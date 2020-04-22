@@ -45,4 +45,4 @@ go tool pprof pprof.test prof.mem
 sudo apt-get install -y graphviz
 ```
 
-2. [使用 pprof 和火焰圖調試 golang 應用](https://cizixs.com/2017/09/11/profiling-golang-program/)up
+2. [使用 pprof 和火焰圖調試 golang 應用](https://cizixs.com/2017/09/11/profiling-golang-program/)
