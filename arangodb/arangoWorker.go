@@ -79,6 +79,12 @@ func (this *ArangoWorkerImp) CacheDatabase(ctx context.Context, dbName string) b
 	return true
 }
 
+/** ArangoDB create document example
+ *
+ * @param ctx golang context
+ * @param dbName name of database
+ * @param colName name of collection
+ * @return string key of new document */
 func (this *ArangoWorkerImp) ExplainSave(ctx context.Context, dbName, colName string) string {
 	if _, exists := this.Db[dbName]; !exists {
 		return ""
@@ -103,6 +109,12 @@ func (this *ArangoWorkerImp) ExplainSave(ctx context.Context, dbName, colName st
 	return meta.Key
 }
 
+/** ArangoDB transation example
+ *
+ * @param ctx golang context
+ * @param dbName name of database
+ * @param colName name of collection
+ * @return interface{} result transation result */
 func (this *ArangoWorkerImp) ExplainTransation(ctx context.Context, dbName, colName string) interface{} {
 	if _, exists := this.Db[dbName]; !exists {
 		return ""
@@ -120,6 +132,8 @@ func (this *ArangoWorkerImp) ExplainTransation(ctx context.Context, dbName, colN
 		panic(err)
 	}
 
+	// transation script by javascript
+	// creation and deletion databases/collections/indexes are NOT ALLOWED inside transations
 	action := `function (Params) {
 		const db = require('@arangodb').db;
 		const col  = db._collection(Params[0]);
@@ -127,11 +141,17 @@ func (this *ArangoWorkerImp) ExplainTransation(ctx context.Context, dbName, colN
 		return result;}`
 
 	options := &driver.TransactionOptions{
+		// Transation store all keys and values in RAM, so this setting ensure that does not happen any
+		// out-of-memory situations by limiting the size of any individual transtation.
 		MaxTransactionSize: 1000,
-		WriteCollections:   []string{colName},
-		ReadCollections:    []string{colName},
-		Params:             []interface{}{colName, string(jsonData)},
-		WaitForSync:        false,
+		// Those collection will be used in write or read mode.
+		WriteCollections: []string{colName},
+		// Those collections will be used in read-only mode.
+		ReadCollections: []string{colName},
+		// Some parameters will be used in trasation script.
+		Params: []interface{}{colName, string(jsonData)},
+		// Wheher the transation is forced to be synchronous.
+		WaitForSync: false,
 	}
 
 	result, err := this.Db[dbName].Transaction(context.TODO(), action, options)
