@@ -33,17 +33,13 @@ func ws(w http.ResponseWriter, r *http.Request) {
 	}()
 
 	// Read message from socket
-	msgCount := uint64(0)
 	for {
 		_, msg, err := conn.ReadMessage()
 		if err != nil {
 			return
 		}
 
-		if msgCount%1000 == 0 {
-			log.Printf("msg: %s", string(msg))
-		}
-		msgCount++
+		log.Printf("msg: %s", string(msg))
 	}
 }
 
