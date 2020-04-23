@@ -26,6 +26,7 @@ func main() {
 
 	u := url.URL{Scheme: "ws", Host: *ip + ":8000", Path: "/"}
 	log.Printf("Connecting to %s", u.String())
+
 	var conns []*websocket.Conn
 	for i := 0; i < *connections; i++ {
 		c, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
@@ -35,26 +36,31 @@ func main() {
 		}
 		conns = append(conns, c)
 		defer func() {
-			c.WriteControl(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""), time.Now().Add(time.Second))
+			if err := c.WriteControl(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""), time.Now().Add(time.Second)); err != nil {
+				fmt.Printf("Failed to close message: %v", err)
+			}
 			time.Sleep(time.Second)
 			c.Close()
 		}()
 	}
-
 	log.Printf("Finished initializing %d connections", len(conns))
+
 	tts := time.Second
 	if *connections > 100 {
-		tts = time.Millisecond * 5
+		tts = time.Millisecond * 1
 	}
+
 	for {
 		for i := 0; i < len(conns); i++ {
+			// log.Printf("Conn %d sending message", i)
 			time.Sleep(tts)
 			conn := conns[i]
-			log.Printf("Conn %d sending message", i)
 			if err := conn.WriteControl(websocket.PingMessage, nil, time.Now().Add(time.Second*5)); err != nil {
 				fmt.Printf("Failed to receive pong: %v", err)
 			}
-			conn.WriteMessage(websocket.TextMessage, []byte(fmt.Sprintf("Hello from conn %v", i)))
+			if err := conn.WriteMessage(websocket.TextMessage, []byte(fmt.Sprintf("Hello from conn %v", i))); err != nil {
+				fmt.Printf("Failed to write message: %v", err)
+			}
 		}
 	}
 }
