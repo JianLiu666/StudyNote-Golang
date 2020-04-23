@@ -10,7 +10,7 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-var count int64
+var connCount int64
 
 func ws(w http.ResponseWriter, r *http.Request) {
 	// Upgradge connection
@@ -20,12 +20,12 @@ func ws(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	n := atomic.AddInt64(&count, 1)
+	n := atomic.AddInt64(&connCount, 1)
 	if n%100 == 0 {
 		log.Printf("Total number of connection: %v", n)
 	}
 	defer func() {
-		n := atomic.AddInt64(&count, -1)
+		n := atomic.AddInt64(&connCount, -1)
 		if n%100 == 0 {
 			log.Printf("Total number of connection: %v", n)
 		}
@@ -33,12 +33,17 @@ func ws(w http.ResponseWriter, r *http.Request) {
 	}()
 
 	// Read message from socket
+	msgCount := uint64(0)
 	for {
 		_, msg, err := conn.ReadMessage()
 		if err != nil {
 			return
 		}
-		log.Printf("msg: %s", string(msg))
+
+		if msgCount%1000 == 0 {
+			log.Printf("msg: %s", string(msg))
+		}
+		msgCount++
 	}
 }
 

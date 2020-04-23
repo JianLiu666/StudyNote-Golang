@@ -45,11 +45,7 @@ func main() {
 	}
 	log.Printf("Finished initializing %d connections", len(conns))
 
-	tts := time.Second
-	if *connections > 100 {
-		tts = time.Millisecond * 1
-	}
-
+	tts := 1 * time.Millisecond
 	for {
 		for i := 0; i < len(conns); i++ {
 			// log.Printf("Conn %d sending message", i)
