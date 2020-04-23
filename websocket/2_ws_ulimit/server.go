@@ -41,12 +41,18 @@ func ws(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// 每個 Process 在執行時系統都不會無限制的允許單個 Process 不斷的消耗資源, 因此都會設置資源限制。
+// Linux 系統中使用 resource limit 來表示, 每個 Process 都可以設置不同的資源限制, 當前 Process
+// 與底下的 Sub process 都會遵守此限制, 且其他的 Process 不會受到影響。
 func main() {
 	// Increase resources limitations
+	// 描述資源軟體硬限制(resource limit)的結構體
 	var rLimit syscall.Rlimit
+	// syscall.RLIMIT_NOFILE 一個 Process 能打開的最大文件數, 預設是1024
 	if err := syscall.Getrlimit(syscall.RLIMIT_NOFILE, &rLimit); err != nil {
 		panic(err)
 	}
+	// Soft Limit, 是指 Kernel 所能支持的資源上限
 	rLimit.Cur = rLimit.Max
 	if err := syscall.Setrlimit(syscall.RLIMIT_NOFILE, &rLimit); err != nil {
 		panic(err)
