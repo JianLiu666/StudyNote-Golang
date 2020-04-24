@@ -34,6 +34,11 @@ func MkEpoll() (*epoll, error) {
 
 func (e *epoll) Add(conn *websocket.Conn) error {
 	fd := websocketFD(conn)
+
+	// 註冊目標 fd 到 epfd 中, 同時關聯內部 event 到 fd 上
+	// events 參數是一個枚舉的集合, 可以用 `|` 來增加事件類型, 這裡帶入的兩個參數為
+	// EPOLLIN: 表示關聯的 fd 可以進行讀操作
+	// EPOLLHUP: 表示關聯的 fd 已掛起, epoll_wait 會一直等待這個事件, 所以沒必要設置這個屬性
 	err := unix.EpollCtl(e.fd, syscall.EPOLL_CTL_ADD, fd, &unix.EpollEvent{Events: unix.POLLIN | unix.POLLHUP, Fd: int32(fd)})
 	if err != nil {
 		return err
@@ -52,6 +57,8 @@ func (e *epoll) Add(conn *websocket.Conn) error {
 
 func (e *epoll) Remove(conn *websocket.Conn) error {
 	fd := websocketFD(conn)
+
+	// 從 epfd 中刪除已註冊的 fd, event 可以被忽略(nil)
 	err := unix.EpollCtl(e.fd, syscall.EPOLL_CTL_DEL, fd, nil)
 	if err != nil {
 		return err
