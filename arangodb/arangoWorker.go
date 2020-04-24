@@ -16,6 +16,7 @@ const (
 	MaxIdleConnsPerHost int = 10000
 	IdleConnTimeout     int = 150
 	RequestTimeout      int = 30
+	ConnectionLimit     int = 100
 )
 
 type ArangoWorkerImp struct {
@@ -39,8 +40,11 @@ func NewArangoWorkerImp(ctx context.Context, addrList []string) *ArangoWorkerImp
 		ExpectContinueTimeout: 1 * time.Second,
 	}
 
+	// 注意 ArangoDB 預設對單一節點的連線數量為32條, 設定成 -1 表示無限制
+	// 但必須自行注意機器在單一 Process 上的 fd 大小限制
 	conn, err := http.NewConnection(http.ConnectionConfig{
 		Endpoints: arangoClusters,
+		ConnLimit: ConnectionLimit,
 		Transport: transport,
 	})
 	if err != nil {
