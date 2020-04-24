@@ -4,9 +4,12 @@ import (
 	"log"
 	"net/http"
 	_ "net/http/pprof"
+	"sync/atomic"
 
 	"github.com/gorilla/websocket"
 )
+
+var connCount int64
 
 func ws(w http.ResponseWriter, r *http.Request) {
 	// Upgrade connection
@@ -16,13 +19,25 @@ func ws(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	n := atomic.AddInt64(&connCount, 1)
+	if n%100 == 0 {
+		log.Printf("Total number of connection: %v", n)
+	}
+	defer func() {
+		n := atomic.AddInt64(&connCount, -1)
+		if n%100 == 0 {
+			log.Printf("Total number of connection: %v", n)
+		}
+		conn.Close()
+	}()
+
 	// Read message from socket
 	for {
 		_, msg, err := conn.ReadMessage()
 		if err != nil {
-			conn.Close()
 			return
 		}
+
 		log.Printf("msg: %s", string(msg))
 	}
 }

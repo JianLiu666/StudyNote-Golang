@@ -3,13 +3,14 @@ package main
 import (
 	"log"
 	"net/http"
+	_ "net/http/pprof"
 	"sync/atomic"
 	"syscall"
 
 	"github.com/gorilla/websocket"
 )
 
-var count int64
+var connCount int64
 
 func ws(w http.ResponseWriter, r *http.Request) {
 	// Upgradge connection
@@ -19,12 +20,12 @@ func ws(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	n := atomic.AddInt64(&count, 1)
+	n := atomic.AddInt64(&connCount, 1)
 	if n%100 == 0 {
 		log.Printf("Total number of connection: %v", n)
 	}
 	defer func() {
-		n := atomic.AddInt64(&count, -1)
+		n := atomic.AddInt64(&connCount, -1)
 		if n%100 == 0 {
 			log.Printf("Total number of connection: %v", n)
 		}
@@ -37,6 +38,7 @@ func ws(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			return
 		}
+
 		log.Printf("msg: %s", string(msg))
 	}
 }
