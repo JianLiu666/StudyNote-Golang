@@ -5,7 +5,7 @@ import (
 	"log"
 )
 
-var arangoClusters []string = []string{"http://192.168.51.118:8551", "http://192.168.51.118:8552", "http://192.168.51.118:8553"}
+var arangoClusters []string = []string{"http://localhost:8529"}
 
 func main() {
 	ctx := context.Background()
@@ -13,12 +13,12 @@ func main() {
 	arangodb := NewArangoWorkerImp(ctx, arangoClusters)
 	log.Print(arangodb.Version(ctx))
 
-	isCache := arangodb.CacheDatabase(ctx, "Database")
+	isCache := arangodb.CacheDatabase(ctx, "_system")
 	log.Print(isCache)
 
-	docKey := arangodb.ExplainSave(ctx, "Database", "Demo")
+	docKey := arangodb.ExplainSave(ctx, "_system", "Demo")
 	log.Print(docKey)
 
-	result := arangodb.ExplainTransation(ctx, "Database", "Demo")
+	result := arangodb.ExplainTransation(ctx, "_system", "Demo")
 	log.Print(result)
 }
