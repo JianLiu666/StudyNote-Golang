@@ -73,3 +73,4 @@ JWT 的組合可以看成是三個 JSON object 並且用 `.` 來做區隔, 各�
 3. [淺談 JWT 的安全性與使用情境](https://medium.com/mr-efacani-teatime/%E6%B7%BA%E8%AB%87jwt%E7%9A%84%E5%AE%89%E5%85%A8%E6%80%A7%E8%88%87%E9%81%A9%E7%94%A8%E6%83%85%E5%A2%83-301b5491b60e)
 4. [JWT 官網](https://jwt.io/)  
    官網有提供線上工具可以解析目前的 JWT 字串內容
+5. [Golang-JWT 示範](https://medium.com/%E4%BC%81%E9%B5%9D%E4%B9%9F%E6%87%82%E7%A8%8B%E5%BC%8F%E8%A8%AD%E8%A8%88/golang-json-web-tokens-jwt-olang-json-web-tokens-jwt-%E7%A4%BA%E7%AF%84-225b377e0f79)
