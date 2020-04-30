@@ -6,12 +6,22 @@ JWT 的組合可以看成是三個 JSON object 並且用 `.` 來做區隔, 各�
  - Signature
 
 ## Header
- 
-1. alg
-紀錄加密演算法
-e.g. HMAC、SHA256、RSA ...
 
-2. typ
+```json
+{
+    "alg": "HS256",
+    "typ": "JWT",
+}
+```
+
+1. alg  
+紀錄加密演算法 (e.g. HMAC、SHA256、RSA ...  )
+
+2. typ  
+表示 token type, 即 JWT
+
+最後用 Base64 重新編碼
+
 
 <br/>
 
