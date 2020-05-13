@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"time"
 )
 
 func main() {
@@ -16,4 +17,6 @@ func main() {
 			}
 		}
 	}
+
+	time.Sleep(6 * time.Second)
 }

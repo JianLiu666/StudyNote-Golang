@@ -1,20 +1,21 @@
 package main
 
+import "github.com/JianLiu666/LearningNote-Golang/interface/room"
+
 type Theme struct {
-	Pass    string                // yeah you already know
-	RoomMap map[string]IRoom      // yeah you already know
-	NewRoom func(id string) IRoom // callback function
+	Settings map[string]interface{}     // Something like ante, or business logic ...
+	RoomMap  map[string]room.IRoom      // Room instances
+	NewRoom  func(id string) room.IRoom // Callback
 }
 
 /** 建立 Theme
  *
- * @param pass guess what it is
+ * @param ante Business logic condition
  * @param newRoomCallback 建立房間的方法
  * @return *Theme 物件實例 */
-func NewTheme(pass string, newRoomCallback func(id string) IRoom) *Theme {
+func NewTheme(ante string, newRoomCallback func(id string) room.IRoom) *Theme {
 	t := &Theme{
-		Pass:    pass,
-		RoomMap: map[string]IRoom{},
+		RoomMap: map[string]room.IRoom{},
 		NewRoom: newRoomCallback,
 	}
 
