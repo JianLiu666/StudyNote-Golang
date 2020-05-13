@@ -1,6 +1,6 @@
 package main
 
-import "github.com/JianLiu666/LearningNote-Golang/businessCase/roomService/room"
+import "github.com/JianLiu666/LearningNote-Golang/business-case/room-service/room"
 
 type Game struct {
 	GameName string                 // e.g. Holdem
