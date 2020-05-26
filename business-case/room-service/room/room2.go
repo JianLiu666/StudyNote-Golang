@@ -5,18 +5,6 @@ import (
 	"time"
 )
 
-type Room2 struct {
-	IRoom
-	fsm             *FSM
-	enabled         bool
-	id              string // uuid
-	currentFrame    int64
-	voidPeriodFrame int64
-	endPeriodFrame  int64
-	periodTimer     map[string]int64
-	void2EndHandler FSMHandler
-}
-
 /** 建立 Room2
  *
  * @param id uuid
@@ -36,6 +24,18 @@ func NewRoom2(id string) IRoom {
 	r.InitFSM()
 
 	return r
+}
+
+type Room2 struct {
+	IRoom
+	fsm             *FSM
+	enabled         bool
+	id              string // uuid
+	currentFrame    int64
+	voidPeriodFrame int64
+	endPeriodFrame  int64
+	periodTimer     map[string]int64
+	void2EndHandler FSMHandler
 }
 
 func (r *Room2) InitFSM() {

@@ -2,14 +2,6 @@ package main
 
 import "github.com/JianLiu666/LearningNote-Golang/business-case/room-service/room"
 
-type Game struct {
-	GameName string                 // e.g. Holdem
-	GameId   string                 // e.g. g-01-001
-	Version  string                 // e.g. 1.0.1
-	Settings map[string]interface{} // Something like player capacity ...
-	ThemeMap map[string]*Theme      // Something like sub server
-}
-
 /** 建立 Game
  *
  * @param gameName
@@ -17,14 +9,20 @@ type Game struct {
  * @param version
  * @return *Game 物件實例 */
 func NewGame(gameName, gameId, version string) *Game {
-	g := &Game{
+	return &Game{
 		GameName: gameName,
 		GameId:   gameId,
 		Version:  version,
 		ThemeMap: map[string]*Theme{},
 	}
+}
 
-	return g
+type Game struct {
+	GameName string                 // e.g. Holdem
+	GameId   string                 // e.g. g-01-001
+	Version  string                 // e.g. 1.0.1
+	Settings map[string]interface{} // Something like player capacity ...
+	ThemeMap map[string]*Theme      // Something like sub server
 }
 
 /** 初始化

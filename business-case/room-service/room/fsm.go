@@ -5,6 +5,17 @@ import (
 	"sync"
 )
 
+/** 實體化有限狀態機
+ *
+ * @param initState 設定狀態機初始狀態
+ * @return FSM 有限狀態機 */
+func NewFSM(initState FSMState) *FSM {
+	return &FSM{
+		state:    initState,
+		handlers: make(map[FSMState]map[FSMEvent]FSMHandler),
+	}
+}
+
 type FSMState string            // 定義狀態
 type FSMEvent string            // 定義事件
 type FSMHandler func() FSMState // 定義處理方法
@@ -67,17 +78,6 @@ func (f *FSM) Call(event FSMEvent) FSMState {
 		log.Print("切換狀態失敗")
 	}
 	return f.GetState()
-}
-
-/** 實體化有限狀態機
- *
- * @param initState 設定狀態機初始狀態
- * @return FSM 有限狀態機 */
-func NewFSM(initState FSMState) *FSM {
-	return &FSM{
-		state:    initState,
-		handlers: make(map[FSMState]map[FSMEvent]FSMHandler),
-	}
 }
 
 /** 確認當前狀態有無在指定狀態內
