@@ -1,6 +1,6 @@
 package main
 
-import "LearningNote/business-case/room-service/room"
+import "LearningNote/practices/room-service/room"
 
 /** 建立 Game
  *
