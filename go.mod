@@ -1,4 +1,4 @@
-module github.com/JianLiu666/LearningNote-Golang
+module LearningNote
 
 go 1.14
 

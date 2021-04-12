@@ -1,6 +1,6 @@
 package main
 
-import "github.com/JianLiu666/LearningNote-Golang/business-case/room-service/room"
+import "LearningNote/business-case/room-service/room"
 
 /** 建立 Game
  *
