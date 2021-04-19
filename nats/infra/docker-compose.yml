@@ -1,0 +1,32 @@
+version: "3.6"
+
+services:
+  nats-streaming-1:
+    container_name: nats-streaming-1
+    image: nats-streaming:0.21.2-alpine3.13
+    command: ["-c", "/cluster.config"]
+    ports:
+      - "4222:4222"
+      - "8222:8222"
+    volumes: 
+      - "./config/cluster1.config:/cluster.config"
+
+  nats-streaming-2:
+    container_name: nats-streaming-2
+    image: nats-streaming:0.21.2-alpine3.13
+    command: ["-c", "cluster.config"]
+    ports:
+      - "4223:4223"
+      - "8223:8223"
+    volumes: 
+      - "./config/cluster2.config:/cluster.config"
+
+  nats-streaming-3:
+    container_name: nats-streaming-3
+    image: nats-streaming:0.21.2-alpine3.13
+    command: ["-c", "cluster.config"]
+    ports:
+      - "4224:4224"
+      - "8224:8224"
+    volumes: 
+      - "./config/cluster3.config:/cluster.config"
