@@ -1,6 +1,6 @@
 package main
 
-import "LearningNote/practices/room-service/room"
+import "jian6/practices/room-service/room"
 
 /** 建立 Theme
  *

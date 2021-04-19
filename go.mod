@@ -1,14 +1,11 @@
-module LearningNote
+module jian6
 
-go 1.14
+go 1.15
 
 require (
-	github.com/arangodb/go-driver v0.0.0-20200403100147-ca5dd87ffe93
+	github.com/arangodb/go-driver v0.0.0-20210304082257-d7e0ea043b7f
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
-	github.com/golang/protobuf v1.4.2 // indirect
-	github.com/gorilla/websocket v1.4.2
-	github.com/nats-io/nats-server/v2 v2.1.7 // indirect
-	github.com/nats-io/nats.go v1.10.0
-	golang.org/x/sys v0.0.0-20200420163511-1957bb5e6d1f
-	google.golang.org/protobuf v1.24.0 // indirect
+	github.com/golang/protobuf v1.5.2 // indirect
+	github.com/nats-io/nats-server/v2 v2.2.1 // indirect
+	github.com/nats-io/nats.go v1.10.1-0.20210330225420-a0b1f60162f8
 )
