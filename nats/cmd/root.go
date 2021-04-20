@@ -2,15 +2,18 @@ package cmd
 
 import (
 	"fmt"
+	"jian6/nats/config"
 	"runtime"
+	"strings"
+	"time"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
-var (
-	GitCommitNum string
-	BuildTime    string
-)
+var cfgFile string
+var gitCommitNum string
+var buildTime string
 
 var rootCmd = &cobra.Command{
 	Use:               "root",
@@ -20,7 +23,28 @@ var rootCmd = &cobra.Command{
 }
 
 func init() {
+	cobra.OnInitialize(initConfig)
 
+	rootCmd.PersistentFlags().StringVarP(&cfgFile, "config", "f", "./conf.d/env.yaml", "config file")
+	rootCmd.PersistentFlags().StringVarP(&gitCommitNum, "version", "v", "unknown", "git commit hash")
+	rootCmd.PersistentFlags().StringVarP(&buildTime, "buildTime", "b", time.Now().String(), "binary build time")
+}
+
+func initConfig() {
+	viper.SetConfigType("yaml")
+	viper.AutomaticEnv()
+	viper.SetEnvPrefix("NATS")
+	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+
+	if cfgFile != "" {
+		viper.SetConfigFile(cfgFile)
+	}
+
+	if err := viper.ReadInConfig(); err != nil {
+		fmt.Printf("ReadInConfig file failed: %v\n", err)
+	} else {
+		fmt.Printf("Using config file: %v\n", viper.ConfigFileUsed())
+	}
 }
 
 func Execute() {
@@ -31,9 +55,20 @@ func PersistentPreRunBeforeCommandStartUp(cmd *cobra.Command, args []string) err
 	goVersion := runtime.Version()
 	osName := runtime.GOOS
 	architecture := runtime.GOARCH
-	fmt.Printf("Go Version %s\n", goVersion)
-	fmt.Printf("Build on %s from gitCommitNum %s\n", BuildTime, GitCommitNum)
-	fmt.Printf("OS: %s, Architecture: %s\n", osName, architecture)
+	fmt.Println("======")
+	fmt.Printf("Build on %s\n", buildTime)
+	fmt.Printf("GoVersion: %s\n", goVersion)
+	fmt.Printf("GitCommitNum: %s\n", gitCommitNum)
+	fmt.Printf("OS: %s\n", osName)
+	fmt.Printf("Architecture: %s\n", architecture)
+	fmt.Println("======")
+
+	c, err := config.NewFromViper()
+	if err != nil {
+		fmt.Printf("Init config failed: %v\n", err)
+	} else {
+		config.SetConfig(c)
+	}
 
 	return nil
 }
