@@ -72,7 +72,7 @@ func enableWorker(sc stan.Conn, subjectName string, instanceId int, wg *sync.Wai
 		if err := msg.Ack(); err != nil {
 			fmt.Printf("receiver error:%v\n", err)
 		}
-		fmt.Printf("[%d] %05d|Data:%v\n", instanceId, msg.Sequence, string(msg.Data))
+		fmt.Printf("[%d] Seq: %-5d  Redeliverd: %-5v  RedeliveryCount: %-v\n", instanceId, msg.Sequence, msg.Redelivered, msg.RedeliveryCount)
 		wg.Done()
 	}
 
