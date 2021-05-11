@@ -80,6 +80,7 @@ func enableWorker(sc stan.Conn, subjectName string, instanceId int, wg *sync.Wai
 		subjectName,
 		"durable_queue_group",
 		callback,
+		stan.DurableName("durable_queue_test"),
 		stan.SetManualAckMode(),
 		stan.AckWait(10*time.Second),
 		stan.MaxInflight(1),
