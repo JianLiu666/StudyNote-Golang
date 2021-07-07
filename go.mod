@@ -11,4 +11,5 @@ require (
 	github.com/nats-io/stan.go v0.9.0
 	github.com/spf13/cobra v1.1.3
 	github.com/spf13/viper v1.7.0
+	go.uber.org/fx v1.13.1
 )
