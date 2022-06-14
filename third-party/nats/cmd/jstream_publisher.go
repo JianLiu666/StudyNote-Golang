@@ -34,7 +34,16 @@ func RunJsPublisherCmd(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	js.Publish("SS.subj1", []byte(fmt.Sprintf("%d", time.Now().UnixMilli())))
+	// Create a stream
+	js.AddStream(&nats.StreamConfig{
+		Name:     "S",
+		Subjects: []string{"subj1"},
+	})
+
+	// Simple Async Stream Publisher
+	for i := 0; i < 500; i++ {
+		js.Publish("subj1", []byte(fmt.Sprintf("%d", time.Now().UnixMilli())))
+	}
 
 	select {
 	case <-js.PublishAsyncComplete():

@@ -41,7 +41,7 @@ func RunJsInfoCmd(cmd *cobra.Command, args []string) error {
 	}
 
 	// Get information about all consumers (with MaxWait JSOpt)
-	for info := range js.ConsumersInfo("SS", nats.MaxWait(10*time.Second)) {
+	for info := range js.ConsumersInfo("S", nats.MaxWait(10*time.Second)) {
 		fmt.Println("consumer name:", info.Name)
 	}
 

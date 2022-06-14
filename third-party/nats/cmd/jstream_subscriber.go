@@ -40,7 +40,7 @@ func RunJsSubscriberCmd(cmd *cobra.Command, args []string) error {
 	}
 
 	// Create durable consumer monitor
-	_, err = js.Subscribe("SS.subj1", callback, nats.ManualAck())
+	_, err = js.Subscribe("subj1", callback, nats.ManualAck())
 	if err != nil {
 		return err
 	}
