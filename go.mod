@@ -7,7 +7,7 @@ require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/nats-io/nats-streaming-server v0.22.0 // indirect
-	github.com/nats-io/nats.go v1.11.0
+	github.com/nats-io/nats.go v1.16.0
 	github.com/nats-io/stan.go v0.9.0
 	github.com/spf13/cobra v1.1.3
 	github.com/spf13/viper v1.7.0
