@@ -36,8 +36,9 @@ func RunJsPublisherCmd(cmd *cobra.Command, args []string) error {
 
 	// Create a stream
 	js.AddStream(&nats.StreamConfig{
-		Name:     "S",
-		Subjects: []string{"subj1"},
+		Name:      "S",
+		Subjects:  []string{"subj1"},
+		Retention: nats.WorkQueuePolicy,
 	})
 
 	// Simple Async Stream Publisher

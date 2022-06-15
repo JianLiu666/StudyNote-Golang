@@ -36,13 +36,15 @@ func RunJsInfoCmd(cmd *cobra.Command, args []string) error {
 	// Get information about all streams (with Context JSOpt)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	for info := range js.StreamsInfo(nats.Context(ctx)) {
-		fmt.Println("stream name:", info.Config.Name)
+	for stream := range js.StreamsInfo(nats.Context(ctx)) {
+		for _, subject := range stream.Config.Subjects {
+			fmt.Printf("%s:%s (%s)\n", stream.Config.Name, subject, stream.Config.Retention)
+		}
 	}
 
 	// Get information about all consumers (with MaxWait JSOpt)
 	for info := range js.ConsumersInfo("S", nats.MaxWait(10*time.Second)) {
-		fmt.Println("consumer name:", info.Name)
+		fmt.Printf("%s:%s\n", info.Stream, info.Name)
 	}
 
 	return nil

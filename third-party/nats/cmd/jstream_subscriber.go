@@ -23,7 +23,7 @@ func init() {
 }
 
 func RunJsSubscriberCmd(cmd *cobra.Command, args []string) error {
-	nc, err := nats.Connect(config.Nats.Addr)
+	nc, err := nats.Connect(config.Nats.Addr, nats.Name("consumer"))
 	if err != nil {
 		return err
 	}
@@ -40,7 +40,10 @@ func RunJsSubscriberCmd(cmd *cobra.Command, args []string) error {
 	}
 
 	// Create durable consumer monitor
-	_, err = js.Subscribe("subj1", callback, nats.ManualAck())
+	_, err = js.Subscribe("*", callback,
+		nats.ManualAck(),
+		nats.Durable("consumer"),
+		nats.BindStream("S"))
 	if err != nil {
 		return err
 	}
