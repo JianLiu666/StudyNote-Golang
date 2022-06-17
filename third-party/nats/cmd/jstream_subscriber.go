@@ -23,15 +23,17 @@ func init() {
 }
 
 func RunJsSubscriberCmd(cmd *cobra.Command, args []string) error {
-	nc, err := nats.Connect(config.Nats.Addr, nats.Name("consumer"))
+	nc, err := nats.Connect(config.Nats.Addr)
 	if err != nil {
-		return err
+		fmt.Println(err)
+		return nil
 	}
 	defer nc.Close()
 
 	js, err := nc.JetStream(nats.PublishAsyncMaxPending(256))
 	if err != nil {
-		return err
+		fmt.Println(err)
+		return nil
 	}
 
 	callback := func(msg *nats.Msg) {
@@ -42,11 +44,12 @@ func RunJsSubscriberCmd(cmd *cobra.Command, args []string) error {
 	// Create durable consumer monitor
 	_, err = js.Subscribe("Collection.GuChat.Direct", callback,
 		nats.ManualAck(),
-		nats.Durable("consumer"),
-		nats.BindStream("Collection"),
+		nats.Durable("consumer1"),
+		nats.BindStream("GuChat_Collection"),
 	)
 	if err != nil {
-		return err
+		fmt.Println(err)
+		return nil
 	}
 
 	stopChan := make(chan os.Signal, 1)

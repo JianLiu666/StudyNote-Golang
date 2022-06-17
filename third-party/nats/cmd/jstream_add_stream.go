@@ -35,8 +35,28 @@ func RunJsAddStreamCmd(cmd *cobra.Command, args []string) error {
 
 	// Create a stream
 	_, err = js.AddStream(&nats.StreamConfig{
-		Name:      "Collection",
-		Subjects:  []string{"Collection.GuChat.Direct", "Collection.GuChat.Group", "Collection.KKGame.Group"},
+		Name:      "GuChat_Collection",
+		Subjects:  []string{"Collection.GuChat.Direct", "Collection.GuChat.Group"},
+		Retention: nats.WorkQueuePolicy,
+	})
+	if err != nil {
+		log.Println(err)
+		return nil
+	}
+
+	_, err = js.AddStream(&nats.StreamConfig{
+		Name:      "GuChat_Delivery",
+		Subjects:  []string{"Delivery.GuChat.Direct", "Delivery.GuChat.Group"},
+		Retention: nats.InterestPolicy,
+	})
+	if err != nil {
+		log.Println(err)
+		return nil
+	}
+
+	_, err = js.AddStream(&nats.StreamConfig{
+		Name:      "KKGame_Collection",
+		Subjects:  []string{"Collection.KKGame.Group"},
 		Retention: nats.WorkQueuePolicy,
 	})
 	if err != nil {
@@ -45,8 +65,9 @@ func RunJsAddStreamCmd(cmd *cobra.Command, args []string) error {
 	}
 
 	// _, err = js.UpdateStream(&nats.StreamConfig{
-	// 	Name:      "Collection",
-	// 	Subjects:  []string{"Collection.KKGame.Direct"},
+	// 	Name:     "KKGame_Collection",
+	// 	Subjects: []string{"Collection.KKGame.Direct"},
+	// 	// Subjects:  []string{"Collection.KKGame.Group"},
 	// 	Retention: nats.WorkQueuePolicy,
 	// })
 	// if err != nil {
@@ -55,8 +76,8 @@ func RunJsAddStreamCmd(cmd *cobra.Command, args []string) error {
 	// }
 
 	_, err = js.AddStream(&nats.StreamConfig{
-		Name:      "Delivery",
-		Subjects:  []string{"Delivery.GuChat.Direct", "Delivery.GuChat.Group", "Delivery.KKGame.Group"},
+		Name:      "KKGame_Delivery",
+		Subjects:  []string{"Delivery.KKGame.Group"},
 		Retention: nats.InterestPolicy,
 	})
 	if err != nil {

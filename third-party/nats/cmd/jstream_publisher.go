@@ -24,21 +24,27 @@ func RunJsPublisherCmd(cmd *cobra.Command, args []string) error {
 	// Connect to NATS
 	nc, err := nats.Connect(config.Nats.Addr)
 	if err != nil {
-		return err
+		fmt.Println(err)
+		return nil
 	}
 	defer nc.Close()
 
 	// Create JetStream Context
 	js, err := nc.JetStream(nats.PublishAsyncMaxPending(256))
 	if err != nil {
-		return err
+		fmt.Println(err)
+		return nil
 	}
 
 	// Simple Async Stream Publisher
 	subjName := "Collection.GuChat.Direct"
 	for i := 0; i < 500; i++ {
 		msg := fmt.Sprintf("%d", time.Now().UnixMilli())
-		js.Publish(subjName, []byte(msg))
+		_, err := js.Publish(subjName, []byte(msg))
+		if err != nil {
+			fmt.Println(err)
+			return nil
+		}
 	}
 
 	select {
