@@ -12,7 +12,7 @@ import (
 )
 
 var jsSubscriberCmd = &cobra.Command{
-	Use:   "jssub",
+	Use:   "js_sub",
 	Short: "Run NATS streaming subscriber test case.",
 	Long:  `No more description.`,
 	RunE:  RunJsSubscriberCmd,
@@ -40,10 +40,11 @@ func RunJsSubscriberCmd(cmd *cobra.Command, args []string) error {
 	}
 
 	// Create durable consumer monitor
-	_, err = js.Subscribe("*", callback,
+	_, err = js.Subscribe("Collection.GuChat.Direct", callback,
 		nats.ManualAck(),
 		nats.Durable("consumer"),
-		nats.BindStream("S"))
+		nats.BindStream("Collection"),
+	)
 	if err != nil {
 		return err
 	}

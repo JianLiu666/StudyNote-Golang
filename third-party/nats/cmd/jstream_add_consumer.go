@@ -10,18 +10,18 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var jsInfoCmd = &cobra.Command{
-	Use:   "js_info",
-	Short: "Get NATS JetStream Information.",
+var jsAddConsumerCmd = &cobra.Command{
+	Use:   "js_add_consumer",
+	Short: "Add Consumer to NATS JetStream",
 	Long:  `No more description.`,
-	RunE:  RunJsInfoCmd,
+	RunE:  RunJsAddConsumerCmd,
 }
 
 func init() {
-	rootCmd.AddCommand(jsInfoCmd)
+	rootCmd.AddCommand(jsAddConsumerCmd)
 }
 
-func RunJsInfoCmd(cmd *cobra.Command, args []string) error {
+func RunJsAddConsumerCmd(cmd *cobra.Command, args []string) error {
 	nc, err := nats.Connect(config.Nats.Addr)
 	if err != nil {
 		return err
@@ -38,17 +38,13 @@ func RunJsInfoCmd(cmd *cobra.Command, args []string) error {
 	defer cancel()
 	for stream := range js.StreamsInfo(nats.Context(ctx)) {
 		for _, subject := range stream.Config.Subjects {
-			fmt.Printf("%s: %s (%s)\n", stream.Config.Name, subject, stream.Config.Retention)
+			fmt.Printf("%s:%s (%s)\n", stream.Config.Name, subject, stream.Config.Retention)
 		}
 	}
 
 	// Get information about all consumers (with MaxWait JSOpt)
-	for info := range js.ConsumersInfo("Collection", nats.MaxWait(10*time.Second)) {
-		fmt.Printf("%s: %s\n", info.Stream, info.Name)
-	}
-
-	for info := range js.ConsumersInfo("Delivery", nats.MaxWait(10*time.Second)) {
-		fmt.Printf("%s: %s\n", info.Stream, info.Name)
+	for info := range js.ConsumersInfo("S", nats.MaxWait(10*time.Second)) {
+		fmt.Printf("%s:%s\n", info.Stream, info.Name)
 	}
 
 	return nil
