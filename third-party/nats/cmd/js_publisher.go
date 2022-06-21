@@ -11,7 +11,7 @@ import (
 
 var jsPublisherCmd = &cobra.Command{
 	Use:   "js_pub",
-	Short: "Run NATS JetStream publisher test case.",
+	Short: "Run NATS JetStream publisher example.",
 	Long:  `No more description.`,
 	RunE:  RunJsPublisherCmd,
 }
@@ -39,7 +39,7 @@ func RunJsPublisherCmd(cmd *cobra.Command, args []string) error {
 	// Simple Async Stream Publisher
 	subjName := "Collection.GuChat.Direct"
 	for i := 0; i < 500; i++ {
-		msg := fmt.Sprintf("%d", time.Now().UnixMilli())
+		msg := fmt.Sprintf("%d:%04d", time.Now().UnixMilli(), i)
 		_, err := js.Publish(subjName, []byte(msg))
 		if err != nil {
 			fmt.Println(err)
