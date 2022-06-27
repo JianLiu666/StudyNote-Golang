@@ -64,17 +64,6 @@ func RunJsAddStreamCmd(cmd *cobra.Command, args []string) error {
 		return nil
 	}
 
-	// _, err = js.UpdateStream(&nats.StreamConfig{
-	// 	Name:     "KKGame_Collection",
-	// 	Subjects: []string{"Collection.KKGame.Direct"},
-	// 	// Subjects:  []string{"Collection.KKGame.Group"},
-	// 	Retention: nats.WorkQueuePolicy,
-	// })
-	// if err != nil {
-	// 	log.Println(err)
-	// 	return nil
-	// }
-
 	_, err = js.AddStream(&nats.StreamConfig{
 		Name:      "KKGame_Delivery",
 		Subjects:  []string{"Delivery.KKGame.Group"},
@@ -84,12 +73,6 @@ func RunJsAddStreamCmd(cmd *cobra.Command, args []string) error {
 		log.Println(err)
 		return nil
 	}
-
-	// err = js.DeleteStream("Collection")
-	// if err != nil {
-	// 	log.Println(err)
-	// 	return nil
-	// }
 
 	return nil
 }
