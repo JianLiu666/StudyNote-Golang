@@ -2,7 +2,7 @@ version: "3.6"
 
 services:
   nats-cluster-1:
-    image: nats:2.8.2-alpine3.15
+    image: nats:latest
     container_name: nats-cluster-1
     command: ["-c", "/cluster.config"]
     ports:
@@ -12,7 +12,7 @@ services:
       - "./config/nats-cluster-1.config:/cluster.config"
 
   nats-cluster-2:
-    image: nats:2.8.2-alpine3.15
+    image: nats:latest
     container_name: nats-cluster-2
     command: ["-c", "cluster.config"]
     ports:
@@ -22,7 +22,7 @@ services:
       - "./config/nats-cluster-2.config:/cluster.config"
 
   nats-cluster-3:
-    image: nats:2.8.2-alpine3.15
+    image: nats:latest
     container_name: nats-cluster-3
     command: ["-c", "cluster.config"]
     ports:
