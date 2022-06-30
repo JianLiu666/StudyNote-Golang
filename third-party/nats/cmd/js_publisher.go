@@ -37,13 +37,22 @@ func RunJsPublisherCmd(cmd *cobra.Command, args []string) error {
 	}
 
 	// Simple Async Stream Publisher
-	subjName := "Collection.GuChat.Direct"
-	for i := 0; i < 500; i++ {
-		msg := fmt.Sprintf("%d:%04d", time.Now().UnixMilli(), i)
-		_, err := js.Publish(subjName, []byte(msg))
-		if err != nil {
-			fmt.Println(err)
-			return nil
+	subjNames := []string{
+		"Collection.GuChat.Direct",
+		// "Collection.GuChat.Group",
+		// "Collection.KKGame.Group",
+		// "Collection.KKGame.Group",
+		// "Delivery.GuChat.Direct",
+		// "Delivery.KKGame.Group",
+	}
+	for _, subjName := range subjNames {
+		for i := 0; i < 1000; i++ {
+			msg := fmt.Sprintf("%d:%04d", time.Now().UnixMilli(), i)
+			_, err := js.Publish(subjName, []byte(msg))
+			if err != nil {
+				fmt.Printf("%v: %v", subjName, err)
+				return nil
+			}
 		}
 	}
 

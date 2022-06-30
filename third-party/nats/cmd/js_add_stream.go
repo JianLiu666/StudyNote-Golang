@@ -37,6 +37,7 @@ func RunJsAddStreamCmd(cmd *cobra.Command, args []string) error {
 	_, err = js.AddStream(&nats.StreamConfig{
 		Name:      "GuChat_Collection",
 		Subjects:  []string{"Collection.GuChat.Direct", "Collection.GuChat.Group"},
+		Replicas:  3,
 		Retention: nats.WorkQueuePolicy,
 	})
 	if err != nil {
@@ -47,6 +48,7 @@ func RunJsAddStreamCmd(cmd *cobra.Command, args []string) error {
 	_, err = js.AddStream(&nats.StreamConfig{
 		Name:      "GuChat_Delivery",
 		Subjects:  []string{"Delivery.GuChat.Direct", "Delivery.GuChat.Group"},
+		Replicas:  3,
 		Retention: nats.InterestPolicy,
 	})
 	if err != nil {
@@ -57,6 +59,7 @@ func RunJsAddStreamCmd(cmd *cobra.Command, args []string) error {
 	_, err = js.AddStream(&nats.StreamConfig{
 		Name:      "KKGame_Collection",
 		Subjects:  []string{"Collection.KKGame.Group"},
+		Replicas:  3,
 		Retention: nats.WorkQueuePolicy,
 	})
 	if err != nil {
@@ -67,6 +70,7 @@ func RunJsAddStreamCmd(cmd *cobra.Command, args []string) error {
 	_, err = js.AddStream(&nats.StreamConfig{
 		Name:      "KKGame_Delivery",
 		Subjects:  []string{"Delivery.KKGame.Group"},
+		Replicas:  3,
 		Retention: nats.InterestPolicy,
 	})
 	if err != nil {
