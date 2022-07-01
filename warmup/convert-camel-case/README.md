@@ -32,9 +32,9 @@ expected result
             "resource": {
                 "path": "/api/data/documents"
         },
-        "allowOrigins": [ "http://this.example.com", "http://that.example.com" ],
-        "allowMethods": [ "GET" ],
-        "allowCredentials": true
+        "allow_origins": [ "http://this.example.com", "http://that.example.com" ],
+        "allow_methods": [ "GET" ],
+        "allow_credentials": true
         },
     ]
 }
