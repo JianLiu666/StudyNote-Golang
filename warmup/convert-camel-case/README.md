@@ -1,7 +1,8 @@
 # Convert camel case to nsake case
 
-read json file with camel case key field and write out converted key field name as snake_case.
-so, what will you do to handle generic/arbitrary json format?
+read json file with camel case key field and write out converted key field name as snake_case.  
+
+so, what will you do to handle generic/arbitrary json format?  
 
 ### Example 1:
 
