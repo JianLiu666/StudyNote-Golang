@@ -1,12 +1,15 @@
-package main
+package benchmark
 
-import "testing"
+import (
+	"testing"
+)
 
 func BenchmarkSliceInsert(b *testing.B) {
-	var s1 []uint32
+	var s1 []int
+
+	b.ReportAllocs()
 	b.ResetTimer()
-	var i uint32
-	for i = 0; i < uint32(b.N); i++ {
+	for i := 0; i < b.N; i++ {
 		s1 = append(s1, i)
 	}
 }
