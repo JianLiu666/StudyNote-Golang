@@ -15,9 +15,10 @@ func TestSimepleCache(t *testing.T) {
 		time.Sleep(10 * time.Millisecond)
 	}
 	fmt.Println(cache.GetAll())
+	fmt.Println(cache.Get("50"))
 
-	cache.Get("50")
 	time.Sleep(10 * time.Millisecond)
 	fmt.Println(cache.Set("100", 100, -10000))
+
 	fmt.Println(cache.GetAll())
 }
