@@ -18,15 +18,15 @@ Please explain the computational complexity of `get(key)` and `put(...)` in **Bi
 # Benchmark Result
 
 ```
-BenchmarkSampleSet_Size_1000-10     10000    63055.00 ns/op     96 B/op    1 allocs/op
-BenchmarkSampleGet_Size_1000-10     10000       94.62 ns/op     23 B/op    1 allocs/op
+BenchmarkSampleSet_Size_1000-10     20000     67198.00 ns/op     90 B/op    1 allocs/op
+BenchmarkSampleGet_Size_1000-10     20000        86.99 ns/op     13 B/op    0 allocs/op
 
-BenchmarkSampleSet_Size_10000-10    10000      168.70 ns/op    180 B/op    2 allocs/op
-BenchmarkSampleGet_Size_10000-10    10000      239.70 ns/op    184 B/op    3 allocs/op
+BenchmarkSampleSet_Size_10000-10    20000    352370.00 ns/op    133 B/op    2 allocs/op
+BenchmarkSampleGet_Size_10000-10    20000       158.80 ns/op     94 B/op    1 allocs/op
 
-BenchmarkSimpleSet_Size_1000-10     10000      214.40 ns/op    181 B/op    2 allocs/op
-BenchmarkSimpleGet_Size_1000-10     10000      108.90 ns/op     23 B/op    1 allocs/op
+BenchmarkSimpleSet_Size_1000-10     20000       224.90 ns/op    181 B/op    2 allocs/op
+BenchmarkSimpleGet_Size_1000-10     20000        91.42 ns/op     13 B/op    0 allocs/op
 
-BenchmarkSimpleSet_Size_10000-10    10000      168.50 ns/op    181 B/op    2 allocs/op
-BenchmarkSimpleGet_Size_10000-10    10000      262.60 ns/op    184 B/op    3 allocs/op
+BenchmarkSimpleSet_Size_10000-10    20000       188.80 ns/op    182 B/op    2 allocs/op
+BenchmarkSimpleGet_Size_10000-10    20000       166.00 ns/op     94 B/op    1 allocs/op
 ```
