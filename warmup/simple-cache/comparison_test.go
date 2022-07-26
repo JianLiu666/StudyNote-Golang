@@ -8,10 +8,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestSimepleCache(t *testing.T) {
+func TestSamepleCache(t *testing.T) {
 	ast := assert.New(t)
 
-	cache := CreateSimpleCache(10)
+	cache := CreateSampleCache(10)
 	for i := 0; i < 10; i++ {
 		cache.Set(strconv.Itoa(i), i, 100)
 		time.Sleep(50 * time.Millisecond)
@@ -28,9 +28,9 @@ func TestSimepleCache(t *testing.T) {
 	ast.Equal([]int{1, 2, 3, 4, 6, 7, 8, 9, 5, 100}, cache.GetAll())
 }
 
-func BenchmarkSimpleSet_Size_1000(b *testing.B) {
+func BenchmarkSampleSet_Size_1000(b *testing.B) {
 	num := 1000
-	cache := CreateSimpleCache(num)
+	cache := CreateSampleCache(num)
 
 	b.ReportAllocs()
 	b.StartTimer()
@@ -39,9 +39,9 @@ func BenchmarkSimpleSet_Size_1000(b *testing.B) {
 	}
 }
 
-func BenchmarkSimpleGet_Size_1000(b *testing.B) {
+func BenchmarkSampleGet_Size_1000(b *testing.B) {
 	num := 1000
-	cache := CreateSimpleCache(num)
+	cache := CreateSampleCache(num)
 	for i := 0; i < num; i++ {
 		cache.Set(strconv.Itoa(i), i, -10000)
 	}
@@ -53,9 +53,9 @@ func BenchmarkSimpleGet_Size_1000(b *testing.B) {
 	}
 }
 
-func BenchmarkSimpleSet_Size_10000(b *testing.B) {
+func BenchmarkSampleSet_Size_10000(b *testing.B) {
 	num := 10000
-	cache := CreateSimpleCache(num)
+	cache := CreateSampleCache(num)
 
 	b.ReportAllocs()
 	b.StartTimer()
@@ -64,9 +64,9 @@ func BenchmarkSimpleSet_Size_10000(b *testing.B) {
 	}
 }
 
-func BenchmarkSimpleGet_Size_10000(b *testing.B) {
+func BenchmarkSampleGet_Size_10000(b *testing.B) {
 	num := 10000
-	cache := CreateSimpleCache(num)
+	cache := CreateSampleCache(num)
 	for i := 0; i < num; i++ {
 		cache.Set(strconv.Itoa(i), i, -10000)
 	}
