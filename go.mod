@@ -10,6 +10,7 @@ require (
 	github.com/nats-io/nats.go v1.16.0
 	github.com/spf13/cobra v1.1.3
 	github.com/spf13/viper v1.7.0
+	github.com/stretchr/testify v1.5.1
 	go.uber.org/fx v1.13.1
 	golang.org/x/crypto v0.0.0-20210513164829-c07d793c2f9a // indirect
 	golang.org/x/sys v0.0.0-20210525143221-35b2ab0089ea // indirect

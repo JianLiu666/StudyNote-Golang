@@ -22,6 +22,9 @@ func CreateDoublyLinkedList() *dataList {
 	}
 }
 
+// get num of data in the doubly linked list
+//
+// @return int num of data
 func (this *dataList) Size() int {
 	return this.size
 }
@@ -62,7 +65,10 @@ func (this *dataList) MoveToTail(node *dataNode) {
 	this.tail = node
 }
 
-// compare data node's score with socre and find specific node
+// compare data node's score with given threshold and find specific node
+// @param score the score of threshold
+//
+// @return bool deleted or not
 func (this *dataList) CompareAndDeleteNode(score float64) bool {
 	deleted := false
 
@@ -95,6 +101,9 @@ func (this *dataList) CompareAndDeleteNode(score float64) bool {
 	return deleted
 }
 
+// Get all data with the accessing ordering
+//
+// @return []int data list
 func (this *dataList) GetAll() []int {
 	res := []int{}
 

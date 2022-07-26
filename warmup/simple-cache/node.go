@@ -12,8 +12,8 @@ type dataNode struct {
 }
 
 // create new data node
-// @param key    uuid
-// @param value  custom data
+// @param key uuid
+// @param value custom data
 // @param weight custom data
 //
 // @return dataNode
