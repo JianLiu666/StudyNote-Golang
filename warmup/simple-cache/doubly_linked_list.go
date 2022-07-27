@@ -1,10 +1,5 @@
 package simplecache
 
-import (
-	"math"
-	"time"
-)
-
 type dataList struct {
 	head *dataNode // point to list head
 	tail *dataNode // point to list tail
@@ -74,8 +69,7 @@ func (this *dataList) CompareAndDeleteNode(score float64) bool {
 
 	current := this.head
 	for current != nil && !deleted {
-		dividend := float64(time.Now().UnixMilli() - current.lastAccessTime.UnixMilli() + 1)
-		current_score := float64(current.weight) / math.Log(dividend)
+		current_score := CalcScoreByAccessTime(current.weight, current.lastAccessTime)
 
 		if current_score >= score {
 			current = current.next

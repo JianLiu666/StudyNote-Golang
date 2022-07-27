@@ -46,7 +46,7 @@ func (this *SimpleCache) Set(key string, value, weight int) bool {
 
 	data := CreateNode(key, value, weight)
 	if this.list.Size()+1 > this.capacity {
-		new_data_score := float64(weight / -100)
+		new_data_score := CalcScoreByWeight(weight)
 		if deleted := this.list.CompareAndDeleteNode(new_data_score); !deleted {
 			return false
 		}
