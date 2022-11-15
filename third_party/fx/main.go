@@ -2,8 +2,8 @@ package main
 
 import (
 	"context"
-	"jian6/third-party/fx/config"
-	"jian6/third-party/fx/delivery/server"
+	"jian6/third_party/fx/config"
+	"jian6/third_party/fx/delivery/server"
 	"log"
 	"net/http"
 	"os"
