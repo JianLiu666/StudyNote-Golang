@@ -58,7 +58,9 @@ go tool pprof pprof.test mem.profile
 
 列出函數程式碼以及對應的效能分析結果
 
-# References
+---
+
+## References
 
 1. 安裝 graphviz 使用效能分析圖與火焰圖
 
