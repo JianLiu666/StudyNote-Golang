@@ -1,3 +1,5 @@
-#Folder
+# Folders
 
-**/docker_cache
+# Files
+**/*.test
+**/*.profile
