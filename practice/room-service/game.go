@@ -1,6 +1,6 @@
 package main
 
-import "jian6/internal/room-service/room"
+import "jian6/practice/room-service/room"
 
 /** 建立 Game
  *
