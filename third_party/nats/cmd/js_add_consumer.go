@@ -3,7 +3,7 @@ package cmd
 import (
 	"context"
 	"fmt"
-	"jian6/third-party/nats/config"
+	"jian6/third_party/nats/config"
 	"time"
 
 	"github.com/nats-io/nats.go"

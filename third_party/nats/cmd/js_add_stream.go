@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"jian6/third-party/nats/config"
+	"jian6/third_party/nats/config"
 	"log"
 
 	"github.com/nats-io/nats.go"
