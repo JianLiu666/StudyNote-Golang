@@ -2,9 +2,11 @@
 
 參數筆記：
 
- - `-bench regexp` : 測試函式名稱 (預設 `.` 表示全部都測試)
+ - `-bench regexp` : 壓力測試函式名稱 (預設 `.` 表示全部都測試)
+ - `-run regexp` : 單元測試函數名稱 (預設 `.` 表示全部都測試)
  - `-benchtime t` : 測試次數或時間 (e.g. 1000x=1000次, 10s=10秒)
  - `-cpu 1,2,4` : 測試時使用的cpu數目
+ - `-benchmem` : 
  - `-cpuprofile cpu.out` : 輸出 cpu profile
  - `-memprofile mem.out` : 輸出 memory profile
 
@@ -17,7 +19,7 @@ go help testflag
 範例：執行當前路徑底下所有的測試函式並產生對應的 cpu 與 memory profiles
 
 ```sh
-go test -bench=. -benchtime=10000000x -cpu=1 -cpuprofile cpu.profile -memprofile mem.profile
+go test -bench=. -run=none -benchtime=10000000x -cpu=1 -benchmem -cpuprofile cpu.profile -memprofile mem.profile
 ```
 
 ---
@@ -42,7 +44,7 @@ go tool pprof pprof.test cpu.profile
 go tool pprof pprof.test mem.profile
 ```
 
-### top N
+### top [N]
 
 列出前 N 名最吃效能的函式列表 (i.e. 最耗時、使用最多記憶體)
 

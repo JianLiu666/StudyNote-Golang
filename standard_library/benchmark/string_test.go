@@ -7,24 +7,16 @@ import (
 
 func BenchmarkStringBuilder(b *testing.B) {
 	var str strings.Builder
-
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		str.WriteString("s")
 	}
-	b.StopTimer()
-
-	b.ReportAllocs()
 }
 
 func BenchmarkStringConcat(b *testing.B) {
 	str := ""
-
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		str += "s"
 	}
-	b.StopTimer()
-
-	b.ReportAllocs()
 }

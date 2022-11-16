@@ -19,24 +19,16 @@ func (o *Object) GetItself() *Object {
 
 func BenchmarkDereference(b *testing.B) {
 	o := &Object{}
-
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		o = o.Get()
 	}
-	b.StopTimer()
-
-	b.ReportAllocs()
 }
 
 func BenchmarkReference(b *testing.B) {
 	o := &Object{}
-
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		o = o.GetItself()
 	}
-	b.StopTimer()
-
-	b.ReportAllocs()
 }
