@@ -3,7 +3,7 @@
 | 類型 | 大小 |
 | - | - |
 | bool | 1 byte |
-| intN, uintN, floatN, complexN | N/8 byte |
+| intN, uintN, floatN, complexN | N/8 bytes |
 | int, uint, uintptr | 1 platform |
 | *T | 1 platform |
 | sring | 2 platform (data, len) |
@@ -13,7 +13,7 @@
 | chan | 1 platform |
 | interface | 2 platform (type, value) |
 
-*platform: this type is usually 32 bits wide on 32-bit systems and 64 bits wide on 64-bit systems.
+**platform**: this type is usually 32 bits wide on 32-bit systems and 64 bits wide on 64-bit systems.
 
 <br/>
 
