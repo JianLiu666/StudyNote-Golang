@@ -24,10 +24,10 @@ func multiRoutine() {
 	time.Sleep(5 * time.Second)
 }
 
-/** Goroutine 迭代事件
- *
- * @param ctx
- * @param instance */
+// Goroutine 迭代事件
+//
+// @param ctx
+// @param instance
 func multiRoutineEpoch(ctx context.Context, instance string) {
 	for {
 		select {
