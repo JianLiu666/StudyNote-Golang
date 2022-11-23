@@ -3,4 +3,10 @@ go 1.19
 use (
 	./practice/convert-camel-case
 	./practice/room-service
+	./practice/simple-cache
+	./standard_library/benchmark
+	./standard_library/context
+	./standard_library/interface
+	./standard_library/pointer
+	./standard_library/sizeof
 )
