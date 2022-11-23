@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"jian6/third_party/nats/config"
 	"log"
+	"natspractice/config"
 
 	"github.com/nats-io/nats.go"
 	"github.com/spf13/cobra"

@@ -1,6 +1,6 @@
 package main
 
-import "jian6/third_party/nats/cmd"
+import "natspractice/cmd"
 
 func main() {
 	cmd.Execute()

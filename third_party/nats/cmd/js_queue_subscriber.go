@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"fmt"
-	"jian6/third_party/nats/config"
+	"natspractice/config"
 	"os"
 	"os/signal"
 	"syscall"

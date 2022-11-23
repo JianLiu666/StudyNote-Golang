@@ -2,12 +2,12 @@ package main
 
 import (
 	"context"
-	"jian6/third_party/fx/config"
-	"jian6/third_party/fx/delivery/server"
 	"log"
 	"net/http"
 	"os"
 	"time"
+	"uberfx/config"
+	"uberfx/delivery/server"
 
 	"go.uber.org/fx"
 )

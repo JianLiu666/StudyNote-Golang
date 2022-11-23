@@ -9,4 +9,8 @@ use (
 	./standard_library/interface
 	./standard_library/pointer
 	./standard_library/sizeof
+	./third_party/arangodb
+	./third_party/fx
+	./third_party/jwt
+	./third_party/nats
 )
