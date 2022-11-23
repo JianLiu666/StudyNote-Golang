@@ -1,6 +1,6 @@
 package main
 
-import "jian6/practice/room-service/room"
+import "roomservice/room"
 
 /** 建立 Theme
  *

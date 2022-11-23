@@ -1,0 +1,6 @@
+go 1.19
+
+use (
+	./practice/convert-camel-case
+	./practice/room-service
+)
