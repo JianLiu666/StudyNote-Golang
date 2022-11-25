@@ -1,8 +1,8 @@
 go 1.19
 
 use (
-	./practice/convert-camel-case
-	./practice/room-service
+	./practice/json-converter
+	./practice/game-management
 	./practice/simple-cache
 	./standard-library/benchmark
 	./standard-library/context

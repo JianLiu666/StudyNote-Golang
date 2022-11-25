@@ -1,6 +1,6 @@
 package main
 
-import "roomservice/room"
+import "gamemanagement/room"
 
 /** 建立 Game
  *

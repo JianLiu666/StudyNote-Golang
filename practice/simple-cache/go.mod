@@ -1,4 +1,4 @@
-module studynote
+module simplecache
 
 go 1.19
 

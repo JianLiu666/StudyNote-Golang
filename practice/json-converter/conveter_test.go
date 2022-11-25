@@ -1,4 +1,4 @@
-package convertcamelcase
+package jasonconverter
 
 import (
 	"fmt"

@@ -3,8 +3,8 @@
 ```
 StudyNode-Golang
  ├─ practice/                # 實作指定情境
- │   ├─ convert-camel-case      # JSON 格式解析
- │   ├─ room-service            # 遊戲模組 & 有限狀態機 (FSM)
+ │   ├─ json-converter          # JSON 格式解析
+ │   ├─ game-management         # 遊戲模組 & 有限狀態機 (FSM)
  │   └─ simple-cache            # Linked List & Hash Table
  ├─ standard-library/        # 學習標準函式庫
  │   ├─ benchmark/              # 壓力測試 & pprof
