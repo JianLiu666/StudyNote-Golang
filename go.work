@@ -1,0 +1,16 @@
+go 1.19
+
+use (
+	./practice/json-converter
+	./practice/game-management
+	./practice/simple-cache
+	./standard-library/benchmark
+	./standard-library/context
+	./standard-library/interface
+	./standard-library/pointer
+	./standard-library/sizeof
+	./third-party/arangodb
+	./third-party/fx
+	./third-party/jwt
+	./third-party/nats
+)
