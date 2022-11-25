@@ -12,6 +12,7 @@ StudyNode-Golang
  │   ├─ context/             # Context 調用關係
  │   ├─ interface/           # Interface 調用關係
  │   ├─ pointer/             # 物件、函式與指標調用關係
+ │   ├─ select/              # Channel Select 使用方式
  │   └─ sizeof               # 資料結構的記憶體保存空間
  ├─ third-party/          # 學習第三方套件
  │   ├─ arangodb/            # ArangoDB Client Driver
