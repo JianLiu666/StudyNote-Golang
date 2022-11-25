@@ -1,8 +1,9 @@
 go 1.19
 
 use (
-	./practice/json-converter
 	./practice/game-management
+	./practice/json-converter
+	./practice/message-broker
 	./practice/simple-cache
 	./standard-library/benchmark
 	./standard-library/context
