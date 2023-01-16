@@ -151,7 +151,7 @@ func (this *ArangoWorkerImp) ExplainTransation(ctx context.Context, dbName, colN
 		const result = col.firstExample({
 			"_key": meta._key,
 		})
-		return result;
+		return JSON.stringify(result);
 	}`
 
 	options := &driver.TransactionOptions{
