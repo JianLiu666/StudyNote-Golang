@@ -3,3 +3,4 @@
 # Files
 **/*.test
 **/*.profile
+**/docker_cache

@@ -102,9 +102,11 @@ func (this *ArangoWorkerImp) ExplainSave(ctx context.Context, dbName, colName st
 	meta, err := col.CreateDocument(ctx, struct {
 		Text       string `json:"Text"`
 		CreateTime int64  `json:"CreateTime"`
+		Number     int64  `json:"Number"`
 	}{
 		Text:       "Write something.",
 		CreateTime: time.Now().Unix(),
+		Number:     50000000000,
 	})
 	if err != nil {
 		panic(err)
@@ -124,12 +126,16 @@ func (this *ArangoWorkerImp) ExplainTransation(ctx context.Context, dbName, colN
 		return ""
 	}
 
-	doc := struct {
+	type dao struct {
 		Text       string `json:"Text"`
 		CreateTime int64  `json:"CreateTime"`
-	}{
+		Number     int64  `json:"Number"`
+	}
+
+	doc := dao{
 		Text:       "Write something.",
 		CreateTime: time.Now().Unix(),
+		Number:     50000000000,
 	}
 	jsonData, err := json.Marshal(&doc)
 	if err != nil {
@@ -141,8 +147,12 @@ func (this *ArangoWorkerImp) ExplainTransation(ctx context.Context, dbName, colN
 	action := `function (Params) {
 		const db = require('@arangodb').db;
 		const col  = db._collection(Params[0]);
-		const result = col.save(JSON.parse(Params[1]));
-		return result;}`
+		const meta = col.save(JSON.parse(Params[1]));
+		const result = col.firstExample({
+			"_key": meta._key,
+		})
+		return result;
+	}`
 
 	options := &driver.TransactionOptions{
 		// Transation store all keys and values in RAM, so this setting ensure that does not happen any
