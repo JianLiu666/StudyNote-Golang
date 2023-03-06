@@ -4,3 +4,4 @@
 **/*.test
 **/*.profile
 **/docker_cache
+**/*.idea
