@@ -12,6 +12,7 @@ use (
 	./standard-library/pointer
 	./standard-library/select
 	./standard-library/sizeof
+	./standard-library/wire
 	./third-party/arangodb
 	./third-party/fx
 	./third-party/jwt
