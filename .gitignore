@@ -5,3 +5,4 @@
 **/*.profile
 **/docker_cache
 **/*.idea
+**/env.yaml

@@ -6,6 +6,7 @@ use (
 	./practice/json-converter
 	./practice/message-broker
 	./practice/simple-cache
+	./practice/websocket-benchmark
 	./standard-library/benchmark
 	./standard-library/context
 	./standard-library/interface
