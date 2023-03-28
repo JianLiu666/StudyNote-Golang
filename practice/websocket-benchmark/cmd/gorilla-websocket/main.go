@@ -12,6 +12,12 @@ import (
 )
 
 func init() {
+	// enable logger modules
+	logrus.SetFormatter(&logrus.TextFormatter{
+		FullTimestamp:   true,
+		TimestampFormat: "2006-01-02 15:04:05-07:00",
+	})
+
 	viper.SetConfigFile("./conf.d/env.yaml")
 	viper.AutomaticEnv()
 }
@@ -32,7 +38,9 @@ func echo(w http.ResponseWriter, r *http.Request) {
 			logrus.Error("read:", err)
 			break
 		}
-		logrus.Info("recv:", message)
+
+		logrus.Info("recv:", string(message))
+
 		err = c.WriteMessage(mt, message)
 		if err != nil {
 			logrus.Error("write:", err)
@@ -46,12 +54,6 @@ func home(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	// enable logger modules
-	logrus.SetFormatter(&logrus.TextFormatter{
-		FullTimestamp:   true,
-		TimestampFormat: "2006-01-02 15:04:05-07:00",
-	})
-
 	conf := config.NewFromViper()
 
 	http.HandleFunc("/echo", echo)
