@@ -12,8 +12,8 @@ import (
 	"github.com/spf13/viper"
 )
 
-const numClients int = 1     //
-const numMessages int = 1000 //
+const numClients int = 100    //
+const numMessages int = 10000 //
 
 var bar *progressbar.ProgressBar
 
@@ -32,10 +32,11 @@ func init() {
 }
 
 func main() {
+	conf := config.NewFromViper()
+
 	var clients [numClients]*client
 	var wg sync.WaitGroup
-
-	conf := config.NewFromViper()
+	wg.Add(numClients)
 
 	addr := fmt.Sprintf("%s:%s", conf.Server.Addr, conf.Server.Port)
 	u := url.URL{
@@ -44,12 +45,15 @@ func main() {
 		Path:   "/echo",
 	}
 
-	wg.Add(numClients)
+	logrus.Infof("num of clients: %v, each client will send %v messages", numClients, numMessages)
+
+	logrus.Info("start to create clients")
 	for i := 0; i < numClients; i++ {
 		clients[i] = newClient(u)
 		time.Sleep(1 * time.Millisecond)
 	}
 
+	logrus.Info("start to send messages")
 	for i := 0; i < numClients; i++ {
 		go clients[i].start(&wg)
 	}
