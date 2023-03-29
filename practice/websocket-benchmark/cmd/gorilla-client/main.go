@@ -3,15 +3,19 @@ package main
 import (
 	"fmt"
 	"net/url"
-	"os"
-	"os/signal"
+	"sync"
 	"time"
 	"websocketbenchmark/internal/config"
 
-	"github.com/gorilla/websocket"
+	"github.com/schollz/progressbar/v3"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
+
+const numClients int = 1     //
+const numMessages int = 1000 //
+
+var bar *progressbar.ProgressBar
 
 func init() {
 	// enable logger modules
@@ -22,13 +26,16 @@ func init() {
 
 	viper.SetConfigFile("./conf.d/env.yaml")
 	viper.AutomaticEnv()
+
+	opts := progressbar.OptionUseANSICodes(true)
+	bar = progressbar.NewOptions64(int64(numClients)*int64(numMessages), opts)
 }
 
 func main() {
-	conf := config.NewFromViper()
+	var clients [numClients]*client
+	var wg sync.WaitGroup
 
-	interrupt := make(chan os.Signal, 1)
-	signal.Notify(interrupt, os.Interrupt)
+	conf := config.NewFromViper()
 
 	addr := fmt.Sprintf("%s:%s", conf.Server.Addr, conf.Server.Port)
 	u := url.URL{
@@ -36,56 +43,22 @@ func main() {
 		Host:   addr,
 		Path:   "/echo",
 	}
-	logrus.Infof("connecting to %s", u.String())
 
-	c, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
-	if err != nil {
-		logrus.Fatal("dial:", err)
+	wg.Add(numClients)
+	for i := 0; i < numClients; i++ {
+		clients[i] = newClient(u)
+		time.Sleep(1 * time.Millisecond)
 	}
-	defer c.Close()
 
-	done := make(chan struct{})
-
-	go func() {
-		defer close(done)
-		for {
-			_, message, err := c.ReadMessage()
-			if err != nil {
-				logrus.Error("read:", err)
-				return
-			}
-			logrus.Info("recv:", string(message))
-		}
-	}()
-
-	ticker := time.NewTicker(time.Second)
-	defer ticker.Stop()
-
-	for {
-		select {
-		case <-done:
-			return
-		case t := <-ticker.C:
-			err := c.WriteMessage(websocket.TextMessage, []byte(t.String()))
-			if err != nil {
-				logrus.Error("write:", err)
-				return
-			}
-		case <-interrupt:
-			logrus.Error("interrupt")
-
-			// Cleanly close the connection by sending a close message and then
-			// waiting (with timeout) for the server to close the connection.
-			err := c.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
-			if err != nil {
-				logrus.Error("write close:", err)
-				return
-			}
-			select {
-			case <-done:
-			case <-time.After(time.Second):
-			}
-			return
-		}
+	for i := 0; i < numClients; i++ {
+		go clients[i].start(&wg)
 	}
+
+	wg.Wait()
+
+	for i := 0; i < numClients; i++ {
+		clients[i].close()
+	}
+
+	calculate(clients)
 }
