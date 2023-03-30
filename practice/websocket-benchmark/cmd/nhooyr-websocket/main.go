@@ -15,11 +15,6 @@ import (
 	"github.com/spf13/viper"
 )
 
-type data struct {
-	Count     int32 `json:"c"`
-	Timestamp int64 `json:"ts"`
-}
-
 func init() {
 	// enable logger modules
 	logrus.SetFormatter(&logrus.TextFormatter{

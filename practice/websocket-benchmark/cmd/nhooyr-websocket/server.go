@@ -1,16 +1,18 @@
 package main
 
 import (
-	"context"
-	"fmt"
-	"io"
+	"encoding/json"
 	"net/http"
 	"time"
 
 	"github.com/sirupsen/logrus"
-	"golang.org/x/time/rate"
 	"nhooyr.io/websocket"
 )
+
+type data struct {
+	Count     int32 `json:"c"`
+	Timestamp int64 `json:"ts"`
+}
 
 // echoServer is the WebSocket echo server implementation.
 // It ensures the client speaks the echo subprotocol and
@@ -33,47 +35,42 @@ func (s echoServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	l := rate.NewLimiter(rate.Every(time.Millisecond*100), 10)
 	for {
-		err = echo(r.Context(), c, l)
+		mt, message, err := c.Read(r.Context())
 		if websocket.CloseStatus(err) == websocket.StatusNormalClosure {
+			logrus.Info("client closed connection.")
 			return
 		}
 		if err != nil {
-			logrus.Errorf("failed to echo with %v: %v", r.RemoteAddr, err)
+			logrus.Errorf("failed to read: %v", err)
+			return
+		}
+
+		var json_data data
+		err = json.Unmarshal(message, &json_data)
+		if err != nil {
+			logrus.Error("json unmarshal:", err)
+			return
+		}
+
+		c.Write(r.Context(), mt, getEvent(json_data.Count))
+		if err != nil {
+			logrus.Errorf("failed to write: %v", err)
 			return
 		}
 	}
-
 }
 
-// echo reads from the WebSocket connection and then writes
-// the received message back to it.
-// The entire function has 10s to complete.
-func echo(ctx context.Context, c *websocket.Conn, l *rate.Limiter) error {
-	ctx, cancel := context.WithTimeout(ctx, time.Second*10)
-	defer cancel()
+func getEvent(c int32) []byte {
+	var event data
+	event.Count = c
+	event.Timestamp = time.Now().UnixMilli()
 
-	err := l.Wait(ctx)
+	b, err := json.Marshal(event)
 	if err != nil {
-		return err
+		logrus.Error("json marshal failed:", err)
+		return []byte{}
 	}
 
-	typ, r, err := c.Reader(ctx)
-	if err != nil {
-		return err
-	}
-
-	w, err := c.Writer(ctx, typ)
-	if err != nil {
-		return err
-	}
-
-	_, err = io.Copy(w, r)
-	if err != nil {
-		return fmt.Errorf("failed to io.Copy: %w", err)
-	}
-
-	err = w.Close()
-	return err
+	return b
 }

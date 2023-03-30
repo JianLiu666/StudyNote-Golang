@@ -7,7 +7,6 @@ require (
 	github.com/schollz/progressbar/v3 v3.13.1
 	github.com/sirupsen/logrus v1.9.0
 	github.com/spf13/viper v1.15.0
-	golang.org/x/time v0.1.0
 	nhooyr.io/websocket v1.8.7
 )
 

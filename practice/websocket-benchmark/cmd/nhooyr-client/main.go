@@ -3,14 +3,19 @@ package main
 import (
 	"context"
 	"fmt"
+	"sync"
 	"time"
 	"websocketbenchmark/internal/config"
 
+	"github.com/schollz/progressbar/v3"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
-	"nhooyr.io/websocket"
-	"nhooyr.io/websocket/wsjson"
 )
+
+const numClients int = 100    //
+const numMessages int = 10000 //
+
+var bar *progressbar.ProgressBar
 
 func init() {
 	// enable logger modules
@@ -21,42 +26,41 @@ func init() {
 
 	viper.SetConfigFile("./conf.d/env.yaml")
 	viper.AutomaticEnv()
+
+	opts := progressbar.OptionUseANSICodes(true)
+	bar = progressbar.NewOptions64(int64(numClients)*int64(numMessages), opts)
 }
 
 func main() {
 	conf := config.NewFromViper()
 
+	var clients [numClients]*client
+	var wg sync.WaitGroup
+	wg.Add(numClients)
+
 	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
 	defer cancel()
 
 	addr := fmt.Sprintf("http://%s:%s", conf.Server.Addr, conf.Server.Port)
-	c, _, err := websocket.Dial(ctx, addr, &websocket.DialOptions{
-		Subprotocols: []string{"echo"},
-	})
-	if err != nil {
-		logrus.Fatal("dial: ", err)
-	}
-	defer c.Close(websocket.StatusInternalError, "the sky is falling")
 
-	for i := 0; i < 5; i++ {
-		err = wsjson.Write(ctx, c, map[string]int{
-			"i": i,
-		})
-		if err != nil {
-			logrus.Fatal(err)
-		}
+	logrus.Infof("num of clients: %v, each client will send %v messages", numClients, numMessages)
 
-		v := map[string]int{}
-		err = wsjson.Read(ctx, c, &v)
-		if err != nil {
-			logrus.Fatal(err)
-		}
-		logrus.Info(v)
-
-		if v["i"] != i {
-			logrus.Fatalf("expected %v but got %v", i, v)
-		}
+	logrus.Info("start to create clients")
+	for i := 0; i < numClients; i++ {
+		clients[i] = newClient(ctx, addr)
+		time.Sleep(1 * time.Millisecond)
 	}
 
-	c.Close(websocket.StatusNormalClosure, "")
+	logrus.Info("start to send messages")
+	for i := 0; i < numClients; i++ {
+		go clients[i].start(ctx, &wg)
+	}
+
+	wg.Wait()
+
+	for i := 0; i < numClients; i++ {
+		clients[i].close()
+	}
+
+	calculate(clients)
 }
