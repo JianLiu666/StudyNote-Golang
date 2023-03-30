@@ -4,15 +4,11 @@ import (
 	"encoding/json"
 	"net/http"
 	"time"
+	"websocketbenchmark/model"
 
 	"github.com/sirupsen/logrus"
 	"nhooyr.io/websocket"
 )
-
-type data struct {
-	Count     int32 `json:"c"`
-	Timestamp int64 `json:"ts"`
-}
 
 // echoServer is the WebSocket echo server implementation.
 // It ensures the client speaks the echo subprotocol and
@@ -46,7 +42,7 @@ func (s echoServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		var json_data data
+		var json_data model.Payload
 		err = json.Unmarshal(message, &json_data)
 		if err != nil {
 			logrus.Error("json unmarshal:", err)
@@ -62,7 +58,7 @@ func (s echoServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func getEvent(c int32) []byte {
-	var event data
+	var event model.Payload
 	event.Count = c
 	event.Timestamp = time.Now().UnixMilli()
 

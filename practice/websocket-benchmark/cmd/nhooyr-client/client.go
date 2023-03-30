@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"sync"
 	"time"
+	"websocketbenchmark/model"
 
 	"github.com/sirupsen/logrus"
 	"nhooyr.io/websocket"
@@ -39,7 +40,7 @@ func (c *client) start(ctx context.Context, wg *sync.WaitGroup) {
 			}
 			bar.Add(1)
 
-			var payload data
+			var payload model.Payload
 			err = json.Unmarshal(message, &payload)
 			if err != nil {
 				logrus.Error("unmarshal: ", err)
@@ -61,7 +62,7 @@ func (c *client) start(ctx context.Context, wg *sync.WaitGroup) {
 			"client_start": time.Now().UnixMilli(),
 		}
 
-		payload := data{
+		payload := model.Payload{
 			Count:     int32(i),
 			Timestamp: 0,
 		}

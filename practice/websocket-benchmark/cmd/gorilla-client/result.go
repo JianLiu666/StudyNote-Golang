@@ -7,11 +7,6 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type data struct {
-	Count     int32 `json:"c"`
-	Timestamp int64 `json:"ts"`
-}
-
 func calculate(clients [numClients]*client) {
 	var total int64
 	var shortest int64 = math.MaxInt64

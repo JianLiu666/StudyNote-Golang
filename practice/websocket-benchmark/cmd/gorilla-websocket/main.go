@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"time"
 	"websocketbenchmark/internal/config"
+	"websocketbenchmark/model"
 
 	"github.com/gorilla/websocket"
 	"github.com/sirupsen/logrus"
@@ -13,11 +14,6 @@ import (
 
 	_ "net/http/pprof"
 )
-
-type data struct {
-	Count     int32 `json:"c"`
-	Timestamp int64 `json:"ts"`
-}
 
 func init() {
 	// enable logger modules
@@ -68,7 +64,7 @@ func echo(w http.ResponseWriter, r *http.Request) {
 			continue
 		}
 
-		var json_data data
+		var json_data model.Payload
 		err = json.Unmarshal(message, &json_data)
 		if err != nil {
 			logrus.Error("json unmarshal:", err)
@@ -97,7 +93,7 @@ func notify(ws *websocket.Conn, c int32) error {
 //
 // @return A JSON string (byte array) containing the message count and the current timestamp
 func getEvent(c int32) []byte {
-	var event data
+	var event model.Payload
 	event.Count = c
 	event.Timestamp = time.Now().UnixMilli()
 
