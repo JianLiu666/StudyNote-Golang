@@ -5,8 +5,8 @@ import "github.com/spf13/viper"
 var cfg *Config
 
 type Config struct {
-	Server     ServerOpts     `mapstructure:"server" yaml:"server"`
-	Simulation SimulationOpts `mapstructure:"simulation" yaml:"simulation"`
+	Server     ServerOpts     `yaml:"server"`
+	Simulation SimulationOpts `yaml:"simulation"`
 }
 
 func NewFromViper() *Config {
