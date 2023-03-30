@@ -25,7 +25,7 @@ func calculate(clients []*client) {
 	})
 
 	fmt.Println()
-	logrus.Info("timestmap")
+	logrus.Info("timestamp")
 	logrus.Infof("average:  %v ms", total/(int64(conf.Simulation.NumClients*conf.Simulation.NumMessages)))
 	logrus.Infof("shortest: %v ms", data[0])
 	logrus.Infof("longest:  %v ms", data[len(data)-1])
