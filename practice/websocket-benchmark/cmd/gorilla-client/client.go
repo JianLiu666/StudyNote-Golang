@@ -12,8 +12,8 @@ import (
 )
 
 type client struct {
-	conn  *websocket.Conn                   //
-	times [numMessages + 1]map[string]int64 //
+	conn  *websocket.Conn    //
+	times []map[string]int64 //
 }
 
 func newClient(u url.URL) *client {
@@ -24,7 +24,7 @@ func newClient(u url.URL) *client {
 
 	return &client{
 		conn:  conn,
-		times: [numMessages + 1]map[string]int64{{}},
+		times: make([]map[string]int64, conf.Simulation.NumMessages),
 	}
 }
 
@@ -48,14 +48,14 @@ func (c *client) start(wg *sync.WaitGroup) {
 			c.times[payload.Count]["server_received"] = payload.Timestamp
 			c.times[payload.Count]["client_received"] = time.Now().UnixMilli()
 
-			if payload.Count >= int64(numMessages) {
+			if payload.Count >= int64(conf.Simulation.NumMessages)-1 {
 				wg.Done()
 				return
 			}
 		}
 	}()
 
-	for i := 1; i <= numMessages; i++ {
+	for i := 0; i < conf.Simulation.NumMessages; i++ {
 		c.times[int64(i)] = map[string]int64{
 			"client_start": time.Now().UnixMilli(),
 		}

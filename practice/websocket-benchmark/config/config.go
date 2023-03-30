@@ -5,7 +5,8 @@ import "github.com/spf13/viper"
 var cfg *Config
 
 type Config struct {
-	Server ServerOpts `mapstructure:"server" yaml:"server"`
+	Server     ServerOpts     `mapstructure:"server" yaml:"server"`
+	Simulation SimulationOpts `mapstructure:"simulation" yaml:"simulation"`
 }
 
 func NewFromViper() *Config {
@@ -29,8 +30,14 @@ func NewFromDefault() *Config {
 		Port: "6600",
 	}
 
+	simulation := SimulationOpts{
+		NumClients:  1,
+		NumMessages: 100,
+	}
+
 	cfg := &Config{
-		Server: server,
+		Server:     server,
+		Simulation: simulation,
 	}
 
 	return cfg

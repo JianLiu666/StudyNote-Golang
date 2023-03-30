@@ -5,17 +5,15 @@ import (
 	"net/url"
 	"sync"
 	"time"
-	"websocketbenchmark/internal/config"
+	"websocketbenchmark/config"
 
 	"github.com/schollz/progressbar/v3"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
-const numClients int = 100    //
-const numMessages int = 10000 //
-
 var bar *progressbar.ProgressBar
+var conf *config.Config
 
 func init() {
 	// enable logger modules
@@ -26,41 +24,42 @@ func init() {
 
 	viper.SetConfigFile("./conf.d/env.yaml")
 	viper.AutomaticEnv()
+	conf = config.NewFromViper()
 
 	opts := progressbar.OptionUseANSICodes(true)
-	bar = progressbar.NewOptions64(int64(numClients)*int64(numMessages), opts)
+	bar = progressbar.NewOptions64(int64(conf.Simulation.NumClients*conf.Simulation.NumMessages), opts)
 }
 
 func main() {
-	conf := config.NewFromViper()
-
-	var clients [numClients]*client
+	var clients []*client = make([]*client, conf.Simulation.NumClients)
 	var wg sync.WaitGroup
-	wg.Add(numClients)
+	wg.Add(conf.Simulation.NumClients)
 
-	addr := fmt.Sprintf("%s:%s", conf.Server.Addr, conf.Server.Port)
-	u := url.URL{
-		Scheme: "ws",
-		Host:   addr,
-		Path:   "/echo",
-	}
-
-	logrus.Infof("num of clients: %v, each client will send %v messages", numClients, numMessages)
+	logrus.Infof("num of clients: %v, each client will send %v messages", conf.Simulation.NumClients, conf.Simulation.NumMessages)
 
 	logrus.Info("start to create clients")
-	for i := 0; i < numClients; i++ {
+
+	u := url.URL{
+		Scheme: "ws",
+		Host:   fmt.Sprintf("%s:%s", conf.Server.Addr, conf.Server.Port),
+		Path:   "/echo",
+	}
+	for i := 0; i < conf.Simulation.NumClients; i++ {
 		clients[i] = newClient(u)
 		time.Sleep(1 * time.Millisecond)
 	}
 
 	logrus.Info("start to send messages")
-	for i := 0; i < numClients; i++ {
+
+	for i := 0; i < conf.Simulation.NumClients; i++ {
 		go clients[i].start(&wg)
 	}
 
 	wg.Wait()
 
-	for i := 0; i < numClients; i++ {
+	fmt.Println()
+	logrus.Info("start to close connections")
+	for i := 0; i < conf.Simulation.NumClients; i++ {
 		clients[i].close()
 	}
 

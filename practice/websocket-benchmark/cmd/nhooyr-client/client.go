@@ -12,21 +12,19 @@ import (
 )
 
 type client struct {
-	conn  *websocket.Conn                   //
-	times [numMessages + 1]map[string]int64 //
+	conn  *websocket.Conn    //
+	times []map[string]int64 //
 }
 
 func newClient(ctx context.Context, u string) *client {
-	conn, _, err := websocket.Dial(ctx, u, &websocket.DialOptions{
-		Subprotocols: []string{"echo"},
-	})
+	conn, _, err := websocket.Dial(ctx, u, &websocket.DialOptions{})
 	if err != nil {
 		logrus.Fatal("dial: ", err)
 	}
 
 	return &client{
 		conn:  conn,
-		times: [numMessages + 1]map[string]int64{{}},
+		times: make([]map[string]int64, conf.Simulation.NumMessages),
 	}
 }
 
@@ -50,15 +48,15 @@ func (c *client) start(ctx context.Context, wg *sync.WaitGroup) {
 			c.times[payload.Count]["server_received"] = payload.Timestamp
 			c.times[payload.Count]["client_received"] = time.Now().UnixMilli()
 
-			if payload.Count >= int64(numMessages) {
+			if payload.Count >= int64(conf.Simulation.NumMessages)-1 {
 				wg.Done()
 				return
 			}
 		}
 	}()
 
-	for i := 1; i <= numMessages; i++ {
-		c.times[int32(i)] = map[string]int64{
+	for i := 0; i < conf.Simulation.NumMessages; i++ {
+		c.times[i] = map[string]int64{
 			"client_start": time.Now().UnixMilli(),
 		}
 

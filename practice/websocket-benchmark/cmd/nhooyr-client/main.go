@@ -5,17 +5,15 @@ import (
 	"fmt"
 	"sync"
 	"time"
-	"websocketbenchmark/internal/config"
+	"websocketbenchmark/config"
 
 	"github.com/schollz/progressbar/v3"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
-const numClients int = 100    //
-const numMessages int = 10000 //
-
 var bar *progressbar.ProgressBar
+var conf *config.Config
 
 func init() {
 	// enable logger modules
@@ -26,39 +24,41 @@ func init() {
 
 	viper.SetConfigFile("./conf.d/env.yaml")
 	viper.AutomaticEnv()
+	conf = config.NewFromViper()
 
 	opts := progressbar.OptionUseANSICodes(true)
-	bar = progressbar.NewOptions64(int64(numClients)*int64(numMessages), opts)
+	bar = progressbar.NewOptions64(int64(conf.Simulation.NumClients*conf.Simulation.NumMessages), opts)
 }
 
 func main() {
-	conf := config.NewFromViper()
-
-	var clients [numClients]*client
+	var clients []*client = make([]*client, conf.Simulation.NumClients)
 	var wg sync.WaitGroup
-	wg.Add(numClients)
+	wg.Add(conf.Simulation.NumClients)
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
 	defer cancel()
 
+	logrus.Infof("num of clients: %v, each client will send %v messages", conf.Simulation.NumClients, conf.Simulation.NumMessages)
+
+	logrus.Info("start to create connections")
+
 	addr := fmt.Sprintf("http://%s:%s", conf.Server.Addr, conf.Server.Port)
-
-	logrus.Infof("num of clients: %v, each client will send %v messages", numClients, numMessages)
-
-	logrus.Info("start to create clients")
-	for i := 0; i < numClients; i++ {
+	for i := 0; i < conf.Simulation.NumClients; i++ {
 		clients[i] = newClient(ctx, addr)
 		time.Sleep(1 * time.Millisecond)
 	}
 
 	logrus.Info("start to send messages")
-	for i := 0; i < numClients; i++ {
+
+	for i := 0; i < conf.Simulation.NumClients; i++ {
 		go clients[i].start(ctx, &wg)
 	}
 
 	wg.Wait()
 
-	for i := 0; i < numClients; i++ {
+	fmt.Println()
+	logrus.Info("start to close connections")
+	for i := 0; i < conf.Simulation.NumClients; i++ {
 		clients[i].close()
 	}
 

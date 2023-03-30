@@ -9,7 +9,7 @@ import (
 	"os"
 	"os/signal"
 	"time"
-	"websocketbenchmark/internal/config"
+	"websocketbenchmark/config"
 
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"

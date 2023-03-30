@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"websocketbenchmark/internal/config"
+	"websocketbenchmark/config"
 	"websocketbenchmark/model"
 	"websocketbenchmark/util"
 
@@ -49,13 +49,8 @@ func echo(w http.ResponseWriter, r *http.Request) {
 	for {
 		mt, message, err := c.ReadMessage()
 		if err != nil {
-			logrus.Error("read:", err)
+			logrus.Error("read: ", err)
 			break
-		}
-
-		// logrus.Info("recv:", string(message))
-		if mt != websocket.TextMessage {
-			continue
 		}
 
 		var recv model.Payload
@@ -71,7 +66,7 @@ func echo(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		c.WriteMessage(websocket.TextMessage, b)
+		c.WriteMessage(mt, b)
 		if err != nil {
 			logrus.Error("notify:", err)
 			return
