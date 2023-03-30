@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"time"
 	"websocketbenchmark/internal/config"
 	"websocketbenchmark/model"
+	"websocketbenchmark/util"
 
 	"github.com/gorilla/websocket"
 	"github.com/sirupsen/logrus"
@@ -46,12 +46,6 @@ func echo(w http.ResponseWriter, r *http.Request) {
 	}
 	defer c.Close()
 
-	err = notify(c, 0)
-	if err != nil {
-		logrus.Error("notify:", err)
-		return
-	}
-
 	for {
 		mt, message, err := c.ReadMessage()
 		if err != nil {
@@ -64,44 +58,28 @@ func echo(w http.ResponseWriter, r *http.Request) {
 			continue
 		}
 
-		var json_data model.Payload
-		err = json.Unmarshal(message, &json_data)
+		var recv model.Payload
+		err = json.Unmarshal(message, &recv)
 		if err != nil {
 			logrus.Error("json unmarshal:", err)
 			return
 		}
 
-		err = notify(c, json_data.Count)
+		b, err := util.GetEvent(recv.Count)
+		if err != nil {
+			logrus.Errorf("failed to generate binary data: %v", err)
+			return
+		}
+
+		c.WriteMessage(websocket.TextMessage, b)
 		if err != nil {
 			logrus.Error("notify:", err)
 			return
 		}
+
+		if err != nil {
+			logrus.Error("write:", err)
+			return
+		}
 	}
-}
-
-// Send a connected client an event JSON string
-// @param ws - The client connection the outgoing message is for
-// @param c  - The message count
-//
-// @return Error object containing a possible error that occured
-func notify(ws *websocket.Conn, c int32) error {
-	return ws.WriteMessage(websocket.TextMessage, getEvent(c))
-}
-
-// Creates a JSON string containing the message count and the current timestamp
-// @param c - The message count
-//
-// @return A JSON string (byte array) containing the message count and the current timestamp
-func getEvent(c int32) []byte {
-	var event model.Payload
-	event.Count = c
-	event.Timestamp = time.Now().UnixMilli()
-
-	b, err := json.Marshal(event)
-	if err != nil {
-		logrus.Error("json marshal failed:", err)
-		return []byte{}
-	}
-
-	return b
 }

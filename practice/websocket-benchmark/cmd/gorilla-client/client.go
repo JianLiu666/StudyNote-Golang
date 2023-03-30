@@ -48,7 +48,7 @@ func (c *client) start(wg *sync.WaitGroup) {
 			c.times[payload.Count]["server_received"] = payload.Timestamp
 			c.times[payload.Count]["client_received"] = time.Now().UnixMilli()
 
-			if payload.Count >= int32(numMessages) {
+			if payload.Count >= int64(numMessages) {
 				wg.Done()
 				return
 			}
@@ -56,12 +56,12 @@ func (c *client) start(wg *sync.WaitGroup) {
 	}()
 
 	for i := 1; i <= numMessages; i++ {
-		c.times[int32(i)] = map[string]int64{
+		c.times[int64(i)] = map[string]int64{
 			"client_start": time.Now().UnixMilli(),
 		}
 
 		payload := model.Payload{
-			Count:     int32(i),
+			Count:     int64(i),
 			Timestamp: 0,
 		}
 		binary, err := json.Marshal(&payload)

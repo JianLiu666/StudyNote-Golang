@@ -50,7 +50,7 @@ func (c *client) start(ctx context.Context, wg *sync.WaitGroup) {
 			c.times[payload.Count]["server_received"] = payload.Timestamp
 			c.times[payload.Count]["client_received"] = time.Now().UnixMilli()
 
-			if payload.Count >= int32(numMessages) {
+			if payload.Count >= int64(numMessages) {
 				wg.Done()
 				return
 			}
@@ -63,7 +63,7 @@ func (c *client) start(ctx context.Context, wg *sync.WaitGroup) {
 		}
 
 		payload := model.Payload{
-			Count:     int32(i),
+			Count:     int64(i),
 			Timestamp: 0,
 		}
 		binary, err := json.Marshal(&payload)

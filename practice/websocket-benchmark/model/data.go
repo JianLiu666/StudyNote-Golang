@@ -1,6 +1,6 @@
 package model
 
 type Payload struct {
-	Count     int32 `json:"c"`
+	Count     int64 `json:"c"`
 	Timestamp int64 `json:"ts"`
 }
