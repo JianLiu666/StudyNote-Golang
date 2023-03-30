@@ -56,7 +56,7 @@ func (c *client) start(wg *sync.WaitGroup) {
 	}()
 
 	for i := 0; i < conf.Simulation.NumMessages; i++ {
-		c.times[int64(i)] = map[string]int64{
+		c.times[i] = map[string]int64{
 			"client_start": time.Now().UnixMilli(),
 		}
 

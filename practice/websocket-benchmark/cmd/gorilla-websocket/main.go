@@ -41,20 +41,28 @@ func echo(w http.ResponseWriter, r *http.Request) {
 	//upgrade the connection from a HTTP connection to a websocket connection
 	c, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		logrus.Error("websocket upgrade:", err)
+		logrus.Errorf("websocket upgrade: %v", err)
 		return
 	}
 	defer c.Close()
 
-	for {
-		mt, message, err := c.ReadMessage()
-		if err != nil {
-			logrus.Error("read: ", err)
-			break
-		}
+	ch := make(chan []byte, 1000)
+	go func() {
+		defer close(ch)
+		for {
+			_, message, err := c.ReadMessage()
+			if err != nil {
+				logrus.Error("read: ", err)
+				break
+			}
 
+			ch <- message
+		}
+	}()
+
+	for payload := range ch {
 		var recv model.Payload
-		err = json.Unmarshal(message, &recv)
+		err = json.Unmarshal(payload, &recv)
 		if err != nil {
 			logrus.Error("json unmarshal:", err)
 			return
@@ -66,12 +74,7 @@ func echo(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		c.WriteMessage(mt, b)
-		if err != nil {
-			logrus.Error("notify:", err)
-			return
-		}
-
+		c.WriteMessage(websocket.TextMessage, b)
 		if err != nil {
 			logrus.Error("write:", err)
 			return

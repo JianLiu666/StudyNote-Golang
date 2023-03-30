@@ -19,26 +19,34 @@ type echoServer struct {
 func (s echoServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	c, err := websocket.Accept(w, r, &websocket.AcceptOptions{})
 	if err != nil {
-		logrus.Error(err)
+		logrus.Errorf("websocket: %v", err)
 		return
 	}
 	defer c.Close(websocket.StatusInternalError, "the sky is falling")
 
-	for {
-		mt, message, err := c.Read(r.Context())
-		if websocket.CloseStatus(err) == websocket.StatusNormalClosure {
-			logrus.Info("client closed connection.")
-			return
-		}
-		if err != nil {
-			logrus.Errorf("failed to read: %v", err)
-			return
-		}
+	ch := make(chan []byte, 1000)
+	go func() {
+		defer close(ch)
+		for {
+			_, message, err := c.Read(r.Context())
+			if websocket.CloseStatus(err) == websocket.StatusNormalClosure {
+				logrus.Info("client closed connection.")
+				return
+			}
+			if err != nil {
+				logrus.Errorf("failed to read: %v", err)
+				return
+			}
 
+			ch <- message
+		}
+	}()
+
+	for payload := range ch {
 		var recv model.Payload
-		err = json.Unmarshal(message, &recv)
+		err = json.Unmarshal(payload, &recv)
 		if err != nil {
-			logrus.Error("json unmarshal:", err)
+			logrus.Errorf("json unmarshal: %v", err)
 			return
 		}
 
@@ -48,7 +56,7 @@ func (s echoServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		c.Write(r.Context(), mt, b)
+		c.Write(r.Context(), websocket.MessageText, b)
 		if err != nil {
 			logrus.Errorf("failed to write: %v", err)
 			return
