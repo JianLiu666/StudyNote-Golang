@@ -10,7 +10,7 @@ import (
 )
 
 const POOL_SIZE int = 100
-const NUM_MESSAGES int = 1000
+const NUM_MESSAGES int = 10000
 
 func init() {
 	// enable logger modules

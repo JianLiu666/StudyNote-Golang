@@ -14,7 +14,7 @@ import (
 
 const POOL_SIZE int = 100
 const NUM_CONSUMERS int = 1
-const NUM_MESSAGES int = 1000
+const NUM_MESSAGES int = 10000
 const STREAM_COUNT int64 = 1
 const STREAM_TOPIC string = "guchat:mq"
 const CONSUMER_GROUP string = "guchat-group"
@@ -64,7 +64,7 @@ func readMessages(ctx context.Context, wg *sync.WaitGroup, client *redis.Client)
 	args := &redis.XReadArgs{
 		Streams: []string{STREAM_TOPIC, "0"},
 		Count:   STREAM_COUNT,
-		Block:   time.Duration(2) * time.Second,
+		Block:   time.Duration(100) * time.Millisecond,
 	}
 	for i := 0; i < NUM_MESSAGES; i++ {
 		_, err := client.XRead(ctx, args).Result()
