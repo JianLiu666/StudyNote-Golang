@@ -1,0 +1,39 @@
+version: "3.4"
+
+services:
+  redis-master:
+    image: redis:6.2.7
+    container_name: "redis-master"
+    restart: always
+    ports:
+      - 6379:6379
+    networks:
+      - redis-replication
+
+  redis-slave1:
+    image: redis:6.2.7
+    container_name: "redis-slave1"
+    restart: always
+    ports:
+      - 6380:6379
+    command: redis-server --slaveof redis-master 6379
+    depends_on:
+      - redis-master
+    networks:
+      - redis-replication
+
+  redis-slave2:
+    image: redis:6.2.7
+    container_name: "redis-slave2"
+    restart: always
+    ports:
+      - 6381:6379
+    command: redis-server --slaveof redis-master 6379
+    depends_on:
+      - redis-master
+    networks:
+      - redis-replication
+
+networks:
+  redis-replication:
+    driver: bridge

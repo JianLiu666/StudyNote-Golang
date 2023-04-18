@@ -18,4 +18,5 @@ use (
 	./third-party/fx
 	./third-party/jwt
 	./third-party/nats
+	./third-party/redis-stream
 )
