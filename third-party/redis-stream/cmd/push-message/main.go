@@ -6,10 +6,19 @@ import (
 	"time"
 
 	"github.com/go-redis/redis/v8"
+	"github.com/sirupsen/logrus"
 )
 
 const POOL_SIZE int = 100
 const NUM_MESSAGES int = 1000
+
+func init() {
+	// enable logger modules
+	logrus.SetFormatter(&logrus.TextFormatter{
+		FullTimestamp:   true,
+		TimestampFormat: "2006-01-02 15:04:05-07:00",
+	})
+}
 
 func main() {
 	ctx := context.Background()
