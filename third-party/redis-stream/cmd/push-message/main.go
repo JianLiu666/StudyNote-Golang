@@ -26,9 +26,12 @@ func main() {
 	client := redisstream.InitRedisClient(ctx, ":6379", POOL_SIZE)
 	defer client.Close()
 
+	logrus.Infoln("Start to send messages.")
 	for i := 0; i < NUM_MESSAGES; i++ {
 		args := redis.XAddArgs{
 			Stream: "guchat:mq",
+			MaxLen: 10,
+			Approx: true,
 			Values: map[string]interface{}{
 				"timestamp": time.Now().UnixMicro(),
 				"field1":    true,
@@ -40,4 +43,5 @@ func main() {
 		}
 		client.XAdd(ctx, &args)
 	}
+	logrus.Infoln("Finished.")
 }

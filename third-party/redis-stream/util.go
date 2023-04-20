@@ -10,9 +10,9 @@ import (
 func InitRedisClient(ctx context.Context, addr string, poolSize int) *redis.Client {
 	client := redis.NewClient(&redis.Options{
 		Addr:         addr,
-		DialTimeout:  5 * time.Second,
-		ReadTimeout:  3 * time.Second,
-		WriteTimeout: 3 * time.Second,
+		DialTimeout:  60 * time.Second,
+		ReadTimeout:  60 * time.Second,
+		WriteTimeout: 60 * time.Second,
 		PoolSize:     poolSize,
 	})
 
