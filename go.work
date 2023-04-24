@@ -3,6 +3,7 @@ go 1.19
 use (
 	./practice/game-management
 	./practice/generics
+	./practice/http2-server
 	./practice/json-converter
 	./practice/message-broker
 	./practice/simple-cache
