@@ -6,3 +6,4 @@
 **/docker_cache
 **/*.idea
 **/env.yaml
+**/*.pem
