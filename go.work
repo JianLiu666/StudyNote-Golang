@@ -7,6 +7,7 @@ use (
 	./practice/json-converter
 	./practice/message-broker
 	./practice/simple-cache
+	./practice/syncmap-cache-proxy
 	./practice/websocket-benchmark
 	./standard-library/benchmark
 	./standard-library/context
