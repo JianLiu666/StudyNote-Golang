@@ -6,6 +6,7 @@ use (
 	./practice/http2-server
 	./practice/json-converter
 	./practice/message-broker
+	./practice/rethinking-classical-concurrency-patterns
 	./practice/simple-cache
 	./practice/syncmap-cache-proxy
 	./practice/websocket-benchmark
