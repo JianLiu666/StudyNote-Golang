@@ -21,7 +21,7 @@ func perform(t task) {
 		mu.Lock()
 		// 即使我們在任務完成的時候會結束掉 worker
 		// 但也不能保證 worker 在執行的過程中是否會發生問題
-		// 例如現在這個局面造成的 deadlock 事件
+		// 例如現在這個位置因為沒有人 consume chanel 導致無法在繼續寫入而卡住
 		<-forever
 		mu.Unlock()
 	}
@@ -49,6 +49,8 @@ func TestDeadlock(t *testing.T) {
 
 	// send the work
 	for _, task := range hugeSlice {
+		// 上面的 channel 卡住事件連帶影響沒辦法再繼續派發任務給 worker
+		// 造成 deadlock 僵局
 		work <- prepare(task)
 	}
 
