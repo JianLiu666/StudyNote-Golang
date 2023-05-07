@@ -7,3 +7,4 @@
 # References
 
 - [[PDF] Rethinking Classical Concurrency Patterns](https://drive.google.com/file/d/1nPdvhB0PutEJzdCq5ms6UI58dp50fcAN/view)
+- [[Blog] 一文读懂channel设计](https://zhuanlan.zhihu.com/p/312041083)
