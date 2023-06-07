@@ -5,32 +5,22 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/arangodb/go-driver"
-	"log"
 	"time"
+
+	"github.com/arangodb/go-driver"
 )
 
 func main() {
 	ctx := context.Background()
+	instance := src.GetDBInstance(ctx, "_system")
 
-	arangodb := src.NewArangoWorkerImp([]string{"http://localhost:8529"})
-	log.Print(arangodb.Version(ctx))
+	explainSave(ctx, instance)
 
-	isCache := arangodb.CacheDatabase(ctx, "_system")
-	log.Print(isCache)
-
-	explainSave(ctx, arangodb)
-
-	explainTransaction(ctx, arangodb)
+	explainTransaction(ctx, instance)
 }
 
-func explainSave(ctx context.Context, imp *src.ArangoWorkerImp) {
-	db, err := imp.GetDatabase("_system")
-	if err != nil {
-		panic(err)
-	}
-
-	col, err := db.Collection(ctx, "Demo")
+func explainSave(ctx context.Context, instance driver.Database) {
+	col, err := instance.Collection(ctx, "Demo")
 	if err != nil {
 		panic(err)
 	}
@@ -51,12 +41,7 @@ func explainSave(ctx context.Context, imp *src.ArangoWorkerImp) {
 	fmt.Println(meta.Key)
 }
 
-func explainTransaction(ctx context.Context, imp *src.ArangoWorkerImp) {
-	db, err := imp.GetDatabase("_system")
-	if err != nil {
-		panic(err)
-	}
-
+func explainTransaction(ctx context.Context, instance driver.Database) {
 	type dao struct {
 		Text       string `json:"Text"`
 		CreateTime int64  `json:"CreateTime"`
@@ -99,7 +84,7 @@ func explainTransaction(ctx context.Context, imp *src.ArangoWorkerImp) {
 		WaitForSync: false,
 	}
 
-	result, err := db.Transaction(ctx, action, options)
+	result, err := instance.Transaction(ctx, action, options)
 	if err != nil {
 		panic(err)
 	}

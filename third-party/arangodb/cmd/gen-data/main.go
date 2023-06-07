@@ -13,16 +13,7 @@ import (
 func main() {
 	ctx := context.Background()
 
-	arangoDriver := src.NewArangoWorkerImp([]string{"http://10.127.6.16:8529"})
-	log.Print(arangoDriver.Version(ctx))
-
-	isCache := arangoDriver.CacheDatabase(ctx, "Test")
-	log.Print(isCache)
-
-	db, err := arangoDriver.GetDatabase("Test")
-	if err != nil {
-		panic(err)
-	}
+	db := src.GetDBInstance(ctx, "Test")
 
 	grCol, _ := db.Collection(ctx, "GameRecords")
 	wrCol, _ := db.Collection(ctx, "WagerRecords")
@@ -37,7 +28,7 @@ func main() {
 
 		for j := 1; j <= 40000; j++ {
 			var gr GameRecord
-			err = json.Unmarshal([]byte(baseGameRecord), &gr)
+			err := json.Unmarshal([]byte(baseGameRecord), &gr)
 			if err != nil {
 				panic(err)
 			}

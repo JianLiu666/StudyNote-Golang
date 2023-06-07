@@ -7,3 +7,4 @@
 **/*.idea
 **/env.yaml
 **/*.pem
+third-party/arangodb/**/config.json
