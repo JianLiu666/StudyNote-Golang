@@ -12,20 +12,20 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var stanPublisherCmd = &cobra.Command{
-	Use:   "stan_pub",
+var benchStanPublisherCmd = &cobra.Command{
+	Use:   "bench_stan_pub",
 	Short: "",
 	Long:  ``,
-	RunE:  RunStanPublisherCmd,
+	RunE:  RunBenchStanPublisherCmd,
 }
 
 func init() {
-	rootCmd.AddCommand(stanPublisherCmd)
+	rootCmd.AddCommand(benchStanPublisherCmd)
 }
 
-func RunStanPublisherCmd(cmd *cobra.Command, args []string) error {
+func RunBenchStanPublisherCmd(cmd *cobra.Command, args []string) error {
 	sc, err := stan.Connect(
-		config.Nats.ClusterId,
+		config.Nats.StanClusterId,
 		fmt.Sprintf("stan-%v", time.Now().UnixNano()),
 		stan.NatsURL(config.Nats.Addr),
 	)
@@ -35,12 +35,12 @@ func RunStanPublisherCmd(cmd *cobra.Command, args []string) error {
 	defer sc.Close()
 
 	// 併發測試 NATS streaming publish 效能
-	for i := 0; i < 10000; i++ {
+	for i := 0; i < config.Nats.BenchNumProducers; i++ {
 		go func() {
-			for {
+			for i := 0; i < config.Nats.BenchProducerEachTimes; i++ {
 				eplased := time.Now()
 				err = sc.Publish("Test", []byte(fmt.Sprintf("%v", time.Now().UnixMilli())))
-				fmt.Println(time.Now().Sub(eplased))
+				fmt.Println(i, time.Now().Sub(eplased))
 
 				if err != nil {
 					fmt.Println(err)

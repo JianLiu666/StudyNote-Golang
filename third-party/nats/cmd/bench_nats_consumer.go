@@ -12,22 +12,22 @@ import (
 	"github.com/go-echarts/go-echarts/v2/charts"
 	"github.com/go-echarts/go-echarts/v2/opts"
 	"github.com/go-echarts/go-echarts/v2/types"
-	"github.com/nats-io/stan.go"
+	"github.com/nats-io/nats.go"
 	"github.com/spf13/cobra"
 )
 
-var stanConsumerCmd = &cobra.Command{
-	Use:   "stan_sub",
+var benchNatsConsumerCmd = &cobra.Command{
+	Use:   "bench_nats_sub",
 	Short: "",
 	Long:  ``,
-	RunE:  RunStanConsumerCmd,
+	RunE:  RunBenchNatsConsumerCmd,
 }
 
 func init() {
-	rootCmd.AddCommand(stanConsumerCmd)
+	rootCmd.AddCommand(benchNatsConsumerCmd)
 }
 
-func RunStanConsumerCmd(cmd *cobra.Command, args []string) error {
+func RunBenchNatsConsumerCmd(cmd *cobra.Command, args []string) error {
 	// 儲存資料用
 	xaxis := []int{}
 	items := []opts.LineData{}
@@ -51,18 +51,16 @@ func RunStanConsumerCmd(cmd *cobra.Command, args []string) error {
 	}(buffer)
 
 	// 對 NATS streaming server 建立連線
-	sc, err := stan.Connect(
-		config.Nats.ClusterId,
-		fmt.Sprintf("stan-%v", time.Now().UnixNano()),
-		stan.NatsURL(config.Nats.Addr),
+	nc, err := nats.Connect(
+		config.Nats.Addr,
 	)
 	if err != nil {
 		return err
 	}
-	defer sc.Close()
+	defer nc.Close()
 
 	// 訂閱指定主題
-	_, err = sc.Subscribe("Test", func(msg *stan.Msg) {
+	_, err = nc.Subscribe("Test", func(msg *nats.Msg) {
 		data, _ := strconv.Atoi(string(msg.Data))
 		eplased := time.Now().Sub(time.UnixMilli(int64(data))).Milliseconds()
 		buffer <- eplased
@@ -81,15 +79,21 @@ func RunStanConsumerCmd(cmd *cobra.Command, args []string) error {
 	line.SetGlobalOptions(
 		charts.WithInitializationOpts(opts.Initialization{Theme: types.ThemeWesteros}),
 		charts.WithTitleOpts(opts.Title{
-			Title:    "NATS Streaming Server Benchmark",
-			Subtitle: "multiple producers with single consumer",
+			Title: "NATS Server Benchmark",
+			Subtitle: fmt.Sprintf("Number of producers: %v Time of each producer: %v",
+				config.Nats.BenchNumProducers,
+				config.Nats.BenchProducerEachTimes,
+			),
 		}))
 
 	line.SetXAxis(xaxis).
 		AddSeries("flight time (ms)", items).
 		SetSeriesOptions(charts.WithLineChartOpts(opts.LineChart{Smooth: true}))
 
-	f, _ := os.Create("line.html")
+	f, _ := os.Create(fmt.Sprintf("bench_nats_%vx%v.html",
+		config.Nats.BenchNumProducers,
+		config.Nats.BenchProducerEachTimes,
+	))
 	line.Render(f)
 
 	return nil
