@@ -6,7 +6,6 @@ import (
 	"os"
 	"os/signal"
 	"strconv"
-	"sync"
 	"syscall"
 	"time"
 
@@ -35,9 +34,7 @@ func RunStanConsumerCmd(cmd *cobra.Command, args []string) error {
 	buffer := make(chan int64, 100000)
 
 	// 開一條 goroutine 在背景匯聚資料
-	wg := sync.WaitGroup{}
-	wg.Add(1)
-	go func(ch chan int64, _wg *sync.WaitGroup) {
+	go func(ch chan int64) {
 		var xidx int = 1
 		var batch, sum int64 = 0, 0
 		for data := range buffer {
@@ -51,8 +48,7 @@ func RunStanConsumerCmd(cmd *cobra.Command, args []string) error {
 				xidx++
 			}
 		}
-		wg.Done()
-	}(buffer, &wg)
+	}(buffer)
 
 	// 對 NATS streaming server 建立連線
 	sc, err := stan.Connect(
@@ -80,20 +76,17 @@ func RunStanConsumerCmd(cmd *cobra.Command, args []string) error {
 	signal.Notify(stopSignal, os.Interrupt, syscall.SIGTERM)
 	<-stopSignal
 
-	close(buffer)
-	wg.Wait()
-
 	// 繪製圖表
 	line := charts.NewLine()
 	line.SetGlobalOptions(
 		charts.WithInitializationOpts(opts.Initialization{Theme: types.ThemeWesteros}),
 		charts.WithTitleOpts(opts.Title{
-			Title:    "Line example in Westeros theme",
-			Subtitle: "Line chart rendered by the http server this time",
+			Title:    "NATS Streaming Server Benchmark",
+			Subtitle: "multiple producers with single consumer",
 		}))
 
 	line.SetXAxis(xaxis).
-		AddSeries("Category A", items).
+		AddSeries("flight time (ms)", items).
 		SetSeriesOptions(charts.WithLineChartOpts(opts.LineChart{Smooth: true}))
 
 	f, _ := os.Create("line.html")
