@@ -26,7 +26,7 @@ func init() {
 func RunStanPublisherCmd(cmd *cobra.Command, args []string) error {
 	sc, err := stan.Connect(
 		config.Nats.ClusterId,
-		fmt.Sprintf("stna-%v", time.Now().UnixNano()),
+		fmt.Sprintf("stan-%v", time.Now().UnixNano()),
 		stan.NatsURL(config.Nats.Addr),
 	)
 	if err != nil {
