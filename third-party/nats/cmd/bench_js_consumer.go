@@ -58,7 +58,7 @@ func RunBenchJetStreamConsumerCmd(cmd *cobra.Command, args []string) error {
 	defer nc.Close()
 
 	// 建立 JetStream context
-	js, err := nc.JetStream()
+	js, err := nc.JetStream(nats.PublishAsyncMaxPending(256))
 	if err != nil {
 		return err
 	}
@@ -80,7 +80,12 @@ func RunBenchJetStreamConsumerCmd(cmd *cobra.Command, args []string) error {
 		data, _ := strconv.Atoi(string(msg.Data))
 		eplased := time.Now().Sub(time.UnixMilli(int64(data))).Milliseconds()
 		buffer <- eplased
-	}, nats.DeliverLast())
+	},
+		nats.DeliverLast(),
+		nats.ReplayInstant(),
+		nats.AckNone(),
+		nats.ConsumerMemoryStorage(),
+	)
 	if err != nil {
 		return err
 	}

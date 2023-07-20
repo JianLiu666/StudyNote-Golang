@@ -30,7 +30,7 @@ func RunBenchJetStreamPublisherCmd(cmd *cobra.Command, args []string) error {
 	}
 	defer nc.Close()
 
-	js, err := nc.JetStream()
+	js, err := nc.JetStream(nats.PublishAsyncMaxPending(256))
 	if err != nil {
 		return err
 	}
@@ -43,6 +43,7 @@ func RunBenchJetStreamPublisherCmd(cmd *cobra.Command, args []string) error {
 			_, err = js.AddStream(&nats.StreamConfig{
 				Name:     "Test",
 				Subjects: []string{"Test"},
+				Replicas: 1,
 				Storage:  nats.FileStorage,
 			})
 
