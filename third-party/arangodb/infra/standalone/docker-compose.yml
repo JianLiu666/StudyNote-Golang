@@ -1,13 +1,13 @@
 version: '3'
 
 services: 
-
     arangodb:
         image: arangodb:latest
+        container_name: arango-standalone
         restart: always
         ports:
             - 8529:8529
         environment: 
             - ARANGO_NO_AUTH=1
         volumes: 
-            - ./docker_cache/data:/var/lib/arangodb3
+            - ./data:/var/lib/arangodb3

@@ -8,4 +8,5 @@
 **/env.yaml
 **/*.pem
 third-party/arangodb/**/config.json
+third-party/arangodb/**/data
 third-party/nats/**/*.html
