@@ -1,4 +1,7 @@
-# Reference
+# ArangoDB References
 
-1. [Cluster Architecture](https://www.arangodb.com/docs/stable/architecture-deployment-modes-cluster-architecture.html)
-2. [Why ArangoDB? Cluster](https://www.arangodb.com/why-arangodb/cluster/)
+## 架構文件
+ - [Cluster Architecture: Data Sharding](https://www.arangodb.com/docs/stable/deployment-cluster-manual-start.html)
+
+## 部署 Cluster Mode
+ - [Starting Manually Cluster](https://www.arangodb.com/docs/stable/deployment-cluster-manual-start.html)
