@@ -31,10 +31,12 @@ type WagerRecord struct {
 	GameID                string  `json:"gameId"`                //
 	GameType              uint8   `json:"gameType"`              //
 	ScoreType             uint8   `json:"scoreType"`             //
+	ShardKey              int     `json:"shardKey"`              // Sharding by month
 }
 
 type GameRecord struct {
-	Key                    string         `json:"_key,omitempty"`         // GR-{UnixTime}-{RedisIncr}-{InstanceIncr}
+	// Key                    string         `json:"_key,omitempty"`         // GR-{UnixTime}-{RedisIncr}-{InstanceIncr}
+	RecordId               string         `json:"recordId"`               // GR-{UnixTime}-{RedisIncr}-{InstanceIncr}
 	EcSiteId               string         `json:"ecSiteId"`               // 平台識別碼
 	GameType               int            `json:"gameType"`               // 遊戲編號
 	MergedGameRecordId     string         `json:"mergedGameRecordId"`     // 合併注單關聯Id
@@ -57,6 +59,7 @@ type GameRecord struct {
 	EndTimestamp           uint64         `json:"endTimestamp"`           // 遊戲結束時間
 	ScoreType              uint8          `json:"scoreType"`              // 比賽房分數類型 0: 積分類型, 1: 現金類型
 	Signature              []byte         `json:"signature"`              // 數位簽章
+	ShardKey               int            `json:"shardKey"`               // Sharding by month
 }
 
 type MemberDataList []*MemberData
