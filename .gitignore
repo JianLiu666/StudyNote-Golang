@@ -10,3 +10,4 @@
 third-party/arangodb/**/config.json
 third-party/arangodb/**/data
 third-party/nats/**/*.html
+third-party/nats/**/env.yaml
