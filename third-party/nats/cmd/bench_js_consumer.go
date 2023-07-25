@@ -18,7 +18,7 @@ import (
 
 var benchJetStreamConsumerCmd = &cobra.Command{
 	Use:   "bench_js_sub",
-	Short: "",
+	Short: "A simple nats jetstream benchmark example, cooperate with 'bench_js_pub' command.",
 	Long:  ``,
 	RunE:  RunBenchJetStreamConsumerCmd,
 }

@@ -12,8 +12,8 @@ import (
 
 var jsAddConsumerCmd = &cobra.Command{
 	Use:   "js_add_consumer",
-	Short: "Add new consumer to NATS JetStream",
-	Long:  `No more description.`,
+	Short: "A nats jetstream example: add consumer",
+	Long:  ``,
 	RunE:  RunJsAddConsumerCmd,
 }
 

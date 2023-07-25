@@ -10,8 +10,8 @@ import (
 
 var jsAddStreamCmd = &cobra.Command{
 	Use:   "js_add_stream",
-	Short: "Add new stream to NATS JetStream",
-	Long:  `No more description.`,
+	Short: "A nats jetstream example: add stream",
+	Long:  ``,
 	RunE:  RunJsAddStreamCmd,
 }
 

@@ -13,8 +13,8 @@ import (
 
 var jsQueueSubscriberCmd = &cobra.Command{
 	Use:   "js_qsub",
-	Short: "Run NATS JetStream queue group subscriber example.",
-	Long:  `No more description.`,
+	Short: "A nats jetstream example: subscribe stream by queue group",
+	Long:  ``,
 	RunE:  RunJsQueueSubscriberCmd,
 }
 

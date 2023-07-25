@@ -14,7 +14,7 @@ import (
 
 var benchNatsPublisherCmd = &cobra.Command{
 	Use:   "bench_nats_pub",
-	Short: "",
+	Short: "A simple nats benchmark example, cooperate with 'bench_nats_sub' command.",
 	Long:  ``,
 	RunE:  RunBenchNatsPublisherCmd,
 }

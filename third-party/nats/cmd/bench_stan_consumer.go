@@ -18,7 +18,7 @@ import (
 
 var benchStanConsumerCmd = &cobra.Command{
 	Use:   "bench_stan_sub",
-	Short: "",
+	Short: "A simple nats streaming benchmark example, cooperate with 'bench_stan_pub' command.",
 	Long:  ``,
 	RunE:  RunBenchStanConsumerCmd,
 }

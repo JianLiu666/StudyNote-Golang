@@ -12,8 +12,8 @@ import (
 
 var jsInfoCmd = &cobra.Command{
 	Use:   "js_info",
-	Short: "Get NATS JetStream information.",
-	Long:  `No more description.`,
+	Short: "A nats jetstream example: get stream infomation",
+	Long:  ``,
 	RunE:  RunJsInfoCmd,
 }
 

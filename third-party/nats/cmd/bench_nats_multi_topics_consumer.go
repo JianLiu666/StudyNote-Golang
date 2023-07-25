@@ -18,7 +18,7 @@ import (
 
 var benchNatsMultiTopicsConsumerCmd = &cobra.Command{
 	Use:   "bench_nats_multi_topics_sub",
-	Short: "",
+	Short: "A nats benchmark example with multiple topics, cooperate with 'bench_nats_multi_topics_pub' command.",
 	Long:  ``,
 	RunE:  RunBenchNatsMultiTopicsConsumerCmd,
 }

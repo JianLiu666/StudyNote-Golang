@@ -13,8 +13,8 @@ import (
 
 var jsSubscriberCmd = &cobra.Command{
 	Use:   "js_sub",
-	Short: "Run NATS JetStream subscriber example.",
-	Long:  `No more description.`,
+	Short: "A nats jetstream example: subscribe stream",
+	Long:  ``,
 	RunE:  RunJsSubscriberCmd,
 }
 

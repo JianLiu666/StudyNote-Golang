@@ -11,8 +11,8 @@ import (
 
 var jsPublisherCmd = &cobra.Command{
 	Use:   "js_pub",
-	Short: "Run NATS JetStream publisher example.",
-	Long:  `No more description.`,
+	Short: "A nats jetstream example: publish message",
+	Long:  ``,
 	RunE:  RunJsPublisherCmd,
 }
 
