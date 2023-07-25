@@ -97,7 +97,7 @@ func RunBenchNatsMultiTopicsConsumerCmd(cmd *cobra.Command, args []string) error
 		charts.WithInitializationOpts(opts.Initialization{Theme: types.ThemeWesteros}),
 		charts.WithTitleOpts(opts.Title{
 			Title: "NATS Server Benchmark: Mutiple Topics",
-			Subtitle: fmt.Sprintf("Number of topics: %v, Number of producers: %v, Time of each producer: %v, Sleep of each producer: %v",
+			Subtitle: fmt.Sprintf("Number of topics: %v, Number of producers: %v, Time of each producer: %v, Sleep of each producer: %vms",
 				config.Nats.BenchNumTopics,
 				config.Nats.BenchNumProducers,
 				config.Nats.BenchProducerEachTimes,
