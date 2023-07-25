@@ -1,11 +1,11 @@
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
 	"natspractice/config"
 	"os"
 	"os/signal"
-	"strconv"
 	"syscall"
 	"time"
 
@@ -28,6 +28,17 @@ func init() {
 }
 
 func RunBenchNatsMultiTopicsConsumerCmd(cmd *cobra.Command, args []string) error {
+	type payload struct {
+		Timestamp  int64       `json:"timestamp"`
+		AnteType   int         `json:"anteType"`
+		FishIds    []string    `json:"fishIds"`
+		Payload    string      `json:"payload"`
+		Positions  [][]float64 `json:"positions"`
+		RoundToken string      `json:"roundToken"`
+		SkillId    string      `json:"skillId"`
+		SkillType  int         `json:"skillType"`
+	}
+
 	// 儲存資料用
 	xaxis := []int{}
 	items := []opts.LineData{}
@@ -63,8 +74,11 @@ func RunBenchNatsMultiTopicsConsumerCmd(cmd *cobra.Command, args []string) error
 	// 訂閱指定主題
 	for i := 1; i <= config.Nats.BenchNumTopics; i++ {
 		_, err = nc.Subscribe(fmt.Sprintf("Test%v", i), func(msg *nats.Msg) {
-			data, _ := strconv.Atoi(string(msg.Data))
-			eplased := time.Now().Sub(time.UnixMilli(int64(data))).Milliseconds()
+			var data payload
+			if err := json.Unmarshal(msg.Data, &data); err != nil {
+				panic(err)
+			}
+			eplased := time.Now().Sub(time.UnixMilli(int64(data.Timestamp))).Milliseconds()
 			buffer <- eplased
 		})
 		if err != nil {

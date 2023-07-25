@@ -31,6 +31,17 @@ func RunBenchNatsMultiTopicsPublisherCmd(cmd *cobra.Command, args []string) erro
 	}
 	defer nc.Close()
 
+	payload := `{
+		"timestamp": %d,
+		"anteType": 3,
+		"fishIds": [ "f204-civnmjcranec73ebrhfg" ],
+		"payload": "",
+		"positions": [ [ 0, 0 ] ],
+		"roundToken": "a4e4d6d57e8b738065a42275c310771163ce0341",
+		"skillId": "",
+		"skillType": 0
+	}`
+
 	var wg sync.WaitGroup
 
 	// 併發測試 NATS streaming publish 效能
@@ -39,8 +50,9 @@ func RunBenchNatsMultiTopicsPublisherCmd(cmd *cobra.Command, args []string) erro
 		go func(_wg *sync.WaitGroup, idx int) {
 			defer wg.Done()
 			for i := 0; i < config.Nats.BenchProducerEachTimes; i++ {
+				payload := fmt.Sprintf(payload, time.Now().UnixMilli())
 				eplased := time.Now()
-				err = nc.Publish(fmt.Sprintf("Test%v", idx), []byte(fmt.Sprintf("%v", time.Now().UnixMilli())))
+				err = nc.Publish(fmt.Sprintf("Test%v", idx), []byte(payload))
 				fmt.Println(i, time.Now().Sub(eplased))
 
 				if err != nil {
