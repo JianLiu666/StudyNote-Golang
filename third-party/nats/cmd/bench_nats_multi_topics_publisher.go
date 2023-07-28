@@ -50,14 +50,16 @@ func RunBenchNatsMultiTopicsPublisherCmd(cmd *cobra.Command, args []string) erro
 		go func(_wg *sync.WaitGroup, idx int) {
 			defer wg.Done()
 			for i := 0; i < config.Nats.BenchProducerEachTimes; i++ {
-				payload := fmt.Sprintf(payload, time.Now().UnixMilli())
-				eplased := time.Now()
-				err = nc.Publish(fmt.Sprintf("Test%v", idx), []byte(payload))
-				fmt.Println(i, time.Now().Sub(eplased))
+				go func(idx int) {
+					payload := fmt.Sprintf(payload, time.Now().UnixMilli())
+					eplased := time.Now()
+					err = nc.Publish(fmt.Sprintf("Test%v", idx), []byte(payload))
+					fmt.Println(i, time.Now().Sub(eplased))
 
-				if err != nil {
-					fmt.Println(err)
-				}
+					if err != nil {
+						fmt.Println(err)
+					}
+				}(idx)
 
 				time.Sleep(time.Duration(config.Nats.BenchProducerSleepTime) * time.Millisecond)
 			}
