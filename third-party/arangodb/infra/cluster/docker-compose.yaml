@@ -61,3 +61,42 @@ services:
     environment:
       - ARANGO_NO_AUTH=1
     command: arangod --server.authentication false --server.endpoint tcp://0.0.0.0:6002 --cluster.my-address tcp://dbserver2:6002 --cluster.agency-endpoint tcp://agency:5001 --cluster.my-role DBSERVER
+
+  dbserver3:
+    image: arangodb:latest
+    container_name: arango-dbserver3
+    volumes: 
+      - ./data/dbserver3:/var/lib/arangodb3
+    depends_on:
+      - agency
+    ports:
+      - "6003:6003"
+    environment:
+      - ARANGO_NO_AUTH=1
+    command: arangod --server.authentication false --server.endpoint tcp://0.0.0.0:6003 --cluster.my-address tcp://dbserver3:6003 --cluster.agency-endpoint tcp://agency:5001 --cluster.my-role DBSERVER
+
+  dbserver4:
+    image: arangodb:latest
+    container_name: arango-dbserver4
+    volumes: 
+      - ./data/dbserver4:/var/lib/arangodb3
+    depends_on:
+      - agency
+    ports:
+      - "6004:6004"
+    environment:
+      - ARANGO_NO_AUTH=1
+    command: arangod --server.authentication false --server.endpoint tcp://0.0.0.0:6004 --cluster.my-address tcp://dbserver4:6004 --cluster.agency-endpoint tcp://agency:5001 --cluster.my-role DBSERVER
+
+  dbserver5:
+    image: arangodb:latest
+    container_name: arango-dbserver5
+    volumes: 
+      - ./data/dbserver5:/var/lib/arangodb3
+    depends_on:
+      - agency
+    ports:
+      - "6005:6005"
+    environment:
+      - ARANGO_NO_AUTH=1
+    command: arangod --server.authentication false --server.endpoint tcp://0.0.0.0:6005 --cluster.my-address tcp://dbserver5:6005 --cluster.agency-endpoint tcp://agency:5001 --cluster.my-role DBSERVER
