@@ -1,5 +1,23 @@
 package main
 
+var ecSiteIdPool = []string{
+	"1",
+	"21729934",
+	"21729963",
+	"21729991",
+	"21730024",
+	"21730063",
+	"21730086",
+	"21730112",
+	"21730139",
+	"21730184",
+	"21730208",
+	"21730232",
+	"3319009",
+	"5044073",
+	"63638",
+}
+
 var baseWagerRecord = `
 {
   "startTimestamp": 1677934262839,
@@ -14,6 +32,7 @@ var baseWagerRecord = `
   "sessionRecordId": "WGR-1677934506671-23-56172-1777614979",
   "seq": 0,
   "kkBeforBalance": 44161857200,
+  "kkAfterBalance": 44607357200,
   "beforeBetBalance": 44161857200,
   "kkDepositAmount": 0,
   "kkDrawAmount": 0,

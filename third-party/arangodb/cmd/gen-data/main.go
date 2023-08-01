@@ -6,15 +6,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"math"
+	"math/rand"
 	"time"
 )
 
-var dbName string = "Test"
+var dbName string = "POC"
 
 var batchSize int = 1000
 var iteration int = 100000 // batchSize x iteration = total documents
-// var batchSize int = 1
-// var iteration int = 1 // batchSize x iteration = total documents
 
 func main() {
 	ctx := context.Background()
@@ -30,7 +29,10 @@ func main() {
 		panic(err)
 	}
 
-	t := time.Now()
+	t, err := time.Parse("2006-01-02", "2023-07-01")
+	if err != nil {
+		panic(err)
+	}
 	serviceId := 23
 	incr := 1
 
@@ -48,11 +50,15 @@ func main() {
 				panic(err)
 			}
 
+			if rand.Intn(10) >= 6 {
+				gr.EcSiteId = ecSiteIdPool[rand.Intn(len(ecSiteIdPool))]
+			}
 			gr.StartTimestamp = uint64(t.UnixMilli())
 			gr.EndTimestamp = uint64(t.UnixMilli())
 			uuid := fmt.Sprintf("%v-%v-%v", gr.EndTimestamp, serviceId, incr)
 			gr.RecordId = fmt.Sprintf("GR-%v", uuid)
 			gr.MemberData[0].WagerId = fmt.Sprintf("WGR-%v-%v", uuid, gr.MemberData[0].PlayerId)
+			gr.MemberData[0].Profit = rand.Int63n(10000) * 1000
 			gr.ShardKey = int(t.Day())
 
 			grs = append(grs, &gr)
@@ -64,10 +70,12 @@ func main() {
 				panic(err)
 			}
 
+			wr.EcSiteID = gr.EcSiteId
 			wr.StartTimestamp = gr.StartTimestamp
 			wr.EndTimestamp = gr.EndTimestamp
 			wr.GameRecordID = gr.RecordId
 			wr.SessionRecordID = gr.MemberData[0].WagerId
+			wr.Profit = float64(gr.MemberData[0].Profit)
 			wr.ShardKey = int(t.Day())
 
 			wrs = append(wrs, &wr)

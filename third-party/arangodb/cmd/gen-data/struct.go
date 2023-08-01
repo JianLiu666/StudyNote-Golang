@@ -13,6 +13,7 @@ type WagerRecord struct {
 	SessionRecordID       string  `json:"sessionRecordId"`       //
 	Seq                   int64   `json:"seq"`                   // deprecated: Session Record Seq
 	KKBeforBalance        float64 `json:"kkBeforBalance"`        // 初始金額
+	KKAfterBalance        float64 `json:"kkAfterBalance"`        // 初始金額
 	BeforeBetBalance      float64 `json:"beforeBetBalance"`      // 攜入金額
 	KKDepositAmount       float64 `json:"kkDepositAmount"`       //
 	KKDrawAmount          float64 `json:"kkDrawAmount"`          //
