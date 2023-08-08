@@ -29,7 +29,7 @@ func main() {
 		panic(err)
 	}
 
-	t, err := time.Parse("2006-01-02", "2023-07-01")
+	t, err := time.Parse("2006-01-02T15:04:05", "2023-07-07T08:10:00")
 	if err != nil {
 		panic(err)
 	}
