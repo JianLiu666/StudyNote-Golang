@@ -19,6 +19,7 @@ use (
 	./standard-library/wire
 	./third-party/arangodb
 	./third-party/fx
+	./third-party/grpc
 	./third-party/jwt
 	./third-party/nats
 	./third-party/redis-stream
