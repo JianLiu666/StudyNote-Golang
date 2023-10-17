@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/metadata"
 )
 
 const (
@@ -33,7 +34,8 @@ func main() {
 		name = os.Args[1]
 	}
 
-	callCtx, callCancel := context.WithTimeout(context.Background(), time.Second)
+	md := metadata.Pairs("token", "valid-token")
+	callCtx, callCancel := context.WithTimeout(metadata.NewOutgoingContext(ctx, md), time.Second)
 	defer callCancel()
 
 	r, err := c.SayHello(callCtx, &pb.HelloRequest{Name: name})
