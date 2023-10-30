@@ -12,6 +12,7 @@ use (
 	./practice/websocket-benchmark
 	./standard-library/benchmark
 	./standard-library/context
+	./standard-library/for
 	./standard-library/interface
 	./standard-library/pointer
 	./standard-library/select
