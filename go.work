@@ -14,6 +14,7 @@ use (
 	./standard-library/context
 	./standard-library/interface
 	./standard-library/pointer
+	./standard-library/reflect
 	./standard-library/syntax
 	./standard-library/unsafe
 	./standard-library/wire
