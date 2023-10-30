@@ -14,7 +14,6 @@ use (
 	./standard-library/context
 	./standard-library/interface
 	./standard-library/pointer
-	./standard-library/select
 	./standard-library/sizeof
 	./standard-library/syntax
 	./standard-library/wire

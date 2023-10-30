@@ -1,4 +1,4 @@
-package dynamicselect
+package main
 
 import (
 	"reflect"
