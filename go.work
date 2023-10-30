@@ -14,8 +14,8 @@ use (
 	./standard-library/context
 	./standard-library/interface
 	./standard-library/pointer
-	./standard-library/sizeof
 	./standard-library/syntax
+	./standard-library/unsafe
 	./standard-library/wire
 	./third-party/arangodb
 	./third-party/fx
