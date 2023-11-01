@@ -2,7 +2,6 @@ go 1.19
 
 use (
 	./practice/game-management
-	./practice/generics
 	./practice/http2-server
 	./practice/json-converter
 	./practice/message-broker
@@ -12,6 +11,7 @@ use (
 	./practice/websocket-benchmark
 	./standard-library/benchmark
 	./standard-library/context
+	./standard-library/generics
 	./standard-library/interface
 	./standard-library/pointer
 	./standard-library/reflect

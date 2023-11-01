@@ -14,4 +14,13 @@ func main() {
 	fmt.Println(sum1)
 	fmt.Println(sum2)
 	fmt.Println(sum3)
+
+	var m = map[int]string{1: "2", 2: "4", 4: "8"}
+	fmt.Println("keys:", MapKeys[int, string](m))
+
+	l := List[int]{}
+	l.Push(10)
+	l.Push(20)
+	l.Push(30)
+	fmt.Println("list:", l.GetAll())
 }
