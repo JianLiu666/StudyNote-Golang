@@ -19,7 +19,7 @@ func main() {
 
 	time.Sleep(time.Second)
 	atomic.StoreInt64(&status, 1)
-	// 只會隨機喚醒一個正在等待的 goroutine
+	// 喚醒在 linked list 裡面第一個正在等待的 goroutine
 	c.Signal()
 
 	time.Sleep(2 * time.Second)
