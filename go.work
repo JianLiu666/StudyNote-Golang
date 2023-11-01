@@ -25,5 +25,6 @@ use (
 	./third-party/grpc
 	./third-party/jwt
 	./third-party/nats
+	./third-party/omgo
 	./third-party/redis-stream
 )
