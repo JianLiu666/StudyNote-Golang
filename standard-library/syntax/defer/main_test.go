@@ -17,3 +17,38 @@ func Test_PreCompute(t *testing.T) {
 
 	time.Sleep(time.Second)
 }
+
+func Test_TrickyCases(t *testing.T) {
+	// 匿名函式會對返回值 `r` 的值 +1, 因此在函式返回 `0` 時,
+	// 在返回前被 defer 語句 +1
+	f1 := func() (r int) {
+		defer func() {
+			r++
+		}()
+		return 0
+	}
+
+	// 函式返回 `5`, defer 函式增加的對象是 `t` 不是 `r`
+	// 所以直接返回 `5`
+	f2 := func() (r int) {
+		t := 5
+		defer func() {
+			t = t + 5
+		}()
+		return t
+	}
+
+	// 函式返回 `1`, 且在返回前被 defer +5
+	// 但要注意的是 defer 函式裡面的 `r` 是函式參數不是返回值的 `r`
+	// 所以還是返回 1
+	f3 := func() (r int) {
+		defer func(r int) {
+			r = r + 5
+		}(r)
+		return 1
+	}
+
+	fmt.Println(f1())
+	fmt.Println(f2())
+	fmt.Println(f3())
+}
