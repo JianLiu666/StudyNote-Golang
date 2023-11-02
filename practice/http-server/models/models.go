@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"httpserver/pkg/setting"
 	"log"
-	"time"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -15,10 +14,10 @@ var gormDB *gorm.DB
 var sqlDB *sql.DB
 
 type Model struct {
-	ID         int `gorm:"primary_key" json:"id"`
-	CreatedOn  int `json:"created_on"`
-	ModifiedOn int `json:"modified_on"`
-	DeletedOn  int `json:"deleted_on"`
+	ID         int   `gorm:"primary_key" json:"id"`
+	CreatedOn  int64 `json:"created_on"`
+	ModifiedOn int64 `json:"modified_on"`
+	DeletedOn  int64 `json:"deleted_on"`
 }
 
 func SetUp() {
@@ -40,8 +39,6 @@ func SetUp() {
 		log.Panicf("failed to get sql.DB : %v", err)
 	}
 
-	gormDB.Callback().Create().Before("gorm:before_create").Register("update_timestamp", updateTimeStampForCreateCallback)
-	gormDB.Callback().Update().Before("gorm:before_update").Register("Update_timestamp", updateTimeStampForUpdateCallback)
 	sqlDB.SetMaxIdleConns(10)
 	sqlDB.SetMaxOpenConns(100)
 
@@ -53,46 +50,5 @@ func SetUp() {
 func Close() {
 	if err := sqlDB.Close(); err != nil {
 		log.Printf("failed to close database: %v", err)
-	}
-}
-
-func updateTimeStampForCreateCallback(db *gorm.DB) {
-	if db.Error != nil || db.DryRun || db.Statement.Schema == nil {
-		return
-	}
-
-	nowTime := time.Now().Unix()
-
-	createTimeField := db.Statement.Schema.LookUpField("CreatedOn")
-	if createTimeField == nil {
-		return
-	}
-
-	if createTimeField.DefaultValue == "" {
-		db.Statement.SetColumn("CreatedOn", nowTime)
-	}
-
-	modifyTimeField := db.Statement.Schema.LookUpField("ModifiedOn")
-	if modifyTimeField == nil {
-		return
-	}
-
-	if modifyTimeField.DefaultValue == "" {
-		db.Statement.SetColumn("ModifiedOn", nowTime)
-	}
-}
-
-func updateTimeStampForUpdateCallback(db *gorm.DB) {
-	if db.Error != nil || db.DryRun || db.Statement.Schema == nil {
-		return
-	}
-
-	modifyTimeField := db.Statement.Schema.LookUpField("ModifiedOn")
-	if modifyTimeField == nil {
-		return
-	}
-
-	if modifyTimeField.DefaultValue == "" && !db.Statement.Changed("ModifiedOn") {
-		db.Statement.SetColumn("ModifiedOn", time.Now().Unix())
 	}
 }
