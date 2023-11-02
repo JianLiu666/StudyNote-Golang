@@ -2,6 +2,7 @@ go 1.19
 
 use (
 	./practice/game-management
+	./practice/http-server
 	./practice/http2-server
 	./practice/json-converter
 	./practice/message-broker
