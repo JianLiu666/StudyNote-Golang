@@ -42,6 +42,9 @@ func SetUp() {
 	sqlDB.SetMaxIdleConns(10)
 	sqlDB.SetMaxOpenConns(100)
 
+	if err = sqlDB.Ping(); err != nil {
+		log.Panicf("failed to ping sql.DB: %v", err)
+	}
 }
 
 func Close() {

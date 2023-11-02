@@ -2,10 +2,16 @@ package main
 
 import (
 	"fmt"
+	"httpserver/models"
 	"httpserver/pkg/setting"
 	"httpserver/routers"
 	"net/http"
 )
+
+func init() {
+	setting.SetUp()
+	models.SetUp()
+}
 
 func main() {
 	s := &http.Server{
