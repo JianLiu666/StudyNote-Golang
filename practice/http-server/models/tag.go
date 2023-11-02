@@ -1,12 +1,42 @@
 package models
 
+import "gorm.io/gorm"
+
 type Tag struct {
 	Model
 
 	Name       string `json:"name"`
 	CreatedBy  string `json:"created_by"`
 	ModifiedBy string `json:"modified_by"`
-	State      string `json:"state"`
+	State      int    `json:"state"`
+}
+
+func ExistTagByName(name string) bool {
+	var tag Tag
+	err := gormDB.Select("id").Where("name = ? AND deleted_on = ?", name, 0).First(&tag).Error
+	if err != nil && err != gorm.ErrRecordNotFound {
+		return false
+	}
+
+	if tag.ID > 0 {
+		return true
+	}
+
+	return false
+}
+
+func AddTag(name string, state int, createdBy string) error {
+	tag := Tag{
+		Name:      name,
+		State:     state,
+		CreatedBy: createdBy,
+	}
+
+	if err := gormDB.Create(&tag).Error; err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func GetTags(pageNum int, pageSize int, maps any) (tags []Tag) {
