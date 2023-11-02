@@ -1,0 +1,32 @@
+version: "3.4"
+
+services:
+  mysql:
+    image: mysql:5.7
+    platform: linux/amd64
+    container_name: "blog-mysql"
+    restart: always
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: "0"
+      MYSQL_DATABASE: "blog"
+    volumes:
+      - ./mysql/init:/docker-entrypoint-initdb.d
+      - ./data/mysql:/var/lib/mysql
+      - ./mysql/conf:/etc/mysql/conf.d
+      - /etc/timezone:/etc/timezone
+      - /etc/localtime:/etc/localtime
+    networks: 
+      - blog
+    deploy:
+      resources:
+        limits:
+          cpus: "2"
+          memory: 4G
+        reservations:
+          memory: 2G
+
+networks:
+    blog:
+      driver: bridge
