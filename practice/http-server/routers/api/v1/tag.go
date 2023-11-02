@@ -2,6 +2,7 @@ package v1
 
 import (
 	"httpserver/models"
+	"httpserver/pkg/app"
 	"httpserver/pkg/e"
 	"httpserver/pkg/setting"
 	"httpserver/pkg/util"
@@ -12,11 +13,10 @@ import (
 )
 
 func GetTags(c *gin.Context) {
-	name := c.Query("name")
-
 	maps := make(map[string]any)
 	data := make(map[string]any)
 
+	name := c.Query("name")
 	if name != "" {
 		maps["name"] = name
 	}
@@ -30,41 +30,46 @@ func GetTags(c *gin.Context) {
 	data["lists"] = models.GetTags(util.GetPage(c), setting.AppSetting.PageSize, maps)
 	data["total"] = models.GetTagTotal(maps)
 
-	c.JSON(http.StatusOK, gin.H{
-		"code": e.SUCCESS,
-		"msg":  e.GetMsg(e.SUCCESS),
-		"data": data,
-	})
+	app.Response(c, http.StatusOK, e.SUCCESS, data)
 }
 
 type AddTagsForm struct {
-	Name      string `json:"name" binding:"required,max=100"`
-	State     int    `json:"state" binding:"gte=0,lte=1"`
-	CreatedBy string `json:"created_by" binding:"required,max=100"`
+	Name      string `json:"name"       valid:"Required;MaxSize(100)"`
+	State     int    `json:"state"      valid:"Range(0,1)"`
+	CreatedBy string `json:"created_by" valid:"Required;MaxSize(100)"`
 }
 
 func AddTags(c *gin.Context) {
 	var form AddTagsForm
-	if err := c.ShouldBindJSON(&form); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"code": e.INVALID_PARAMS,
-			"msg":  e.GetMsg(e.INVALID_PARAMS),
-			"date": make(map[string]string),
-		})
+
+	if httpCode, errCode := app.BindAndValid(c, &form); errCode != e.SUCCESS {
+		app.Response(c, httpCode, errCode, nil)
 		return
 	}
 
-	code := e.ERROR_EXIST_TAG
-	if !models.ExistTagByName(form.Name) {
-		code = e.SUCCESS
-		models.AddTag(form.Name, form.State, form.CreatedBy)
+	exists, err := models.ExistTagByName(form.Name)
+	if err != nil {
+		app.Response(c, http.StatusInternalServerError, e.ERROR_EXIST_TAG_FAIL, nil)
+		return
+	}
+	if exists {
+		app.Response(c, http.StatusOK, e.ERROR_EXIST_TAG, nil)
+		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"code": code,
-		"msg":  e.GetMsg(code),
-		"data": make(map[string]string),
-	})
+	if err := models.AddTag(form.Name, form.State, form.CreatedBy); err != nil {
+		app.Response(c, http.StatusInternalServerError, e.ERROR_ADD_TAG_FAIL, nil)
+		return
+	}
+
+	app.Response(c, http.StatusOK, e.SUCCESS, nil)
+}
+
+type EditTagsForm struct {
+	ID         int `json:"" valid:`
+	Name       string
+	ModifiedBy string
+	State      int
 }
 
 func EditTags(c *gin.Context) {

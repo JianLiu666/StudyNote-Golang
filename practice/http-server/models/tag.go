@@ -13,18 +13,18 @@ type Tag struct {
 	State      int    `json:"state"`
 }
 
-func ExistTagByName(name string) bool {
+func ExistTagByName(name string) (bool, error) {
 	var tag Tag
 	err := gormDB.Select("id").Where("name = ? AND deleted_on = ?", name, 0).First(&tag).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
-		return false
+		return false, err
 	}
 
 	if tag.ID > 0 {
-		return true
+		return true, nil
 	}
 
-	return false
+	return false, nil
 }
 
 func AddTag(name string, state int, createdBy string) error {
