@@ -20,3 +20,9 @@ type Database struct {
 	Host     string
 	DBName   string
 }
+
+var AppSetting = &Application{}
+
+type Application struct {
+	PageSize int
+}

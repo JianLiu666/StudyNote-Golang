@@ -18,6 +18,7 @@ func init() {
 
 	mapTo("server", ServerSetting)
 	mapTo("database", DatabaseSetting)
+	mapTo("app", AppSetting)
 
 	ServerSetting.ReadTimeout *= time.Second
 	ServerSetting.WriteTimeout *= time.Second
