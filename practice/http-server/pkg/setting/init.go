@@ -2,6 +2,7 @@ package setting
 
 import (
 	"log"
+	"time"
 
 	"gopkg.in/ini.v1"
 )
@@ -17,6 +18,9 @@ func init() {
 
 	mapTo("server", ServerSetting)
 	mapTo("database", DatabaseSetting)
+
+	ServerSetting.ReadTimeout *= time.Second
+	ServerSetting.WriteTimeout *= time.Second
 
 }
 
