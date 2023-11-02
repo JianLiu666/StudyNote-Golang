@@ -8,7 +8,7 @@ CREATE TABLE `tags` (
   `created_by` varchar(100) DEFAULT '' COMMENT '創建人',
   `modified_on` int(10) unsigned DEFAULT '0' COMMENT '修改時間',
   `modified_by` varchar(100) DEFAULT '' COMMENT '修改人',
-  `deleted_on` int(10) unsigned DEFAULT '0',
+  `deleted_on` int(10) unsigned DEFAULT '0' COMMENT '刪除時間',
   `state` tinyint(3) unsigned DEFAULT '1' COMMENT '狀態: 0禁用, 1:啟用',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='文章標籤管理';
