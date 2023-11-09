@@ -1,9 +1,10 @@
-go 1.19
+go 1.21.3
 
 use (
 	./practice/game-management
 	./practice/http-server
 	./practice/http2-server
+	./practice/interview-20231109
 	./practice/json-converter
 	./practice/message-broker
 	./practice/rethinking-classical-concurrency-patterns
