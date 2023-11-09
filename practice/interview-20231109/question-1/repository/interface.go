@@ -1,5 +1,7 @@
 package repository
 
-// type ArticleInterface interface {
-// 	ArticleWithPagination(page, size int) []model.Article
-// }
+import "interview20231109/question-1/model"
+
+type ArticleRepo interface {
+	GetWithPagination(page, size int) []model.Article
+}

@@ -2,8 +2,6 @@ package main
 
 import (
 	"interview20231109/question-1/api"
-	"interview20231109/question-1/pkg/orm"
-	"interview20231109/question-1/repository/article"
 	"net/http"
 )
 
@@ -27,10 +25,6 @@ import (
 //
 // Testing(optional) if there is enough time
 // Add test cases to ensure correctness of `ArticleWithPagination` function
-
-func init() {
-	article.Init(orm.NewConnect())
-}
 
 func main() {
 	s := &http.Server{

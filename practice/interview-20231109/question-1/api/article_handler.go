@@ -1,7 +1,7 @@
 package api
 
 import (
-	"interview20231109/question-1/repository/article"
+	"interview20231109/question-1/repository"
 	"net/http"
 	"strconv"
 
@@ -17,7 +17,24 @@ import (
 // example: GET /article?page=x&size=x
 // result `{data: [{model.ARticle}]}`
 
-func articleWithPagination(c *gin.Context) {
+type articleHandler struct {
+	repo repository.ArticleRepo
+}
+
+func NewArticleHandler(s *gin.Engine, repo repository.ArticleRepo) {
+	handler := &articleHandler{
+		repo: repo,
+	}
+
+	s.GET("/article", handler.getWithPagination)
+
+	// e.g.
+	// s.POST("/article", handler.create)
+	// s.GET("/article/:id", handler.getByID)
+	// s.DELETE("/article/:id", handler.delete)
+}
+
+func (a *articleHandler) getWithPagination(c *gin.Context) {
 	page := 1
 	if val := c.Query("page"); val != "" {
 		page, _ = strconv.Atoi(val)
@@ -28,7 +45,7 @@ func articleWithPagination(c *gin.Context) {
 		size, _ = strconv.Atoi(val)
 	}
 
-	result := article.ArticleWithPagination(page, size)
+	result := a.repo.GetWithPagination(page, size)
 
 	c.JSON(http.StatusOK, gin.H{
 		"data": result,
