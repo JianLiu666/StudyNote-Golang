@@ -6,6 +6,18 @@
       - [Why?](#why)
       - [What?](#what)
       - [How?](#how)
+    - [資料庫選擇](#資料庫選擇)
+  - [Features](#features)
+    - [RESTful APIs](#restful-apis)
+      - [GetHead](#gethead)
+        - [Endpoint](#endpoint)
+        - [Response](#response)
+      - [GetPage](#getpage)
+        - [Endpoint](#endpoint-1)
+        - [Response](#response-1)
+      - [Set](#set)
+        - [Endpoint](#endpoint-2)
+        - [Request Body](#request-body)
   - [Project Layout](#project-layout)
   - [References](#references)
 
@@ -62,6 +74,155 @@
 - 運用 Linked List 的概念維護文章列表的分頁，當用戶第一次訪問主題(e.g. 熱門文章, 個人推薦, etc.) 時根據這個主題對應的 `topic key` 取得 head page
 - 隨著用戶持續瀏覽相同主題，就可以根據 next page key 指向拿到下一個 page 的文章識別碼(UUID)
 - `Producer` 只需要專注在產生對應主題的 page content，由 `Linked List Server` 維護同一主題的資料結構與排序
+
+### 資料庫選擇
+
+TODO
+
+---
+
+## Features
+
+### RESTful APIs
+
+#### GetHead
+
+取得指定主題的 head page uuid
+
+##### Endpoint
+
+```
+[Get] /api/v1/head?listKey={string}
+```
+
+##### Response 
+
+ - JSON Schema
+```json
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+        "nextPageKey": {
+            "type": "string"
+        }
+    },
+    "required": ["nextPageKey"]
+}
+```
+ - Example
+```json
+{
+    "nextPageKey": "abcd"
+}
+```
+
+#### GetPage
+
+取得指定 page 的文章內容
+
+##### Endpoint
+
+```
+[Get] /api/v1/page?pageKey={string}
+```
+
+##### Response
+
+- JSON Schema
+```json
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+        "articles": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    }
+                },
+                "required": ["id"]
+            }
+        },
+        "nextPageKey": {
+            "type": "string"
+        }
+    },
+    "required": ["articles", "nextPageKey"]
+}
+
+```
+
+- Example
+```json
+{
+    "articles": [
+        {
+            "id": 123334
+        },
+        {
+            "id": 123335
+        }
+    ],
+    "nextPageKey": "efgh"
+}
+```
+
+#### Set
+
+對指定主題更新 head page
+
+##### Endpoint
+
+```
+[Post] /api/v1/head
+```
+
+##### Request Body
+
+- JSON Schema
+```json
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+        "listKey": {
+            "type": "string"
+        },
+        "articles": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    }
+                },
+                "required": ["id"]
+            }
+        }
+    },
+    "required": ["listKey", "articles"]
+}
+```
+
+- Example
+```json
+{
+    "listKey": "hot",
+    "articles": [
+        {
+            "id": 123334
+        },
+        {
+            "id": 123335
+        }
+    ]
+}
+```
 
 ---
 
