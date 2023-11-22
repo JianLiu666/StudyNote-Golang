@@ -28,6 +28,8 @@ func RunServerCmd(cmd *cobra.Command, args []string) error {
 	infra := accessor.Build()
 	defer infra.Close(ctx)
 
+	infra.InitKvStore(ctx)
+
 	stopSignal := make(chan os.Signal, 1)
 	signal.Notify(stopSignal, os.Interrupt, syscall.SIGTERM)
 	<-stopSignal

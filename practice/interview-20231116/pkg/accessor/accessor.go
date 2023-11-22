@@ -3,6 +3,7 @@ package accessor
 import (
 	"context"
 	"interview20231116/pkg/config"
+	"interview20231116/pkg/kvstore"
 	"sync"
 
 	"github.com/sirupsen/logrus"
@@ -14,7 +15,8 @@ type accessor struct {
 	shutdownOnce     sync.Once
 	shutdownHandlers []shutdownHandler
 
-	Config *config.Config
+	Config  *config.Config
+	KvStore kvstore.KvStore
 }
 
 func Build() *accessor {
@@ -32,4 +34,19 @@ func (a *accessor) Close(ctx context.Context) {
 	})
 
 	logrus.Info("all accessors closed.")
+}
+
+func (a *accessor) InitKvStore(ctx context.Context) {
+	a.KvStore = kvstore.NewRedisClient(ctx,
+		a.Config.Redis.Address,
+		a.Config.Redis.Password,
+		a.Config.Redis.DB,
+	)
+
+	a.shutdownHandlers = append(a.shutdownHandlers, func(c context.Context) {
+		a.KvStore.Shutdown(c)
+		logrus.Infoln("key-value store accessor closed.")
+	})
+
+	logrus.Infoln("initial key-value store accessor successful.")
 }
