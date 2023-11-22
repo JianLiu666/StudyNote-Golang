@@ -1,0 +1,38 @@
+version: '3.4'
+
+services:
+  redis:
+    image: redis:6.2.7
+    container_name: "redis"
+    restart: always
+    ports:
+      - 6379:6379
+    networks:
+      - network-listserver
+    deploy:
+      resources:
+        limits:
+          cpus: "2"
+          memory: 4G
+        reservations:
+          memory: 2G
+  
+  tinyurl:
+    image: listserver:latest
+    container_name: "list-server"
+    restart: always
+    ports:
+      - 6600:6600
+    networks:
+      - network-listserver
+    deploy:
+      resources:
+        limits:
+          cpus: "2"
+          memory: 4G
+        reservations:
+          memory: 2G
+
+networks:
+    network-listserver:
+      driver: bridge
