@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"context"
+	"interview20231116/api"
 	"interview20231116/pkg/accessor"
 	"os"
 	"os/signal"
@@ -29,6 +30,11 @@ func RunServerCmd(cmd *cobra.Command, args []string) error {
 	defer infra.Close(ctx)
 
 	infra.InitKvStore(ctx)
+
+	app := api.Init(infra.Config.Server)
+	defer app.Shutdown()
+
+	app.Run()
 
 	stopSignal := make(chan os.Signal, 1)
 	signal.Notify(stopSignal, os.Interrupt, syscall.SIGTERM)
