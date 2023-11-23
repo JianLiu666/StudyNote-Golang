@@ -4,6 +4,7 @@ import (
 	"context"
 	"interview20231116/pkg/config"
 	"interview20231116/pkg/kvstore"
+	"interview20231116/pkg/kvstore/redis"
 	"sync"
 
 	"github.com/sirupsen/logrus"
@@ -37,7 +38,7 @@ func (a *Accessor) Close(ctx context.Context) {
 }
 
 func (a *Accessor) InitKvStore(ctx context.Context) {
-	a.KvStore = kvstore.NewRedisClient(ctx, &a.Config.Redis)
+	a.KvStore = redis.NewRedisClient(ctx, &a.Config.Redis)
 
 	a.shutdownHandlers = append(a.shutdownHandlers, func(c context.Context) {
 		a.KvStore.Shutdown(c)

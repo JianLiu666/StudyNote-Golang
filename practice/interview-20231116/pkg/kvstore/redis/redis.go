@@ -1,4 +1,4 @@
-package kvstore
+package redis
 
 import (
 	"context"
@@ -6,20 +6,21 @@ import (
 	"interview20231116/model"
 	"interview20231116/pkg/config"
 	"interview20231116/pkg/e"
+	"interview20231116/pkg/kvstore"
 	"time"
 
 	"github.com/go-redis/redis/v8"
 	"github.com/sirupsen/logrus"
 )
 
-var _ KvStore = (*redisClient)(nil)
+var _ kvstore.KvStore = (*redisClient)(nil)
 
 type redisClient struct {
 	conn *redis.Client
 	conf *config.RedisOpts
 }
 
-func NewRedisClient(ctx context.Context, conf *config.RedisOpts) KvStore {
+func NewRedisClient(ctx context.Context, conf *config.RedisOpts) kvstore.KvStore {
 	conn := redis.NewClient(&redis.Options{
 		Addr:     conf.Address,
 		Password: conf.Password,
