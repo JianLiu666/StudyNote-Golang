@@ -18,16 +18,15 @@ func (l *listRouter) setList(c *fiber.Ctx) error {
 
 	if err := c.BodyParser(payload); err != nil {
 		logrus.Errorf("Failed to execute c.BodyParser: %v", err)
-		c.SendStatus(fiber.StatusInternalServerError)
+		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
 	page := &model.Page{
 		Articles: payload.Articles,
 	}
 	if err := l.kvstore.SetPageToListHead(context.TODO(), payload.ListKey, page); err != nil {
-		c.SendStatus(fiber.StatusInternalServerError)
+		return c.Status(fiber.StatusBadRequest).SendString(err.Error())
 	}
 
-	c.SendStatus(fiber.StatusOK)
-	return nil
+	return c.SendStatus(fiber.StatusOK)
 }
