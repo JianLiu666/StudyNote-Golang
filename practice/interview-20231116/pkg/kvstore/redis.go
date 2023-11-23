@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"interview20231116/model"
+	"interview20231116/pkg/config"
 	"interview20231116/pkg/e"
 	"time"
 
@@ -15,14 +16,15 @@ var _ KvStore = (*redisClient)(nil)
 
 type redisClient struct {
 	conn *redis.Client
+	conf *config.RedisOpts
 }
 
-func NewRedisClient(ctx context.Context, addr, password string, db, poolSize int) KvStore {
+func NewRedisClient(ctx context.Context, conf *config.RedisOpts) KvStore {
 	conn := redis.NewClient(&redis.Options{
-		Addr:     addr,
-		Password: password,
-		DB:       db,
-		PoolSize: poolSize,
+		Addr:     conf.Address,
+		Password: conf.Password,
+		DB:       conf.DB,
+		PoolSize: conf.PoolSize,
 	})
 
 	ct, cancel := context.WithTimeout(ctx, 10*time.Second)
@@ -33,6 +35,7 @@ func NewRedisClient(ctx context.Context, addr, password string, db, poolSize int
 
 	return &redisClient{
 		conn: conn,
+		conf: conf,
 	}
 }
 
@@ -73,7 +76,7 @@ func (c *redisClient) SetPageToListHead(ctx context.Context, listKey string, pag
 		return e.ERROR_MARSHAL
 	}
 
-	keys := []string{genHashKey(), listKey, genPageKey(page.Key)}
+	keys := []string{c.conf.ListCollectionName, listKey, c.genPageKey(page.Key)}
 	res, err := c.conn.Eval(ctx, script, keys, pageJSON).Result()
 	if err != nil {
 		logrus.Errorf("failed to execute redis command Eval: %v", err)
@@ -89,7 +92,7 @@ func (c *redisClient) SetPageToListHead(ctx context.Context, listKey string, pag
 }
 
 func (c *redisClient) GetListHead(ctx context.Context, listKey string) (string, e.CODE) {
-	res, err := c.conn.HGet(ctx, genHashKey(), listKey).Result()
+	res, err := c.conn.HGet(ctx, c.conf.ListCollectionName, listKey).Result()
 	if err != nil {
 		logrus.Errorf("failed to execute redis command HGet: %v", err)
 		return "", e.ERROR_REDIS_COMMAND
@@ -99,7 +102,7 @@ func (c *redisClient) GetListHead(ctx context.Context, listKey string) (string, 
 }
 
 func (c *redisClient) GetPage(ctx context.Context, pageKey string) (*model.Page, e.CODE) {
-	res, err := c.conn.Get(ctx, genPageKey(pageKey)).Result()
+	res, err := c.conn.Get(ctx, c.genPageKey(pageKey)).Result()
 	if err != nil {
 		logrus.Errorf("failed to execute redis command Get: %v", err)
 		return nil, e.ERROR_REDIS_COMMAND
@@ -112,4 +115,8 @@ func (c *redisClient) GetPage(ctx context.Context, pageKey string) (*model.Page,
 	}
 
 	return page, e.SUCCESS
+}
+
+func (c *redisClient) genPageKey(pageKey string) string {
+	return c.conf.PageKeyPrefix + pageKey
 }

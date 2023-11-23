@@ -37,12 +37,7 @@ func (a *Accessor) Close(ctx context.Context) {
 }
 
 func (a *Accessor) InitKvStore(ctx context.Context) {
-	a.KvStore = kvstore.NewRedisClient(ctx,
-		a.Config.Redis.Address,
-		a.Config.Redis.Password,
-		a.Config.Redis.DB,
-		a.Config.Redis.PoolSize,
-	)
+	a.KvStore = kvstore.NewRedisClient(ctx, &a.Config.Redis)
 
 	a.shutdownHandlers = append(a.shutdownHandlers, func(c context.Context) {
 		a.KvStore.Shutdown(c)
