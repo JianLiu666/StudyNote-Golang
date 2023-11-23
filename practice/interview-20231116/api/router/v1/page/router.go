@@ -19,6 +19,6 @@ func NewPageRouter(kvstore kvstore.KvStore) router.Router {
 
 func (p *pageRouter) Init(r fiber.Router) {
 	v1 := r.Group("/v1")
-	v1.Get("/page", p.getPage)
 
+	v1.Get("/page", p.getPage)
 }

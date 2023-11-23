@@ -19,7 +19,7 @@ func NewListRouter(kvstore kvstore.KvStore) router.Router {
 
 func (l *listRouter) Init(r fiber.Router) {
 	v1 := r.Group("/v1")
+
 	v1.Post("/list", l.setList)
 	v1.Get("/list", l.getList)
-
 }
