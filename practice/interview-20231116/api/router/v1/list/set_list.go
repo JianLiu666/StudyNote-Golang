@@ -3,6 +3,7 @@ package list
 import (
 	"context"
 	"interview20231116/model"
+	"interview20231116/pkg/e"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/sirupsen/logrus"
@@ -24,8 +25,8 @@ func (l *listRouter) setList(c *fiber.Ctx) error {
 	page := &model.Page{
 		Articles: payload.Articles,
 	}
-	if err := l.kvstore.SetPageToListHead(context.TODO(), payload.ListKey, page); err != nil {
-		return c.Status(fiber.StatusBadRequest).SendString(err.Error())
+	if code := l.kvstore.SetPageToListHead(context.TODO(), payload.ListKey, page); code != e.SUCCESS {
+		return c.Status(fiber.StatusBadRequest).SendString(e.GetMsg(code))
 	}
 
 	return c.SendStatus(fiber.StatusOK)

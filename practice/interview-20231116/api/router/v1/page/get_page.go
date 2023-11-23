@@ -3,6 +3,7 @@ package page
 import (
 	"context"
 	"interview20231116/model"
+	"interview20231116/pkg/e"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -19,9 +20,9 @@ func (p *pageRouter) getPage(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusBadRequest)
 	}
 
-	page, err := p.kvstore.GetPage(context.TODO(), pageKey)
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).SendString(err.Error())
+	page, code := p.kvstore.GetPage(context.TODO(), pageKey)
+	if code != e.SUCCESS {
+		return c.Status(fiber.StatusBadRequest).SendString(e.GetMsg(code))
 	}
 
 	resp := getPageResponse{

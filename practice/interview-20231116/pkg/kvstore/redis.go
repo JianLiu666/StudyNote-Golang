@@ -3,8 +3,8 @@ package kvstore
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"interview20231116/model"
+	"interview20231116/pkg/e"
 	"time"
 
 	"github.com/go-redis/redis/v8"
@@ -43,7 +43,7 @@ func (c *redisClient) Shutdown(ctx context.Context) {
 	}
 }
 
-func (c *redisClient) SetPageToListHead(ctx context.Context, listKey string, page *model.Page) error {
+func (c *redisClient) SetPageToListHead(ctx context.Context, listKey string, page *model.Page) e.CODE {
 	script := `
 		local listKey = KEYS[1]
 		local oldPageKey = redis.call('HGET', 'list', listKey)
@@ -67,37 +67,46 @@ func (c *redisClient) SetPageToListHead(ctx context.Context, listKey string, pag
 	pageJSON, err := json.Marshal(page)
 	if err != nil {
 		logrus.Errorf("failed to execute json.Marshal: %v", err)
-		return err
+		return e.ERROR_MARSHAL
 	}
 
 	res, err := c.conn.Eval(ctx, script, []string{listKey}, pageJSON).Result()
 	if err != nil {
-		logrus.Errorf("failed to execute *redis.client.Eval: %v", err)
-		return err
+		logrus.Errorf("failed to execute redis command Eval: %v", err)
+		return e.ERROR_REDIS_COMMAND
 	}
 
 	if res.(int64) == -1 {
-		return errors.New("list key not found.")
+		logrus.Errorf("list key not found: %v", listKey)
+		return e.ERROR_DATA_NOT_FOUND
 	}
-	return nil
+
+	return e.SUCCESS
 }
 
-func (c *redisClient) GetListHead(ctx context.Context, listKey string) (string, error) {
+func (c *redisClient) GetListHead(ctx context.Context, listKey string) (string, e.CODE) {
 	// TODO: remove hardcore string
-	return c.conn.HGet(ctx, "list", listKey).Result()
+	res, err := c.conn.HGet(ctx, "list", listKey).Result()
+	if err != nil {
+		logrus.Errorf("failed to execute redis command HGet: %v", err)
+		return "", e.ERROR_REDIS_COMMAND
+	}
+
+	return res, e.SUCCESS
 }
 
-func (c *redisClient) GetPage(ctx context.Context, pageKey string) (*model.Page, error) {
+func (c *redisClient) GetPage(ctx context.Context, pageKey string) (*model.Page, e.CODE) {
 	res, err := c.conn.Get(ctx, "page/"+pageKey).Result()
 	if err != nil {
-		return nil, err
+		logrus.Errorf("failed to execute redis command Get: %v", err)
+		return nil, e.ERROR_REDIS_COMMAND
 	}
 
 	page := &model.Page{}
 	err = json.Unmarshal([]byte(res), page)
 	if err != nil {
-		return nil, err
+		return nil, e.ERROR_UNMARSHAL
 	}
 
-	return page, nil
+	return page, e.SUCCESS
 }
