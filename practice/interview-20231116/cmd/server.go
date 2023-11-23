@@ -31,7 +31,7 @@ func RunServerCmd(cmd *cobra.Command, args []string) error {
 
 	infra.InitKvStore(ctx)
 
-	app := api.Init(infra.Config.Server)
+	app := api.Init(infra)
 	defer app.Shutdown()
 
 	app.Run()

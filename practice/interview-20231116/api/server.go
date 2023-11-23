@@ -1,9 +1,9 @@
 package api
 
 import (
-	"interview20231116/api/router/v1/head"
+	"interview20231116/api/router/v1/list"
 	"interview20231116/api/router/v1/page"
-	"interview20231116/pkg/config"
+	"interview20231116/pkg/accessor"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
@@ -11,11 +11,11 @@ import (
 )
 
 type server struct {
-	app  *fiber.App
-	conf config.ServerOpts
+	app   *fiber.App
+	infra *accessor.Accessor
 }
 
-func Init(conf config.ServerOpts) *server {
+func Init(infra *accessor.Accessor) *server {
 	app := fiber.New()
 
 	// set web server logger format
@@ -24,19 +24,19 @@ func Init(conf config.ServerOpts) *server {
 	}))
 
 	api := app.Group("/api")
-	head.NewRouter(api)
-	page.NewRouter(api)
+	list.NewListRouter(infra.KvStore).Init(api)
+	page.NewPageRouter(infra.KvStore).Init(api)
 
 	return &server{
-		app:  app,
-		conf: conf,
+		app:   app,
+		infra: infra,
 	}
 }
 
 func (s *server) Run() {
 	go func() {
-		if err := s.app.Listen(s.conf.Port); err != nil {
-			logrus.Panicf("starting server on %s failed: %s", s.conf.Port, err.Error())
+		if err := s.app.Listen(s.infra.Config.Server.Port); err != nil {
+			logrus.Panicf("starting server on %s failed: %s", s.infra.Config.Server.Port, err.Error())
 		}
 	}()
 }

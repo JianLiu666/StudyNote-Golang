@@ -11,7 +11,7 @@ import (
 
 type shutdownHandler func(context.Context)
 
-type accessor struct {
+type Accessor struct {
 	shutdownOnce     sync.Once
 	shutdownHandlers []shutdownHandler
 
@@ -19,13 +19,13 @@ type accessor struct {
 	KvStore kvstore.KvStore
 }
 
-func Build() *accessor {
-	return &accessor{
+func Build() *Accessor {
+	return &Accessor{
 		Config: config.NewFromViper(),
 	}
 }
 
-func (a *accessor) Close(ctx context.Context) {
+func (a *Accessor) Close(ctx context.Context) {
 	a.shutdownOnce.Do(func() {
 		logrus.Info("start to close accessors.")
 		for _, f := range a.shutdownHandlers {
@@ -36,7 +36,7 @@ func (a *accessor) Close(ctx context.Context) {
 	logrus.Info("all accessors closed.")
 }
 
-func (a *accessor) InitKvStore(ctx context.Context) {
+func (a *Accessor) InitKvStore(ctx context.Context) {
 	a.KvStore = kvstore.NewRedisClient(ctx,
 		a.Config.Redis.Address,
 		a.Config.Redis.Password,

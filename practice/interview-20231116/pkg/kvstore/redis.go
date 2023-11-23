@@ -2,9 +2,13 @@ package kvstore
 
 import (
 	"context"
+	"encoding/json"
+	"errors"
+	"interview20231116/model"
 	"time"
 
 	"github.com/go-redis/redis/v8"
+	"github.com/rs/xid"
 	"github.com/sirupsen/logrus"
 )
 
@@ -37,4 +41,51 @@ func (c *redisClient) Shutdown(ctx context.Context) {
 	if err := c.conn.Close(); err != nil {
 		logrus.Errorf("failed to close redis client: %v", err)
 	}
+}
+
+func (c *redisClient) SetPageToListHead(ctx context.Context, listKey string, page *model.Page) error {
+	script := `
+		local listKey = KEYS[1]
+		local oldPageKey = redis.call('HGET', 'list', listKey)
+		
+		if not oldPageKey then
+			return -1
+		end
+
+		local page = cjson.decode(ARGV[1])
+		page.nextPageKey = oldPageKey
+
+		redis.call('HSET', 'list', listKey, page.key)
+
+		local pageJSON = cjson.encode(page)
+		redis.call('SET', 'page/' .. page.key, pageJSON)
+
+		return 1
+	`
+
+	page.Key = xid.New().String()
+	pageJSON, err := json.Marshal(page)
+	if err != nil {
+		logrus.Errorf("failed to execute json.Marshal: %v", err)
+		return err
+	}
+
+	res, err := c.conn.Eval(ctx, script, []string{listKey}, pageJSON).Result()
+	if err != nil {
+		logrus.Errorf("failed to execute *redis.client.Eval: %v", err)
+		return err
+	}
+
+	if res.(int64) == -1 {
+		return errors.New("list key not found.")
+	}
+	return nil
+}
+
+func (c *redisClient) GetHead(listId string) string {
+	return ""
+}
+
+func (c *redisClient) GetPage(pageId string) {
+
 }
