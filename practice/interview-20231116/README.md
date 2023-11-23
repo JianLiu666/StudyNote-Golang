@@ -11,7 +11,7 @@
       - [Redis](#redis)
   - [Features](#features)
     - [RESTful APIs](#restful-apis)
-      - [GetHead](#gethead)
+      - [GetList](#getlist)
         - [Endpoint](#endpoint)
         - [Response](#response)
       - [GetPage](#getpage)
@@ -70,7 +70,7 @@
 ```
     e.g. 熱門文章
       
-      topic key
+      list key
          |
          v
       +------+            +------+       +------+                 +------+
@@ -80,9 +80,9 @@
        └─ next page key
 ```
 
-- 運用 Linked List 的概念維護文章列表的分頁，當用戶第一次訪問主題(e.g. 熱門文章, 個人推薦, etc.) 時根據這個主題對應的 `topic key` 取得 head page
-- 隨著用戶持續瀏覽相同主題，就可以根據 next page key 指向拿到下一個 page 的文章識別碼(UUID)
-- `Producer` 只需要專注在產生對應主題的 page content，由 `Linked List Server` 維護同一主題的資料結構與排序
+- 運用 Linked List 的概念維護文章列表的分頁，當用戶第一次訪問列表(e.g. 熱門文章, 個人推薦, etc.) 時根據這個列表對應的 `topic key` 取得 head page
+- 隨著用戶持續瀏覽相同列表，就可以根據 next page key 指向拿到下一個 page 的文章識別碼(UUID)
+- `Producer` 只需要專注在產生對應列表的 page content，由 `Linked List Server` 維護同一列表的資料結構與排序
 
 ### 資料庫選擇
 
@@ -98,14 +98,14 @@
 
 ### RESTful APIs
 
-#### GetHead
+#### GetList
 
-取得指定主題的 head page uuid
+取得指定列表的第一個 page uuid
 
 ##### Endpoint
 
 ```
-[Get] /api/v1/head?listKey={string}
+[Get] /api/v1/list?listKey={string}
 ```
 
 ##### Response 
@@ -186,12 +186,12 @@
 
 #### Set
 
-對指定主題更新 head page
+對指定列表更新 head page
 
 ##### Endpoint
 
 ```
-[Post] /api/v1/head
+[Post] /api/v1/list
 ```
 
 ##### Request Body
