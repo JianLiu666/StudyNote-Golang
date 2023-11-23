@@ -10,7 +10,7 @@ type KvStore interface {
 
 	SetPageToListHead(ctx context.Context, listKey string, page *model.Page) error
 
-	GetHead(listKey string) string
+	GetListHead(ctx context.Context, listKey string) (string, error)
 
 	GetPage(pageKey string)
 }

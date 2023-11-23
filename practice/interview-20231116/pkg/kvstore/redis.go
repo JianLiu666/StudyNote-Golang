@@ -82,8 +82,9 @@ func (c *redisClient) SetPageToListHead(ctx context.Context, listKey string, pag
 	return nil
 }
 
-func (c *redisClient) GetHead(listId string) string {
-	return ""
+func (c *redisClient) GetListHead(ctx context.Context, listKey string) (string, error) {
+	// TODO: remove hardcore string
+	return c.conn.HGet(ctx, "list", listKey).Result()
 }
 
 func (c *redisClient) GetPage(pageId string) {
