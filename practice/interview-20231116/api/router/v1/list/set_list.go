@@ -6,6 +6,7 @@ import (
 	"interview20231116/pkg/e"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/rs/xid"
 	"github.com/sirupsen/logrus"
 )
 
@@ -23,7 +24,9 @@ func (l *listRouter) setList(c *fiber.Ctx) error {
 	}
 
 	page := &model.Page{
-		Articles: payload.Articles,
+		Key:         xid.New().String(),
+		NextPageKey: "",
+		Articles:    payload.Articles,
 	}
 	if code := l.kvstore.SetPageToListHead(context.TODO(), payload.ListKey, page); code != e.SUCCESS {
 		return c.Status(fiber.StatusBadRequest).SendString(e.GetMsg(code))

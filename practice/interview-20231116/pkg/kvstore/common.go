@@ -1,6 +1,6 @@
 package kvstore
 
-func genListKey() string {
+func genHashKey() string {
 	return "list"
 }
 

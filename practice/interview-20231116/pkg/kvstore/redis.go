@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/go-redis/redis/v8"
-	"github.com/rs/xid"
 	"github.com/sirupsen/logrus"
 )
 
@@ -45,32 +44,37 @@ func (c *redisClient) Shutdown(ctx context.Context) {
 
 func (c *redisClient) SetPageToListHead(ctx context.Context, listKey string, page *model.Page) e.CODE {
 	script := `
-		local listKey = KEYS[1]
-		local oldPageKey = redis.call('HGET', 'list', listKey)
+		local hashKey = KEYS[1]
+		local listKey = KEYS[2]
+		local pageKey = KEYS[3]
 		
-		if not oldPageKey then
-			return -1
-		end
+		-- step.1 如果 hash key 跟 list key 不存在的話, 給定初始值
+		redis.call('HSETNX', hashKey, listKey, '')
+		
+		-- step.2 取出 list 的 head page
+		local nextPageKey = redis.call('HGET', hashKey, listKey)
 
+		-- step.3 更新 linked list
 		local page = cjson.decode(ARGV[1])
-		page.nextPageKey = oldPageKey
+		page.nextPageKey = nextPageKey
 
-		redis.call('HSET', 'list', listKey, page.key)
+		redis.call('HSET', hashKey, listKey, page.key)
 
+		-- step.4 寫入 page
 		local pageJSON = cjson.encode(page)
-		redis.call('SET', 'page/' .. page.key, pageJSON)
+		redis.call('SET', pageKey, pageJSON)
 
 		return 1
 	`
 
-	page.Key = xid.New().String()
 	pageJSON, err := json.Marshal(page)
 	if err != nil {
 		logrus.Errorf("failed to execute json.Marshal: %v", err)
 		return e.ERROR_MARSHAL
 	}
 
-	res, err := c.conn.Eval(ctx, script, []string{listKey}, pageJSON).Result()
+	keys := []string{genHashKey(), listKey, genPageKey(page.Key)}
+	res, err := c.conn.Eval(ctx, script, keys, pageJSON).Result()
 	if err != nil {
 		logrus.Errorf("failed to execute redis command Eval: %v", err)
 		return e.ERROR_REDIS_COMMAND
@@ -85,7 +89,7 @@ func (c *redisClient) SetPageToListHead(ctx context.Context, listKey string, pag
 }
 
 func (c *redisClient) GetListHead(ctx context.Context, listKey string) (string, e.CODE) {
-	res, err := c.conn.HGet(ctx, genListKey(), listKey).Result()
+	res, err := c.conn.HGet(ctx, genHashKey(), listKey).Result()
 	if err != nil {
 		logrus.Errorf("failed to execute redis command HGet: %v", err)
 		return "", e.ERROR_REDIS_COMMAND
