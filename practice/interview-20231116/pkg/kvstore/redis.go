@@ -65,7 +65,8 @@ func (c *redisClient) SetPageToListHead(ctx context.Context, listKey string, pag
 
 		-- step.4 寫入 page
 		local pageJSON = cjson.encode(page)
-		redis.call('SET', pageKey, pageJSON)
+		local expirationTime = ARGV[2]
+		redis.call('SETEX', pageKey, expirationTime, pageJSON)
 
 		return 1
 	`
@@ -77,7 +78,7 @@ func (c *redisClient) SetPageToListHead(ctx context.Context, listKey string, pag
 	}
 
 	keys := []string{c.conf.ListCollectionName, listKey, c.genPageKey(page.Key)}
-	res, err := c.conn.Eval(ctx, script, keys, pageJSON).Result()
+	res, err := c.conn.Eval(ctx, script, keys, pageJSON, c.conf.PageExpirationTime).Result()
 	if err != nil {
 		logrus.Errorf("failed to execute redis command Eval: %v", err)
 		return e.ERROR_REDIS_COMMAND
