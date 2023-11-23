@@ -96,7 +96,7 @@ func (c *redisClient) GetListHead(ctx context.Context, listKey string) (string, 
 	res, err := c.conn.HGet(ctx, c.conf.ListCollectionName, listKey).Result()
 	if err != nil {
 		logrus.Errorf("failed to execute redis command HGet: %v", err)
-		return "", e.ERROR_REDIS_COMMAND
+		return "", e.ERROR_DATA_NOT_FOUND
 	}
 
 	return res, e.SUCCESS
@@ -106,7 +106,7 @@ func (c *redisClient) GetPage(ctx context.Context, pageKey string) (*model.Page,
 	res, err := c.conn.Get(ctx, c.genPageKey(pageKey)).Result()
 	if err != nil {
 		logrus.Errorf("failed to execute redis command Get: %v", err)
-		return nil, e.ERROR_REDIS_COMMAND
+		return nil, e.ERROR_DATA_NOT_FOUND
 	}
 
 	page := &model.Page{}
