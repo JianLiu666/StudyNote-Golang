@@ -8,7 +8,7 @@ type List struct {
 type Page struct {
 	Key         string     `json:"key"`
 	NextPageKey string     `json:"nextPageKey"`
-	Articles    *[]Article `json:"articles"`
+	Articles    []*Article `json:"articles"`
 }
 
 type Article struct {

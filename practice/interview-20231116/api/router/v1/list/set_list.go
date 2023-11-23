@@ -10,7 +10,7 @@ import (
 
 type setListPayload struct {
 	ListKey  string           `json:"listKey"`
-	Articles *[]model.Article `json:"articles"`
+	Articles []*model.Article `json:"articles"`
 }
 
 func (l *listRouter) setList(c *fiber.Ctx) error {
