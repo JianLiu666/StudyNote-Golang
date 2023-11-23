@@ -18,12 +18,12 @@ type redisClient struct {
 	conn *redis.Client
 }
 
-func NewRedisClient(ctx context.Context, addr, password string, db int) KvStore {
+func NewRedisClient(ctx context.Context, addr, password string, db, poolSize int) KvStore {
 	conn := redis.NewClient(&redis.Options{
 		Addr:     addr,
 		Password: password,
 		DB:       db,
-		PoolSize: 10, // TODO: remove magic number
+		PoolSize: poolSize,
 	})
 
 	ct, cancel := context.WithTimeout(ctx, 10*time.Second)
@@ -85,8 +85,7 @@ func (c *redisClient) SetPageToListHead(ctx context.Context, listKey string, pag
 }
 
 func (c *redisClient) GetListHead(ctx context.Context, listKey string) (string, e.CODE) {
-	// TODO: remove hardcore string
-	res, err := c.conn.HGet(ctx, "list", listKey).Result()
+	res, err := c.conn.HGet(ctx, genListKey(), listKey).Result()
 	if err != nil {
 		logrus.Errorf("failed to execute redis command HGet: %v", err)
 		return "", e.ERROR_REDIS_COMMAND
@@ -96,7 +95,7 @@ func (c *redisClient) GetListHead(ctx context.Context, listKey string) (string, 
 }
 
 func (c *redisClient) GetPage(ctx context.Context, pageKey string) (*model.Page, e.CODE) {
-	res, err := c.conn.Get(ctx, "page/"+pageKey).Result()
+	res, err := c.conn.Get(ctx, genPageKey(pageKey)).Result()
 	if err != nil {
 		logrus.Errorf("failed to execute redis command Get: %v", err)
 		return nil, e.ERROR_REDIS_COMMAND

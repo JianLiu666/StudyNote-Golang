@@ -41,6 +41,7 @@ func (a *Accessor) InitKvStore(ctx context.Context) {
 		a.Config.Redis.Address,
 		a.Config.Redis.Password,
 		a.Config.Redis.DB,
+		a.Config.Redis.PoolSize,
 	)
 
 	a.shutdownHandlers = append(a.shutdownHandlers, func(c context.Context) {
