@@ -12,5 +12,5 @@ type KvStore interface {
 
 	GetListHead(ctx context.Context, listKey string) (string, error)
 
-	GetPage(pageKey string)
+	GetPage(ctx context.Context, pageKey string) (*model.Page, error)
 }

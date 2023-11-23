@@ -87,6 +87,17 @@ func (c *redisClient) GetListHead(ctx context.Context, listKey string) (string, 
 	return c.conn.HGet(ctx, "list", listKey).Result()
 }
 
-func (c *redisClient) GetPage(pageId string) {
+func (c *redisClient) GetPage(ctx context.Context, pageKey string) (*model.Page, error) {
+	res, err := c.conn.Get(ctx, "page/"+pageKey).Result()
+	if err != nil {
+		return nil, err
+	}
 
+	page := &model.Page{}
+	err = json.Unmarshal([]byte(res), page)
+	if err != nil {
+		return nil, err
+	}
+
+	return page, nil
 }
