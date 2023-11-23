@@ -241,8 +241,30 @@
 
 ## Project Layout
 
+- 參考 [Standard Go Project Layout](https://github.com/golang-standards/project-layout)
+
 ```
-TODO
+Project
+ ├─ api/                # OpenAPI
+ │   ├─ router/            # router group
+ |   |   ├─ v1/               # v1 版本 APIs
+ |   |   └─ router.go         # router common interface
+ │   └─ server.go          # fiber web framework
+ ├─ cmd/                # 主要應用程式進入點
+ ├─ config/             # 組態設定檔
+ ├─ deployment/         # 部署設定檔
+ ├─ model/              # Data schema
+ ├─ pkg/                # 模組化函式庫
+ │   ├─ accessor/          # 基礎建設管理模組 (e.g. config, network, storage, etc.)
+ │   ├─ config/            # 組態設定模組 (viper)
+ │   ├─ e/                 # 專案內部使用的狀態碼
+ │   └─ kvstore/           # Key-value Database 模組
+ ├─ dockerfile          #
+ ├─ go.mod              #
+ ├─ go.sum              #
+ ├─ main.go             #
+ ├─ makefile            #
+ └─ README.md           #
 ```
 
 ---
