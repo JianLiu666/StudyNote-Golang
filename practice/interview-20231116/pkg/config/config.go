@@ -32,9 +32,13 @@ func NewFromDefault() *Config {
 	}
 
 	redis := RedisOpts{
-		Address:  "localhost:6379",
-		Password: "",
-		DB:       0,
+		Address:            "localhost:6379",
+		Password:           "",
+		DB:                 0,
+		PoolSize:           10,
+		ListCollectionName: "list",
+		PageExpirationTime: 86400,
+		PageKeyPrefix:      "page/",
 	}
 
 	cfg := &Config{
