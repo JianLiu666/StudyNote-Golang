@@ -33,6 +33,7 @@ func setup() (*fiber.App, *accessor.Accessor, *miniredis.Miniredis) {
 
 	return app, infra, redisServer
 }
+
 func TestGetList_Success(t *testing.T) {
 	app, infra, redisServer := setup()
 
