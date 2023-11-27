@@ -8,37 +8,61 @@ import (
 	"interview20231116/pkg/e"
 	"testing"
 
-	"github.com/go-redis/redismock/v8"
-	"github.com/stretchr/testify/assert"
+	"github.com/alicebob/miniredis/v2"
+	"gotest.tools/assert"
 )
 
-var _redisClient redisClient
-var _redisMock redismock.ClientMock
-
-func TestMain(m *testing.M) {
-	setup()
-
-	m.Run()
-}
-
-func setup() {
-	conn, mock := redismock.NewClientMock()
-
-	_redisClient = redisClient{
-		conn: conn,
-		conf: &config.NewFromDefault().Redis,
+func setup() (*redisClient, *miniredis.Miniredis) {
+	mockServer, err := miniredis.Run()
+	if err != nil {
+		panic(err)
 	}
 
-	_redisMock = mock
+	conf := config.NewFromDefault()
+	conf.Redis.Address = mockServer.Addr()
+
+	client := newRedisClient(context.Background(), &conf.Redis)
+
+	return client, mockServer
+}
+
+func TestSetPageToListHead_Success(t *testing.T) {
+	client, _ := setup()
+
+	// prepare data
+	listKey := "list-uuid"
+	page := &model.Page{
+		Key:         "page-uuid",
+		NextPageKey: "",
+		Articles:    []*model.Article{{ID: 1}, {ID: 2}},
+	}
+
+	// testcase
+	code := client.SetPageToListHead(context.Background(), listKey, page)
+	if code != e.SUCCESS {
+		t.Error(e.GetMsg(code))
+	}
+
+	res, code := client.GetPage(context.Background(), page.Key)
+	if code != e.SUCCESS {
+		t.Error(e.GetMsg(code))
+	}
+
+	assert.DeepEqual(t, page, res)
 }
 
 func TestGetListHead_Success(t *testing.T) {
+	client, server := setup()
+
+	// prepare data
 	listKey := "list-uuid"
 	pageKey := "page-uuid"
 
-	_redisMock.ExpectHGet(_redisClient.conf.ListCollectionName, listKey).SetVal(pageKey)
+	// init redis
+	server.HSet(client.conf.ListCollectionName, listKey, pageKey)
 
-	res, code := _redisClient.GetListHead(context.Background(), listKey)
+	// testcase
+	res, code := client.GetListHead(context.Background(), listKey)
 	if code != e.SUCCESS {
 		t.Error(e.GetMsg(code))
 	}
@@ -47,17 +71,22 @@ func TestGetListHead_Success(t *testing.T) {
 }
 
 func TestGetListHead_Fail_DataNotFound(t *testing.T) {
+	client, _ := setup()
+
+	// prepare data
 	listKey := "list-uuid"
 
-	_redisMock.ExpectHGet(_redisClient.conf.ListCollectionName, listKey).RedisNil()
-
-	_, code := _redisClient.GetListHead(context.Background(), listKey)
+	// testcase
+	_, code := client.GetListHead(context.Background(), listKey)
 	if code != e.ERROR_DATA_NOT_FOUND {
 		t.Error(e.GetMsg(code))
 	}
 }
 
 func TestGetPage_Success(t *testing.T) {
+	client, server := setup()
+
+	// prepare data
 	page := &model.Page{
 		Key:         "page-uuid",
 		NextPageKey: "",
@@ -68,26 +97,30 @@ func TestGetPage_Success(t *testing.T) {
 		t.Error(err)
 	}
 
-	_redisMock.ExpectGet(_redisClient.genPageKey(page.Key)).SetVal(string(pageJSON))
+	// init redis
+	server.Set(client.genPageKey(page.Key), string(pageJSON))
 
-	res, code := _redisClient.GetPage(context.Background(), page.Key)
+	// testcase
+	res, code := client.GetPage(context.Background(), page.Key)
 	if code != e.SUCCESS {
 		t.Error(e.GetMsg(code))
 	}
 
-	assert.Equal(t, page, res)
+	assert.DeepEqual(t, page, res)
 }
 
 func TestGetPage_Fail_DataNotFund(t *testing.T) {
+	client, _ := setup()
+
+	// prepare data
 	page := &model.Page{
 		Key:         "page1-uuid",
 		NextPageKey: "",
 		Articles:    []*model.Article{{ID: 1}, {ID: 2}},
 	}
 
-	_redisMock.ExpectGet(_redisClient.genPageKey(page.Key)).RedisNil()
-
-	_, code := _redisClient.GetPage(context.Background(), page.Key)
+	// testcase
+	_, code := client.GetPage(context.Background(), page.Key)
 	if code != e.ERROR_DATA_NOT_FOUND {
 		t.Error(e.GetMsg(code))
 	}

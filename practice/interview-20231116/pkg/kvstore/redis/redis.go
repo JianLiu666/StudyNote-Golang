@@ -20,6 +20,26 @@ type redisClient struct {
 	conf *config.RedisOpts
 }
 
+func newRedisClient(ctx context.Context, conf *config.RedisOpts) *redisClient {
+	conn := redis.NewClient(&redis.Options{
+		Addr:     conf.Address,
+		Password: conf.Password,
+		DB:       conf.DB,
+		PoolSize: conf.PoolSize,
+	})
+
+	ct, cancel := context.WithTimeout(ctx, 10*time.Second)
+	defer cancel()
+	if _, err := conn.Ping(ct).Result(); err != nil {
+		logrus.Panicf("failed to ping redis server: %v", err)
+	}
+
+	return &redisClient{
+		conn: conn,
+		conf: conf,
+	}
+}
+
 func NewRedisClient(ctx context.Context, conf *config.RedisOpts) kvstore.KvStore {
 	conn := redis.NewClient(&redis.Options{
 		Addr:     conf.Address,
