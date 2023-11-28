@@ -21,6 +21,10 @@
         - [Endpoint](#endpoint-2)
         - [Request Body](#request-body)
   - [Project Layout](#project-layout)
+  - [Getting Started](#getting-started)
+    - [Prerequisites](#prerequisites)
+    - [Quick install instructions](#quick-install-instructions)
+    - [Usage](#usage)
   - [References](#references)
 
 ---
@@ -265,6 +269,44 @@ Project
  ├─ main.go             #
  ├─ makefile            #
  └─ README.md           #
+```
+
+---
+
+## Getting Started 
+
+### Prerequisites
+
+- Go
+- Docker
+
+### Quick install instructions
+
+```shell
+make init
+```
+
+### Usage
+
+快速啟動系統，包含：
+
+ - Linked List Server
+ - Redis
+
+```shell
+make up
+```
+
+關閉系統
+
+```shell
+make down
+```
+
+單元測試
+
+```shell
+make test
 ```
 
 ---

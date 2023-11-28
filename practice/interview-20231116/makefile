@@ -1,4 +1,4 @@
-.PHONY: help init up down build local
+.PHONY: help init up down build local test
 
 help:
 	@echo "Usage: make [commands]\n"
@@ -8,6 +8,7 @@ help:
 	@echo "  down        關閉 docker-cpmpose 所有服務"
 	@echo "  build       建置 Linked List Server 映像檔"
 	@echo "  local       本地執行 Linked List Server"
+	@echo "  test        執行專案單元測試"
 
 init:	
 	go mod download
@@ -28,3 +29,6 @@ build:
 
 local:
 	go run main.go -f config/env.yaml server
+
+test:
+	go test -cover ./...
