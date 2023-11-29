@@ -6,6 +6,7 @@ use (
 	./practice/http2-server
 	./practice/interview-20231109
 	./practice/interview-20231116
+	./practice/interview-20231129
 	./practice/json-converter
 	./practice/message-broker
 	./practice/rethinking-classical-concurrency-patterns
