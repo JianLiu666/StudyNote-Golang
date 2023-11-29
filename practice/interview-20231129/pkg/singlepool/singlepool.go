@@ -9,7 +9,7 @@ import (
 )
 
 type singlePool struct {
-	sync.Mutex
+	mu sync.Mutex
 
 	lookup map[string]string
 	boys   *treemap.Map
@@ -26,8 +26,8 @@ func NewSinglePool() *singlePool {
 }
 
 func (s *singlePool) AddSinglePersonAndMatch(user *model.User) {
-	s.Lock()
-	defer s.Unlock()
+	s.mu.Lock()
+	defer s.mu.Unlock()
 
 	if _, exists := s.lookup[user.Name]; exists {
 		return
@@ -47,6 +47,9 @@ func (s *singlePool) AddSinglePersonAndMatch(user *model.User) {
 }
 
 func (s *singlePool) RemoveSinglePerson(name string) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
 	if _, exists := s.lookup[name]; !exists {
 		return
 	}
