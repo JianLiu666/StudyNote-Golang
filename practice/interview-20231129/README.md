@@ -19,6 +19,7 @@
     - [Prerequisites](#prerequisites)
     - [Quick install instructions](#quick-install-instructions)
     - [Usage](#usage)
+  - [TODO](#todo)
 
 ---
 
@@ -201,3 +202,7 @@ make test
 ```
 
 ---
+
+## TODO
+
+- [ ] 使用 GraphQL 改善 QuerySinglePeople 的查詢方式
