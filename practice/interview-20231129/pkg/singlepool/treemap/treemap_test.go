@@ -1,4 +1,4 @@
-package singlepool
+package treemap
 
 import (
 	"interview20231129/model"
@@ -8,7 +8,7 @@ import (
 )
 
 func TestAddSinglePersonAndMatch_add_hit(t *testing.T) {
-	sp := NewSinglePool()
+	sp := newTreemapSinglePool()
 
 	dataset := []*model.User{
 		{Name: "boy1", Height: 180, Gender: 1, NumDates: 2},
@@ -29,7 +29,7 @@ func TestAddSinglePersonAndMatch_add_hit(t *testing.T) {
 }
 
 func TestAddSinglePersonAndMatch_add_missed(t *testing.T) {
-	sp := NewSinglePool()
+	sp := newTreemapSinglePool()
 
 	dataset := []*model.User{
 		{Name: "boy1", Height: 180, Gender: 1, NumDates: 2},
@@ -51,7 +51,7 @@ func TestAddSinglePersonAndMatch_add_missed(t *testing.T) {
 }
 
 func TestAddSinglePersonAndMatch_match_case1(t *testing.T) {
-	sp := NewSinglePool()
+	sp := newTreemapSinglePool()
 
 	dataset := []*model.User{
 		{Name: "boy1", Height: 180, Gender: 1, NumDates: 2},
@@ -84,7 +84,7 @@ func TestAddSinglePersonAndMatch_match_case1(t *testing.T) {
 }
 
 func TestAddSinglePersonAndMatch_match_case2(t *testing.T) {
-	sp := NewSinglePool()
+	sp := newTreemapSinglePool()
 
 	dataset := []*model.User{
 		{Name: "girl1", Height: 155, Gender: 0, NumDates: 2},
@@ -118,7 +118,7 @@ func TestAddSinglePersonAndMatch_match_case2(t *testing.T) {
 }
 
 func TestAddSinglePersonAndMatch_match_case3(t *testing.T) {
-	sp := NewSinglePool()
+	sp := newTreemapSinglePool()
 
 	dataset := []*model.User{
 		{Name: "girl1", Height: 155, Gender: 0, NumDates: 2},
@@ -152,7 +152,7 @@ func TestAddSinglePersonAndMatch_match_case3(t *testing.T) {
 }
 
 func TestRemoveSinglePerson_hit(t *testing.T) {
-	sp := NewSinglePool()
+	sp := newTreemapSinglePool()
 
 	dataset := []*model.User{
 		{Name: "boy1", Height: 170, Gender: 1, NumDates: 4},
@@ -170,7 +170,7 @@ func TestRemoveSinglePerson_hit(t *testing.T) {
 }
 
 func TestRemoveSinglePerson_missed(t *testing.T) {
-	sp := NewSinglePool()
+	sp := newTreemapSinglePool()
 
 	dataset := []*model.User{
 		{Name: "boy1", Height: 170, Gender: 1, NumDates: 4},

@@ -1,6 +1,9 @@
 package cmd
 
 import (
+	"context"
+	"interview20231129/pkg/accessor"
+	"interview20231129/pkg/singlepool/treemap"
 	"os"
 	"os/signal"
 	"syscall"
@@ -21,6 +24,12 @@ func init() {
 }
 
 func RunServerCmd(cmd *cobra.Command, args []string) error {
+	ctx := context.Background()
+
+	infra := accessor.Build()
+	defer infra.Close(ctx)
+
+	infra.InitSinglePool(ctx, treemap.NewTreemapSinglePool())
 
 	stopSignal := make(chan os.Signal, 1)
 	signal.Notify(stopSignal, os.Interrupt, syscall.SIGTERM)

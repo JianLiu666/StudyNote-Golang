@@ -1,8 +1,9 @@
-package singlepool
+package treemap
 
 import (
 	"fmt"
 	"interview20231129/model"
+	"interview20231129/pkg/singlepool"
 	"sync"
 
 	"github.com/emirpasic/gods/maps/treemap"
@@ -24,7 +25,11 @@ type singlePool struct {
 	girls  *treemap.Map
 }
 
-func NewSinglePool() *singlePool {
+func newTreemapSinglePool() *singlePool {
+	return NewTreemapSinglePool().(*singlePool)
+}
+
+func NewTreemapSinglePool() singlepool.SinglePool {
 	return &singlePool{
 
 		lookup: map[string]string{},
