@@ -2,15 +2,19 @@ package single
 
 import (
 	"interview20231129/api/router"
+	"interview20231129/pkg/singlepool"
 
 	"github.com/gin-gonic/gin"
 )
 
 type singleRouter struct {
+	singlePool singlepool.SinglePool
 }
 
-func NewSingleRouter() router.Router {
-	return &singleRouter{}
+func NewSingleRouter(singlePool singlepool.SinglePool) router.Router {
+	return &singleRouter{
+		singlePool: singlePool,
+	}
 }
 
 func (s *singleRouter) Init(r *gin.RouterGroup) {

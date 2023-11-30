@@ -3,6 +3,7 @@ package treemap
 import (
 	"fmt"
 	"interview20231129/model"
+	"interview20231129/pkg/e"
 	"interview20231129/pkg/singlepool"
 	"sync"
 
@@ -41,12 +42,12 @@ func NewTreemapSinglePool() singlepool.SinglePool {
 // AddSinglePersonAndMatch 加入新用戶且根據配對規則進行配對與更新用戶狀態
 //
 // @param user 用戶資訊
-func (s *singlePool) AddSinglePersonAndMatch(user *model.User) {
+func (s *singlePool) AddSinglePersonAndMatch(user *model.User) e.CODE {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
 	if _, exists := s.lookup[user.Name]; exists {
-		return
+		return e.ERROR_ADD_DUPLICATED_USER
 	}
 
 	user.UUID = s.genHashKey(user)
@@ -60,22 +61,26 @@ func (s *singlePool) AddSinglePersonAndMatch(user *model.User) {
 			return a < b
 		})
 	}
+
+	return e.SUCCESS
 }
 
 // RemoveSinglePerson 移除指定用戶
 //
 // @param name 用戶姓名
-func (s *singlePool) RemoveSinglePerson(name string) {
+func (s *singlePool) RemoveSinglePerson(name string) e.CODE {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
 	if _, exists := s.lookup[name]; !exists {
-		return
+		return e.ERROR_USER_NOT_FOUND
 	}
 
 	s.boys.Remove(s.lookup[name])
 	s.girls.Remove(s.lookup[name])
 	delete(s.lookup, name)
+
+	return e.SUCCESS
 }
 
 // match 根據配對規則進行配對

@@ -21,7 +21,7 @@ func Init(infra *accessor.Accessor) *server {
 	router.GET("/ping", func(c *gin.Context) { c.String(http.StatusOK, "pong") })
 
 	api := router.Group("/api")
-	single.NewSingleRouter().Init(api)
+	single.NewSingleRouter(infra.SinglePool).Init(api)
 
 	app := &http.Server{
 		Addr:    infra.Config.Server.Port,
