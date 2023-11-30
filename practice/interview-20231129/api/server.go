@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"interview20231129/api/router/v1/single"
 	"interview20231129/pkg/accessor"
 	"net/http"
 
@@ -18,6 +19,9 @@ func Init(infra *accessor.Accessor) *server {
 	router := gin.Default()
 
 	router.GET("/ping", func(c *gin.Context) { c.String(http.StatusOK, "pong") })
+
+	api := router.Group("/api")
+	single.NewSingleRouter().Init(api)
 
 	app := &http.Server{
 		Addr:    infra.Config.Server.Port,
