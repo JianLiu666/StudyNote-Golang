@@ -14,7 +14,8 @@ import (
 //
 // 1. 使用 goDS 的 treemap (based on red-black tree) 作為配對池的主要資料結構:
 //   - add single person 時的時間複雜度約在 O(logn)
-//   - match 基於 iterator 操作, 時間複雜度為 O(n), 需要思考如何解決 (TODO)
+//   - match 基於 iterator 操作, 時間複雜度為 O(n), 需要思考如何優化 (TODO)
+//   - query 也基於 iterator 操作, 時間複雜度為 O(n), 需要思考如何優化 (TODO)
 //
 // 2. 使用 hash table (lookup) 檢查重複創建的用戶:
 //   - 每次檢查的時間複雜度為 O(1)
@@ -42,6 +43,8 @@ func NewTreemapSinglePool() singlepool.SinglePool {
 // AddSinglePersonAndMatch 加入新用戶且根據配對規則進行配對與更新用戶狀態
 //
 // @param user 用戶資訊
+//
+// @return e.Code 執行結果狀態碼
 func (s *singlePool) AddSinglePersonAndMatch(user *model.User) e.CODE {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -52,7 +55,7 @@ func (s *singlePool) AddSinglePersonAndMatch(user *model.User) e.CODE {
 
 	user.UUID = s.genHashKey(user)
 
-	if user.Gender == 1 {
+	if user.Gender == e.BOY {
 		s.match(user, s.boys, s.girls, func(a, b int) bool {
 			return a > b
 		})
@@ -68,6 +71,8 @@ func (s *singlePool) AddSinglePersonAndMatch(user *model.User) e.CODE {
 // RemoveSinglePerson 移除指定用戶
 //
 // @param name 用戶姓名
+//
+// @return e.Code 執行結果狀態碼
 func (s *singlePool) RemoveSinglePerson(name string) e.CODE {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -81,6 +86,85 @@ func (s *singlePool) RemoveSinglePerson(name string) e.CODE {
 	delete(s.lookup, name)
 
 	return e.SUCCESS
+}
+
+// QuerySinglePeople 根據查詢條件返回符合條件的用戶
+//
+// @param limit 取回的用戶數量
+//
+// @param opts 查詢條件
+//
+// @return []*model.User 符合條件的用戶
+//
+// @return e.Code 執行結果狀態碼
+func (s *singlePool) QuerySinglePeople(limit int, opts *singlepool.QueryOpts) ([]*model.User, e.CODE) {
+	result := make([]*model.User, 0, limit)
+
+	// 初始化 iterator
+	boysIt := s.boys.Iterator()
+	boyExists := false
+	if opts.Gender != e.GIRL {
+		boyExists = boysIt.Next()
+	}
+
+	girlsIt := s.girls.Iterator()
+	girlExists := false
+	if opts.Gender != e.BOY {
+		girlExists = girlsIt.Next()
+	}
+
+	// 取得符合查詢條件的用戶, 直到查詢數量已滿或遍歷完所有的用戶
+	for limit > 0 && (boyExists || girlExists) {
+		if opts.Gender != e.GIRL {
+			// 只要性別條件不是限定女生, 就需要查找男生用戶
+			// 移動 position 到符合條件的 node, 或直到 end 為止
+			for boyExists {
+				boy := boysIt.Value().(*model.User)
+				if s.validQueryOpts(boy, opts) {
+					break
+				}
+				boyExists = boysIt.Next()
+			}
+		}
+		if opts.Gender != e.BOY {
+			// 只要性別條件不是限定男生, 就需要查找女生用戶
+			// 移動 position 到符合條件的 node, 或直到 end 為止
+			for girlExists {
+				girl := girlsIt.Value().(*model.User)
+				if s.validQueryOpts(girl, opts) {
+					break
+				}
+				girlExists = girlsIt.Next()
+			}
+		}
+
+		if boyExists && girlExists {
+			// 如果同時有兩個用戶都滿足條件時, 優先取回身高較矮的用戶
+			boy := boysIt.Value().(*model.User)
+			girl := girlsIt.Value().(*model.User)
+			if boy.Height < girl.Height {
+				result = append(result, boy)
+				boyExists = boysIt.Next()
+			} else {
+				result = append(result, girl)
+				girlExists = girlsIt.Next()
+			}
+
+		} else if boyExists {
+			boy := boysIt.Value().(*model.User)
+			result = append(result, boy)
+			boyExists = boysIt.Next()
+
+		} else if girlExists {
+			girl := girlsIt.Value().(*model.User)
+			result = append(result, girl)
+			girlExists = girlsIt.Next()
+		}
+
+		limit--
+	}
+
+	return result, e.SUCCESS
 }
 
 // match 根據配對規則進行配對
@@ -123,4 +207,33 @@ func (s *singlePool) match(user *model.User, userPool, candidatePool *treemap.Ma
 // @param user 用戶資訊
 func (s *singlePool) genHashKey(user *model.User) string {
 	return fmt.Sprintf("%d-%s", user.Height, user.Name)
+}
+
+// validQueryOpts 檢查指定用戶是否完全符合查詢條件
+//
+// @param user 指定用戶
+//
+// @param opts 查詢條件
+//
+// @return bool 是否符合條件
+func (s *singlePool) validQueryOpts(user *model.User, opts *singlepool.QueryOpts) bool {
+	if opts.Name != "" && user.Name != opts.Name {
+		return false
+	}
+	if (opts.Gender == e.BOY || opts.Gender == e.GIRL) && user.Gender != opts.Gender {
+		return false
+	}
+	if opts.MinHeight != -1 && user.Height < opts.MinHeight {
+		return false
+	}
+	if opts.MaxHeight != -1 && user.Height > opts.MaxHeight {
+		return false
+	}
+	if opts.MinNumDates != -1 && user.NumDates < opts.MinNumDates {
+		return false
+	}
+	if opts.MaxNumDates != -1 && user.NumDates > opts.MaxNumDates {
+		return false
+	}
+	return true
 }
