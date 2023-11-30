@@ -11,9 +11,15 @@
     - [RESTful APIs](#restful-apis)
       - [AddSinglePersonAndMatch](#addsinglepersonandmatch)
         - [Endpoint](#endpoint)
-        - [Request Body](#request-body)
+        - [Request](#request)
+        - [Response](#response)
       - [RemoveSinglePerson](#removesingleperson)
         - [Endpoint](#endpoint-1)
+        - [Response](#response-1)
+      - [QuerySinglePeople](#querysinglepeople)
+        - [Endpoint](#endpoint-2)
+        - [Request](#request-1)
+        - [Response](#response-2)
   - [Project Layout](#project-layout)
   - [Getting Started](#getting-started)
     - [Prerequisites](#prerequisites)
@@ -90,7 +96,7 @@
 [POST] /api/v1/singles
 ```
 
-##### Request Body
+##### Request
 
 - JSON Schema
 ```json
@@ -126,6 +132,14 @@
 }
 ```
 
+##### Response
+
+- Status Code
+```
+200: 請求成功
+400: 參數錯誤
+```
+
 #### RemoveSinglePerson
 
 主動移除用戶
@@ -134,6 +148,108 @@
 
 ```
 [DELETE] /api/v1/singles/{name}
+```
+
+##### Response
+
+- Status Code
+```
+200: 請求成功
+400: 參數錯誤
+```
+
+#### QuerySinglePeople
+
+根據查詢條件返回符合條件的用戶
+
+**NOTE**: 按照身高 ASC 排序
+
+##### Endpoint
+
+```
+[GET] /api/v1/singles
+```
+
+##### Request
+
+- Params
+```
+- `name`        (string, optional): 指定用戶名稱
+- `minHeight`   (int, optional): 最小身高範圍(含), 如果不設定表示沒有最小身高限制
+- `maxHeight`   (int, optional): 最大身高範圍(含), 如果不設定表示沒有最大身高限制
+- `gender`      (int, optional): 性別 (0:女生, 1:男生), 如果不設定則部會篩選性別
+- `minNumDates` (int, optional): 最小約會次數(含), 如果不設定表示沒有最小約會次數限制
+- `maxNumDates` (int, optional): 最大約會次數(含), 如果不設定表示沒有最大約會次數限制
+- `n`           (int, optional): 返回符合結果的最大數量, 預設10筆
+```
+
+- Example
+```
+GET /api/v1/singles?n=20 : 取回任意前20筆資料
+GET /api/v1/singles?gender=1&n=20 : 取回前20筆資料男生資料
+```
+
+##### Response
+
+- Status Code
+```
+200: 請求成功
+```
+
+- JSON Schema
+```json
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "array",
+    "items": {
+        "type": "object",
+        "properties": {
+            "uuid": {
+                "type": "string"
+            },
+            "name": {
+                "type": "string"
+            },
+            "height": {
+                "type": "integer"
+            },
+            "gender": {
+                "type": "integer"
+            },
+            "numDates": {
+                "type": "integer"
+            }
+        },
+        "required": ["uuid", "name", "height", "gender", "numDates"]
+    }
+}
+```
+
+- Example
+```json
+[
+  {
+    "uuid": "188-boy",
+    "name": "boy",
+    "height": 188,
+    "gender": 1,
+    "numDates": 1
+  },
+  {
+    "uuid": "188-boy2",
+    "name": "boy2",
+    "height": 188,
+    "gender": 1,
+    "numDates": 1
+  },
+  {
+    "uuid": "188-boy3",
+    "name": "boy3",
+    "height": 188,
+    "gender": 1,
+    "numDates": 1
+  }
+]
 ```
 
 ---
