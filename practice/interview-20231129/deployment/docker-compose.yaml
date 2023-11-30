@@ -1,0 +1,22 @@
+version: '3.4'
+
+services:
+  tinderserver:
+    image: tinderserver:latest
+    container_name: "tinder-server"
+    restart: always
+    ports:
+      - 6600:6600
+    networks:
+      - network-tinderserver
+    deploy:
+      resources:
+        limits:
+          cpus: "2"
+          memory: 4G
+        reservations:
+          memory: 2G
+
+networks:
+    network-tinderserver:
+      driver: bridge
