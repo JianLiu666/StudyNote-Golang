@@ -7,7 +7,13 @@
       - [規則設計](#規則設計)
       - [定義資料集](#定義資料集)
       - [設計配對模組](#設計配對模組)
-      - [API 設計](#api-設計)
+  - [API 設計](#api-設計)
+    - [RESTful APIs](#restful-apis)
+      - [AddSinglePersonAndMatch](#addsinglepersonandmatch)
+        - [Endpoint](#endpoint)
+        - [Request Body](#request-body)
+      - [RemoveSinglePerson](#removesingleperson)
+        - [Endpoint](#endpoint-1)
   - [Project Layout](#project-layout)
   - [Getting Started](#getting-started)
 
@@ -64,15 +70,96 @@
   - Key: 以 `{身高}-{姓名}` 作為 Composite Key 處理相同身高的重複問題
   - Value: 用戶資訊
 
-#### API 設計
+---
 
-- TODO
+## API 設計
+
+### RESTful APIs
+
+#### AddSinglePersonAndMatch
+
+加入新用戶且根據**配對規則**進行配對與更新用戶狀態
+
+##### Endpoint
+
+```
+[POST] /api/v1/singles
+```
+
+##### Request Body
+
+- JSON Schema
+```json
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+        "name": {
+            "type": "string"
+        },
+        "height": {
+            "type": "integer"
+        },
+        "gender": {
+            "type": "integer"
+        },
+        "numDates": {
+            "type": "integer"
+        }
+    },
+    "required": ["name", "height", "gender", "numDates"]
+}
+
+```
+
+- Example
+```json
+{
+    "name": "jian",
+    "height": 188,
+    "gender": 1,
+    "numDates": 6,
+}
+```
+
+#### RemoveSinglePerson
+
+主動移除用戶
+
+##### Endpoint
+
+```
+[DELETE] /api/v1/singles/{name}
+```
 
 ---
 
 ## Project Layout
 
-TODO
+- 參考 [Standard Go Project Layout](https://github.com/golang-standards/project-layout)
+
+```
+Project
+ ├─ api/                # OpenAPI
+ │   ├─ router/            # router group
+ |   |   ├─ v1/               # v1 版本 APIs
+ |   |   └─ router.go         # router common interface
+ │   └─ server.go          # gin web framework
+ ├─ cmd/                # 主要應用程式進入點
+ ├─ config/             # 組態設定檔
+ ├─ model/              # Data schema
+ ├─ pkg/                # 模組化函式庫
+ │   ├─ accessor/          # 基礎建設管理模組 (e.g. config, network, storage, etc.)
+ │   ├─ config/            # 組態設定模組 (viper)
+ │   ├─ e/                 # 專案內部使用的狀態碼
+ │   └─ singlepool/        # 配對模組
+ ├─ dockerfile          #
+ ├─ go.mod              #
+ ├─ go.sum              #
+ ├─ main.go             #
+ ├─ makefile            #
+ └─ README.md           #
+```
 
 ---
 
