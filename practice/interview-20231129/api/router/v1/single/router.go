@@ -20,6 +20,7 @@ func NewSingleRouter(singlePool singlepool.SinglePool) router.Router {
 func (s *singleRouter) Init(r *gin.RouterGroup) {
 	v1 := r.Group("/v1")
 
+	v1.GET("/singles", s.QuerySinglePeople)
 	v1.POST("/singles", s.AddSinglePersonAndMatch)
 	v1.DELETE("/singles/:name", s.RemoveSinglePerson)
 }
