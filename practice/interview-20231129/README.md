@@ -16,6 +16,9 @@
         - [Endpoint](#endpoint-1)
   - [Project Layout](#project-layout)
   - [Getting Started](#getting-started)
+    - [Prerequisites](#prerequisites)
+    - [Quick install instructions](#quick-install-instructions)
+    - [Usage](#usage)
 
 ---
 
@@ -147,6 +150,7 @@ Project
  │   └─ server.go          # gin web framework
  ├─ cmd/                # 主要應用程式進入點
  ├─ config/             # 組態設定檔
+ ├─ deployment/         # 部署設定檔
  ├─ model/              # Data schema
  ├─ pkg/                # 模組化函式庫
  │   ├─ accessor/          # 基礎建設管理模組 (e.g. config, network, storage, etc.)
@@ -165,6 +169,35 @@ Project
 
 ## Getting Started
 
-TODO
+### Prerequisites
+
+- Go
+- Docker
+
+### Quick install instructions
+
+```shell
+make init
+```
+
+### Usage
+
+快速啟動 Tinder 系統
+
+```shell
+make up
+```
+
+關閉系統
+
+```shell
+make down
+```
+
+單元測試
+
+```shell
+make test
+```
 
 ---
