@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"context"
+	"interview20231129/api"
 	"interview20231129/pkg/accessor"
 	"interview20231129/pkg/singlepool/treemap"
 	"os"
@@ -30,6 +31,11 @@ func RunServerCmd(cmd *cobra.Command, args []string) error {
 	defer infra.Close(ctx)
 
 	infra.InitSinglePool(ctx, treemap.NewTreemapSinglePool())
+
+	app := api.Init(infra)
+	defer app.Shutdown(ctx)
+
+	app.Run()
 
 	stopSignal := make(chan os.Signal, 1)
 	signal.Notify(stopSignal, os.Interrupt, syscall.SIGTERM)
