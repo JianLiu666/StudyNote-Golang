@@ -61,6 +61,10 @@
     - 條件成立時扣除成交量(買賣方中較小的 quantity)，並且建立一筆交易紀錄
     - 清算完之後，清除 quantity 歸零的 orders
 
+例外狀況:
+
+ - 當市場上完全沒有任何的 limit orders，只剩下 market orders 時，會忽略所有的 market orders
+
 #### 可用性保證
 
 - 一但訂單狀態發生改變時，必須保證該更新同時寫入 Database
