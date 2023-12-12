@@ -3,10 +3,9 @@ package trading
 import (
 	"container/heap"
 	"context"
-	"encoding/json"
-	"fmt"
 	"interview20231208/model"
 	"interview20231208/pkg/e"
+	"interview20231208/pkg/rdb"
 	"interview20231208/pkg/trading"
 	"time"
 
@@ -14,17 +13,19 @@ import (
 )
 
 type tradingPool struct {
+	rdb        rdb.RDB
 	orderChan  chan *model.Order
 	buyerHeap  *CustomHeap
 	sellerHeap *CustomHeap
 }
 
-func newTradingPool() *tradingPool {
-	return NewTradingPool().(*tradingPool)
+func newTradingPool(rdb rdb.RDB) *tradingPool {
+	return NewTradingPool(rdb).(*tradingPool)
 }
 
-func NewTradingPool() trading.TradingPool {
+func NewTradingPool(rdb rdb.RDB) trading.TradingPool {
 	return &tradingPool{
+		rdb:       rdb,
 		orderChan: make(chan *model.Order, 1024),
 		buyerHeap: NewCustomHeap(func(i, j *model.Order) bool {
 			if i.Price == j.Price {
@@ -46,7 +47,7 @@ func (t *tradingPool) Enable(ctx context.Context) {
 }
 
 func (t *tradingPool) AddOrder(order *model.Order) {
-	// TODO: 確保訂單已經落地到 database
+	t.rdb.CreateOrder(context.TODO(), order)
 	t.orderChan <- order
 }
 
@@ -87,12 +88,7 @@ func (t *tradingPool) consume(order *model.Order) {
 		}
 	}
 
-	// TODO: 執行寫入 database 的 transaction
-	b, err := json.Marshal(result)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println(string(b))
+	t.rdb.UpdateOrdersAndCreateTransactionLogs(context.TODO(), result)
 }
 
 func (t *tradingPool) processLimitROD(order *model.Order) []*model.TransactionLog {
