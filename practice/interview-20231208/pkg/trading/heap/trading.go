@@ -8,8 +8,6 @@ import (
 	"interview20231208/pkg/rdb"
 	"interview20231208/pkg/trading"
 	"time"
-
-	"github.com/rs/xid"
 )
 
 type tradingPool struct {
@@ -66,7 +64,7 @@ func (t *tradingPool) schedule(ctx context.Context) {
 
 func (t *tradingPool) consume(order *model.Order) {
 	var logs []*model.TransactionLog
-	orderSet := map[string]*model.Order{}
+	orderSet := map[int]*model.Order{}
 
 	if order.OrderType == e.ORDER_LIMIT {
 		switch order.DurationType {
@@ -133,7 +131,6 @@ func (t *tradingPool) processLimitROD(order *model.Order) []*model.TransactionLo
 
 		// step.1 產生一筆新的交易紀錄
 		result = append(result, &model.TransactionLog{
-			ID:            xid.New().String(),
 			BuyerOrderID:  t.buyerHeap.Peek().ID,
 			SellerOrderID: t.sellerHeap.Peek().ID,
 			Price:         t.buyerHeap.Peek().Price,
@@ -180,7 +177,6 @@ func (t *tradingPool) processLimitFOK(order *model.Order) []*model.TransactionLo
 				candidates = append(candidates, heap.Pop(t.sellerHeap).(*model.Order))
 			} else {
 				result = append(result, &model.TransactionLog{
-					ID:            xid.New().String(),
 					BuyerOrderID:  order.ID,
 					SellerOrderID: t.sellerHeap.Peek().ID,
 					Price:         t.sellerHeap.Peek().Price,
@@ -203,7 +199,6 @@ func (t *tradingPool) processLimitFOK(order *model.Order) []*model.TransactionLo
 
 		for len(candidates) > 0 {
 			result = append(result, &model.TransactionLog{
-				ID:            xid.New().String(),
 				BuyerOrderID:  order.ID,
 				SellerOrderID: candidates[0].ID,
 				Price:         candidates[0].Price,
@@ -229,7 +224,6 @@ func (t *tradingPool) processLimitFOK(order *model.Order) []*model.TransactionLo
 				candidates = append(candidates, heap.Pop(t.buyerHeap).(*model.Order))
 			} else {
 				result = append(result, &model.TransactionLog{
-					ID:            xid.New().String(),
 					BuyerOrderID:  t.buyerHeap.Peek().ID,
 					SellerOrderID: order.ID,
 					Price:         t.buyerHeap.Peek().Price,
@@ -252,7 +246,6 @@ func (t *tradingPool) processLimitFOK(order *model.Order) []*model.TransactionLo
 
 		for len(candidates) > 0 {
 			result = append(result, &model.TransactionLog{
-				ID:            xid.New().String(),
 				BuyerOrderID:  candidates[0].ID,
 				SellerOrderID: order.ID,
 				Price:         candidates[0].Price,
@@ -287,7 +280,6 @@ func (t *tradingPool) processMarketFOK(order *model.Order) []*model.TransactionL
 		for order.Quantity > 0 {
 			// step.1 產生一筆新的交易紀錄
 			result = append(result, &model.TransactionLog{
-				ID:            xid.New().String(),
 				BuyerOrderID:  order.ID,
 				SellerOrderID: t.sellerHeap.Peek().ID,
 				Price:         t.sellerHeap.Peek().Price,
@@ -314,7 +306,6 @@ func (t *tradingPool) processMarketFOK(order *model.Order) []*model.TransactionL
 		for order.Quantity > 0 {
 			// step.1 產生一筆新的交易紀錄
 			result = append(result, &model.TransactionLog{
-				ID:            xid.New().String(),
 				BuyerOrderID:  t.buyerHeap.Peek().ID,
 				SellerOrderID: order.ID,
 				Price:         t.buyerHeap.Peek().Price,

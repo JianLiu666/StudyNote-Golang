@@ -15,5 +15,5 @@ type RDB interface {
 
 	CreateOrder(ctx context.Context, order *model.Order)
 
-	UpdateOrdersAndCreateTransactionLogs(ctx context.Context, orders map[string]*model.Order, logs []*model.TransactionLog)
+	UpdateOrdersAndCreateTransactionLogs(ctx context.Context, orders map[int]*model.Order, logs []*model.TransactionLog)
 }

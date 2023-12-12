@@ -16,7 +16,7 @@ func TestAddOrder_RODvsROD(t *testing.T) {
 	src_ordersIdx := 0
 	src_orders := []*model.Order{
 		{
-			ID:           "1",
+			ID:           1,
 			UserID:       1,
 			RoleType:     e.ROLE_BUYER,
 			OrderType:    e.ORDER_LIMIT,
@@ -27,7 +27,7 @@ func TestAddOrder_RODvsROD(t *testing.T) {
 			Timestamp:    int(time.Now().Unix()),
 		},
 		{
-			ID:           "2",
+			ID:           2,
 			UserID:       2,
 			RoleType:     e.ROLE_SELLER,
 			OrderType:    e.ORDER_LIMIT,
@@ -44,9 +44,9 @@ func TestAddOrder_RODvsROD(t *testing.T) {
 	dst_transactionLogs[0] = make([]*model.TransactionLog, 0)
 	dst_transactionLogs[1] = []*model.TransactionLog{
 		{
-			ID:            "",
-			BuyerOrderID:  "1",
-			SellerOrderID: "2",
+			ID:            0,
+			BuyerOrderID:  1,
+			SellerOrderID: 2,
 			Price:         100,
 			Quantity:      30,
 			Timestamp:     0,
@@ -59,9 +59,9 @@ func TestAddOrder_RODvsROD(t *testing.T) {
 		assert.DeepEqual(t, src_orders[src_ordersIdx], order)
 		src_ordersIdx++
 	})
-	mockrdb.SetUpdateOrdersAndCreateTransactionLogs(func(ctx context.Context, orders map[string]*model.Order, logs []*model.TransactionLog) {
+	mockrdb.SetUpdateOrdersAndCreateTransactionLogs(func(ctx context.Context, orders map[int]*model.Order, logs []*model.TransactionLog) {
 		for i, dst := range dst_transactionLogs[dst_transactionLogsIdx] {
-			logs[i].ID = ""
+			logs[i].ID = 0
 			logs[i].Timestamp = 0
 			assert.DeepEqual(t, dst, logs[i])
 		}
