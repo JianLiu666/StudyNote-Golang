@@ -31,6 +31,6 @@ CREATE TABLE `transactionLogs` (
     
     PRIMARY KEY (`id`),
     UNIQUE KEY `buyerOrderId` (`buyerOrderId`),
-    UNIQUE KEY `sellerOrderId` (`sellerOrderId`),
+    UNIQUE KEY `sellerOrderId` (`sellerOrderId`)
 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='成交紀錄';
