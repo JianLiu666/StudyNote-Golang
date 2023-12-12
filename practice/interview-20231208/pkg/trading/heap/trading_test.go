@@ -59,7 +59,7 @@ func TestAddOrder_RODvsROD(t *testing.T) {
 		assert.DeepEqual(t, src_orders[src_ordersIdx], order)
 		src_ordersIdx++
 	})
-	mockrdb.SetUpdateOrdersAndCreateTransactionLogs(func(ctx context.Context, logs []*model.TransactionLog) {
+	mockrdb.SetUpdateOrdersAndCreateTransactionLogs(func(ctx context.Context, orders map[string]*model.Order, logs []*model.TransactionLog) {
 		for i, dst := range dst_transactionLogs[dst_transactionLogsIdx] {
 			logs[i].UUID = ""
 			logs[i].Timestamp = 0

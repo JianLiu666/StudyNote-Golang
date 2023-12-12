@@ -65,16 +65,17 @@ func (t *tradingPool) schedule(ctx context.Context) {
 }
 
 func (t *tradingPool) consume(order *model.Order) {
-	var result []*model.TransactionLog
+	var logs []*model.TransactionLog
+	orderSet := map[string]*model.Order{}
 
 	if order.OrderType == e.ORDER_LIMIT {
 		switch order.DurationType {
 		case e.DURATION_ROD:
-			result = t.processLimitROD(order)
+			logs = t.processLimitROD(order)
 		case e.DURATION_IOC:
 			t.processLimitIOC(order)
 		case e.DURATION_FOK:
-			result = t.processLimitFOK(order)
+			logs = t.processLimitFOK(order)
 		}
 
 	} else if order.OrderType == e.ORDER_MARKET {
@@ -84,11 +85,37 @@ func (t *tradingPool) consume(order *model.Order) {
 		case e.DURATION_IOC:
 			t.processMarketIOC(order)
 		case e.DURATION_FOK:
-			result = t.processMarketFOK(order)
+			logs = t.processMarketFOK(order)
 		}
 	}
 
-	t.rdb.UpdateOrdersAndCreateTransactionLogs(context.TODO(), result)
+	// 如果期限是 ROD 的交易單, 即使沒有撮合成功也不需要更新交易單的狀態
+	if len(logs) == 0 && order.DurationType == e.DURATION_ROD {
+		return
+	}
+
+	// 期限是 IOC/FOK 的交易單, 根據是否有撮合成功來決定如何更新 order 狀態
+	if len(logs) == 0 {
+		orderSet[order.UUID] = &model.Order{
+			UUID:   order.UUID,
+			Status: e.STATUS_CANCEL,
+		}
+		order.Status = e.STATUS_CANCEL
+
+	} else {
+		for _, log := range logs {
+			orderSet[log.BuyerOrderID] = &model.Order{
+				UUID:   log.BuyerOrderID,
+				Status: e.STATUS_SUCCESS,
+			}
+			orderSet[log.SellerOrderID] = &model.Order{
+				UUID:   log.SellerOrderID,
+				Status: e.STATUS_SUCCESS,
+			}
+		}
+	}
+
+	t.rdb.UpdateOrdersAndCreateTransactionLogs(context.TODO(), orderSet, logs)
 }
 
 func (t *tradingPool) processLimitROD(order *model.Order) []*model.TransactionLog {
