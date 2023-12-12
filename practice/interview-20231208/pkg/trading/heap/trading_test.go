@@ -24,7 +24,7 @@ func TestAddOrder_RODvsROD(t *testing.T) {
 			Price:        100,
 			Quantity:     100,
 			Status:       e.STATUS_PENDING,
-			Timestamp:    int(time.Now().Unix()),
+			Timestamp:    time.Now(),
 		},
 		{
 			ID:           2,
@@ -35,7 +35,7 @@ func TestAddOrder_RODvsROD(t *testing.T) {
 			Price:        100,
 			Quantity:     30,
 			Status:       e.STATUS_PENDING,
-			Timestamp:    int(time.Now().Unix()),
+			Timestamp:    time.Now(),
 		},
 	}
 
@@ -49,7 +49,7 @@ func TestAddOrder_RODvsROD(t *testing.T) {
 			SellerOrderID: 2,
 			Price:         100,
 			Quantity:      30,
-			Timestamp:     0,
+			Timestamp:     time.Now(),
 		},
 	}
 
@@ -62,7 +62,7 @@ func TestAddOrder_RODvsROD(t *testing.T) {
 	mockrdb.SetUpdateOrdersAndCreateTransactionLogs(func(ctx context.Context, orders map[int]*model.Order, logs []*model.TransactionLog) {
 		for i, dst := range dst_transactionLogs[dst_transactionLogsIdx] {
 			logs[i].ID = 0
-			logs[i].Timestamp = 0
+			logs[i].Timestamp = time.Now()
 			assert.DeepEqual(t, dst, logs[i])
 		}
 		dst_transactionLogsIdx++

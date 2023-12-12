@@ -27,13 +27,13 @@ func NewTradingPool(rdb rdb.RDB) trading.TradingPool {
 		orderChan: make(chan *model.Order, 1024),
 		buyerHeap: NewCustomHeap(func(i, j *model.Order) bool {
 			if i.Price == j.Price {
-				return i.Timestamp < j.Timestamp
+				return i.Timestamp.Unix() < j.Timestamp.Unix()
 			}
 			return i.Price > j.Price
 		}),
 		sellerHeap: NewCustomHeap(func(i, j *model.Order) bool {
 			if i.Price == j.Price {
-				return i.Timestamp < j.Timestamp
+				return i.Timestamp.Unix() < j.Timestamp.Unix()
 			}
 			return i.Price < j.Price
 		}),
@@ -135,7 +135,7 @@ func (t *tradingPool) processLimitROD(order *model.Order) []*model.TransactionLo
 			SellerOrderID: t.sellerHeap.Peek().ID,
 			Price:         t.buyerHeap.Peek().Price,
 			Quantity:      min(t.buyerHeap.Peek().Quantity, t.sellerHeap.Peek().Quantity),
-			Timestamp:     int(time.Now().Unix()),
+			Timestamp:     time.Now(),
 		})
 
 		// step.2 根據買賣方的 quantity 決定如何更新 PQ
@@ -181,7 +181,7 @@ func (t *tradingPool) processLimitFOK(order *model.Order) []*model.TransactionLo
 					SellerOrderID: t.sellerHeap.Peek().ID,
 					Price:         t.sellerHeap.Peek().Price,
 					Quantity:      order.Quantity,
-					Timestamp:     int(time.Now().Unix()), // FIXME: 這邊可能存在最後一筆交易紀錄的時間早於其他交易紀錄的問題
+					Timestamp:     time.Now(), // FIXME: 這邊可能存在最後一筆交易紀錄的時間早於其他交易紀錄的問題
 				})
 				t.sellerHeap.Peek().Quantity -= order.Quantity
 				order.Quantity = 0
@@ -203,7 +203,7 @@ func (t *tradingPool) processLimitFOK(order *model.Order) []*model.TransactionLo
 				SellerOrderID: candidates[0].ID,
 				Price:         candidates[0].Price,
 				Quantity:      candidates[0].Quantity,
-				Timestamp:     int(time.Now().Unix()),
+				Timestamp:     time.Now(),
 			})
 			candidates = candidates[1:]
 		}
@@ -228,7 +228,7 @@ func (t *tradingPool) processLimitFOK(order *model.Order) []*model.TransactionLo
 					SellerOrderID: order.ID,
 					Price:         t.buyerHeap.Peek().Price,
 					Quantity:      order.Quantity,
-					Timestamp:     int(time.Now().Unix()), // FIXME: 這邊可能存在最後一筆交易紀錄的時間早於其他交易紀錄的問題
+					Timestamp:     time.Now(), // FIXME: 這邊可能存在最後一筆交易紀錄的時間早於其他交易紀錄的問題
 				})
 				t.buyerHeap.Peek().Quantity -= order.Quantity
 				order.Quantity = 0
@@ -250,7 +250,7 @@ func (t *tradingPool) processLimitFOK(order *model.Order) []*model.TransactionLo
 				SellerOrderID: order.ID,
 				Price:         candidates[0].Price,
 				Quantity:      candidates[0].Quantity,
-				Timestamp:     int(time.Now().Unix()),
+				Timestamp:     time.Now(),
 			})
 			candidates = candidates[1:]
 		}
@@ -284,7 +284,7 @@ func (t *tradingPool) processMarketFOK(order *model.Order) []*model.TransactionL
 				SellerOrderID: t.sellerHeap.Peek().ID,
 				Price:         t.sellerHeap.Peek().Price,
 				Quantity:      min(order.Quantity, t.sellerHeap.Peek().Quantity),
-				Timestamp:     int(time.Now().Unix()),
+				Timestamp:     time.Now(),
 			})
 
 			// step.2 根據 quantity 決定如何更新賣方的 PQ
@@ -310,7 +310,7 @@ func (t *tradingPool) processMarketFOK(order *model.Order) []*model.TransactionL
 				SellerOrderID: order.ID,
 				Price:         t.buyerHeap.Peek().Price,
 				Quantity:      min(order.Quantity, t.buyerHeap.Peek().Quantity),
-				Timestamp:     int(time.Now().Unix()),
+				Timestamp:     time.Now(),
 			})
 
 			// step.2 根據 quantity 決定如何更新買方的 PQ

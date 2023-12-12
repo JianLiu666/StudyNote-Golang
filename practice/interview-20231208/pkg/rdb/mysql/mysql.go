@@ -3,6 +3,7 @@ package mysql
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"interview20231208/model"
 	"interview20231208/pkg/rdb"
 	"time"
@@ -10,6 +11,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type mysqlClient struct {
@@ -45,7 +47,9 @@ func (c *mysqlClient) Shutdown(ctx context.Context) {
 }
 
 func (c *mysqlClient) CreateOrder(ctx context.Context, order *model.Order) {
-	// TODO
+	fmt.Println(order.ID)
+	c.gormDB.WithContext(ctx).Table(rdb.TbOrders).Clauses(clause.OnConflict{UpdateAll: true}).Create(&order)
+	fmt.Println(order.ID)
 }
 
 func (c *mysqlClient) UpdateOrdersAndCreateTransactionLogs(ctx context.Context, orders map[int]*model.Order, logs []*model.TransactionLog) {
