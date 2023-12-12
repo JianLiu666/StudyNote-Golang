@@ -46,6 +46,7 @@ func (t *tradingPool) Enable(ctx context.Context) {
 }
 
 func (t *tradingPool) AddOrder(order *model.Order) {
+	// TODO: 確保訂單已經落地到 database
 	t.orderChan <- order
 }
 
@@ -86,7 +87,7 @@ func (t *tradingPool) consume(order *model.Order) {
 		}
 	}
 
-	// TODO
+	// TODO: 執行寫入 database 的 transaction
 	b, err := json.Marshal(result)
 	if err != nil {
 		panic(err)
