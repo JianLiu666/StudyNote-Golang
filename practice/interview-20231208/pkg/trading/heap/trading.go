@@ -96,8 +96,8 @@ func (t *tradingPool) consume(order *model.Order) {
 
 	// 期限是 IOC/FOK 的交易單, 根據是否有撮合成功來決定如何更新 order 狀態
 	if len(logs) == 0 {
-		orderSet[order.UUID] = &model.Order{
-			UUID:   order.UUID,
+		orderSet[order.ID] = &model.Order{
+			ID:     order.ID,
 			Status: e.STATUS_CANCEL,
 		}
 		order.Status = e.STATUS_CANCEL
@@ -105,11 +105,11 @@ func (t *tradingPool) consume(order *model.Order) {
 	} else {
 		for _, log := range logs {
 			orderSet[log.BuyerOrderID] = &model.Order{
-				UUID:   log.BuyerOrderID,
+				ID:     log.BuyerOrderID,
 				Status: e.STATUS_SUCCESS,
 			}
 			orderSet[log.SellerOrderID] = &model.Order{
-				UUID:   log.SellerOrderID,
+				ID:     log.SellerOrderID,
 				Status: e.STATUS_SUCCESS,
 			}
 		}
@@ -133,9 +133,9 @@ func (t *tradingPool) processLimitROD(order *model.Order) []*model.TransactionLo
 
 		// step.1 產生一筆新的交易紀錄
 		result = append(result, &model.TransactionLog{
-			UUID:          xid.New().String(),
-			BuyerOrderID:  t.buyerHeap.Peek().UUID,
-			SellerOrderID: t.sellerHeap.Peek().UUID,
+			ID:            xid.New().String(),
+			BuyerOrderID:  t.buyerHeap.Peek().ID,
+			SellerOrderID: t.sellerHeap.Peek().ID,
 			Price:         t.buyerHeap.Peek().Price,
 			Quantity:      min(t.buyerHeap.Peek().Quantity, t.sellerHeap.Peek().Quantity),
 			Timestamp:     int(time.Now().Unix()),
@@ -180,9 +180,9 @@ func (t *tradingPool) processLimitFOK(order *model.Order) []*model.TransactionLo
 				candidates = append(candidates, heap.Pop(t.sellerHeap).(*model.Order))
 			} else {
 				result = append(result, &model.TransactionLog{
-					UUID:          xid.New().String(),
-					BuyerOrderID:  order.UUID,
-					SellerOrderID: t.sellerHeap.Peek().UUID,
+					ID:            xid.New().String(),
+					BuyerOrderID:  order.ID,
+					SellerOrderID: t.sellerHeap.Peek().ID,
 					Price:         t.sellerHeap.Peek().Price,
 					Quantity:      order.Quantity,
 					Timestamp:     int(time.Now().Unix()), // FIXME: 這邊可能存在最後一筆交易紀錄的時間早於其他交易紀錄的問題
@@ -203,9 +203,9 @@ func (t *tradingPool) processLimitFOK(order *model.Order) []*model.TransactionLo
 
 		for len(candidates) > 0 {
 			result = append(result, &model.TransactionLog{
-				UUID:          xid.New().String(),
-				BuyerOrderID:  order.UUID,
-				SellerOrderID: candidates[0].UUID,
+				ID:            xid.New().String(),
+				BuyerOrderID:  order.ID,
+				SellerOrderID: candidates[0].ID,
 				Price:         candidates[0].Price,
 				Quantity:      candidates[0].Quantity,
 				Timestamp:     int(time.Now().Unix()),
@@ -229,9 +229,9 @@ func (t *tradingPool) processLimitFOK(order *model.Order) []*model.TransactionLo
 				candidates = append(candidates, heap.Pop(t.buyerHeap).(*model.Order))
 			} else {
 				result = append(result, &model.TransactionLog{
-					UUID:          xid.New().String(),
-					BuyerOrderID:  t.buyerHeap.Peek().UUID,
-					SellerOrderID: order.UUID,
+					ID:            xid.New().String(),
+					BuyerOrderID:  t.buyerHeap.Peek().ID,
+					SellerOrderID: order.ID,
 					Price:         t.buyerHeap.Peek().Price,
 					Quantity:      order.Quantity,
 					Timestamp:     int(time.Now().Unix()), // FIXME: 這邊可能存在最後一筆交易紀錄的時間早於其他交易紀錄的問題
@@ -252,9 +252,9 @@ func (t *tradingPool) processLimitFOK(order *model.Order) []*model.TransactionLo
 
 		for len(candidates) > 0 {
 			result = append(result, &model.TransactionLog{
-				UUID:          xid.New().String(),
-				BuyerOrderID:  candidates[0].UUID,
-				SellerOrderID: order.UUID,
+				ID:            xid.New().String(),
+				BuyerOrderID:  candidates[0].ID,
+				SellerOrderID: order.ID,
 				Price:         candidates[0].Price,
 				Quantity:      candidates[0].Quantity,
 				Timestamp:     int(time.Now().Unix()),
@@ -287,9 +287,9 @@ func (t *tradingPool) processMarketFOK(order *model.Order) []*model.TransactionL
 		for order.Quantity > 0 {
 			// step.1 產生一筆新的交易紀錄
 			result = append(result, &model.TransactionLog{
-				UUID:          xid.New().String(),
-				BuyerOrderID:  order.UUID,
-				SellerOrderID: t.sellerHeap.Peek().UUID,
+				ID:            xid.New().String(),
+				BuyerOrderID:  order.ID,
+				SellerOrderID: t.sellerHeap.Peek().ID,
 				Price:         t.sellerHeap.Peek().Price,
 				Quantity:      min(order.Quantity, t.sellerHeap.Peek().Quantity),
 				Timestamp:     int(time.Now().Unix()),
@@ -314,9 +314,9 @@ func (t *tradingPool) processMarketFOK(order *model.Order) []*model.TransactionL
 		for order.Quantity > 0 {
 			// step.1 產生一筆新的交易紀錄
 			result = append(result, &model.TransactionLog{
-				UUID:          xid.New().String(),
-				BuyerOrderID:  t.buyerHeap.Peek().UUID,
-				SellerOrderID: order.UUID,
+				ID:            xid.New().String(),
+				BuyerOrderID:  t.buyerHeap.Peek().ID,
+				SellerOrderID: order.ID,
 				Price:         t.buyerHeap.Peek().Price,
 				Quantity:      min(order.Quantity, t.buyerHeap.Peek().Quantity),
 				Timestamp:     int(time.Now().Unix()),
