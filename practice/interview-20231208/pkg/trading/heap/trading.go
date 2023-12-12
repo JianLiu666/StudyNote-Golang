@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"interview20231208/model"
 	"interview20231208/pkg/e"
+	"interview20231208/pkg/trading"
 	"time"
 
 	"github.com/rs/xid"
@@ -18,7 +19,11 @@ type tradingPool struct {
 	sellerHeap *CustomHeap
 }
 
-func NewTradingPool() *tradingPool {
+func newTradingPool() *tradingPool {
+	return NewTradingPool().(*tradingPool)
+}
+
+func NewTradingPool() trading.TradingPool {
 	return &tradingPool{
 		orderChan: make(chan *model.Order, 1024),
 		buyerHeap: NewCustomHeap(func(i, j *model.Order) bool {

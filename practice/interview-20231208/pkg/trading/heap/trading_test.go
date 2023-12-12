@@ -11,7 +11,7 @@ import (
 )
 
 func TestAddOrder_RODvsROD(t *testing.T) {
-	pool := NewTradingPool()
+	pool := newTradingPool()
 	pool.Enable(context.Background())
 
 	pool.AddOrder(&model.Order{
