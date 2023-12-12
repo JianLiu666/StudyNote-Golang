@@ -3,8 +3,9 @@ package trading
 import "interview20231208/model"
 
 type CustomHeap struct {
-	orders   []*model.Order
-	compFunc func(i, j *model.Order) bool
+	quantites int
+	orders    []*model.Order
+	compFunc  func(i, j *model.Order) bool
 }
 
 func NewCustomHeap(f func(i, j *model.Order) bool) *CustomHeap {
@@ -12,6 +13,10 @@ func NewCustomHeap(f func(i, j *model.Order) bool) *CustomHeap {
 		orders:   make([]*model.Order, 0),
 		compFunc: f,
 	}
+}
+
+func (h *CustomHeap) TotalQuantity() int {
+	return h.quantites
 }
 
 func (h *CustomHeap) Peek() *model.Order {
@@ -31,10 +36,13 @@ func (h *CustomHeap) Less(i, j int) bool {
 }
 
 func (h *CustomHeap) Push(v any) {
-	h.orders = append(h.orders, v.(*model.Order))
+	e := v.(*model.Order)
+	h.orders = append(h.orders, e)
+	h.quantites += e.Quantity
 }
 
 func (h *CustomHeap) Pop() (v any) {
+	h.quantites -= h.orders[h.Len()-1].Quantity
 	v, h.orders = h.orders[h.Len()-1], h.orders[:h.Len()-1]
 	return
 }

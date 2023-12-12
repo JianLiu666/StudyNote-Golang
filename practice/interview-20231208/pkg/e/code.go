@@ -21,3 +21,11 @@ const (
 	DURATION_IOC        // 立即成交否則取消 (Immediate or Cancel)
 	DURATION_FOK        // 立即全部成交否則取消 (Fill or Kill)
 )
+
+type ORDER_STATUS int
+
+const (
+	STATUS_PENDING = iota
+	STATUS_CANCEL
+	STATUS_SUCCESS
+)
