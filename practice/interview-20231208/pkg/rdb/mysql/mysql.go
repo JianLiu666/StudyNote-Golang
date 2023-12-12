@@ -48,6 +48,6 @@ func (c *mysqlClient) CreateOrder(ctx context.Context, order *model.Order) {
 	// TODO
 }
 
-func (c *mysqlClient) UpdateOrdersAndCreateTransactionLogs(ctx context.Context, logs []*model.TransactionLog) {
+func (c *mysqlClient) UpdateOrdersAndCreateTransactionLogs(ctx context.Context, orders map[string]*model.Order, logs []*model.TransactionLog) {
 	// TODO
 }
