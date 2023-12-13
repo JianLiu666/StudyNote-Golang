@@ -13,8 +13,7 @@ CREATE TABLE `orders` (
     `status`       TINYINT UNSIGNED NOT NULL                COMMENT '交易單狀態',
     `timestamp`    DATETIME         NOT NULL                COMMENT '交易單時間戳',
     
-    PRIMARY KEY (`id`),
-    UNIQUE KEY `userId` (`userId`)
+    PRIMARY KEY (`id`)
 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='交易單';
 
@@ -27,10 +26,8 @@ CREATE TABLE `transactionLogs` (
     `sellerOrderId` INT UNSIGNED NOT NULL                COMMENT '賣方唯一識別罵',
     `price`         INT UNSIGNED NOT NULL                COMMENT '成交價格',
     `quantity`      INT UNSIGNED NOT NULL                COMMENT '成交數量',
-    `timstamp`      INT UNSIGNED NOT NULL                COMMENT '成交時間戳',
+    `timstamp`      DATETIME     NOT NULL                COMMENT '成交時間戳',
     
-    PRIMARY KEY (`id`),
-    UNIQUE KEY `buyerOrderId` (`buyerOrderId`),
-    UNIQUE KEY `sellerOrderId` (`sellerOrderId`)
+    PRIMARY KEY (`id`)
 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='成交紀錄';
