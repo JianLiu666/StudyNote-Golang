@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"context"
+	"interview20231208/api"
 	"interview20231208/pkg/accessor"
 	trading "interview20231208/pkg/trading/heap"
 	"os"
@@ -31,6 +32,11 @@ func RunServerCmd(cmd *cobra.Command, args []string) error {
 
 	infra.InitRDB(ctx)
 	infra.InitTradingPool(ctx, trading.NewTradingPool(infra.RDB))
+
+	app := api.Init(infra)
+	defer app.Shutdown(ctx)
+
+	app.Run()
 
 	stopSignal := make(chan os.Signal, 1)
 	signal.Notify(stopSignal, os.Interrupt, syscall.SIGTERM)
