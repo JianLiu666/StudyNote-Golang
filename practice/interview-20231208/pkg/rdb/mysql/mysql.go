@@ -3,7 +3,6 @@ package mysql
 import (
 	"context"
 	"database/sql"
-	"fmt"
 	"interview20231208/model"
 	"interview20231208/pkg/rdb"
 	"time"
@@ -11,7 +10,6 @@ import (
 	"github.com/sirupsen/logrus"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	"gorm.io/gorm/clause"
 )
 
 type mysqlClient struct {
@@ -47,11 +45,23 @@ func (c *mysqlClient) Shutdown(ctx context.Context) {
 }
 
 func (c *mysqlClient) CreateOrder(ctx context.Context, order *model.Order) {
-	fmt.Println(order.ID)
-	c.gormDB.WithContext(ctx).Table(rdb.TbOrders).Clauses(clause.OnConflict{UpdateAll: true}).Create(&order)
-	fmt.Println(order.ID)
+	c.gormDB.WithContext(ctx).Table(rdb.TbOrders).Create(order)
 }
 
 func (c *mysqlClient) UpdateOrdersAndCreateTransactionLogs(ctx context.Context, orders map[int]*model.Order, logs []*model.TransactionLog) {
-	// TODO
+	c.gormDB.Transaction(func(tx *gorm.DB) error {
+		for _, order := range orders {
+			if err := tx.Table(rdb.TbOrders).Where("id = ?", order.ID).Update("status", order.Status).Error; err != nil {
+				return err
+			}
+		}
+
+		for _, log := range logs {
+			if err := tx.Table(rdb.TbTransactionLogs).Create(log).Error; err != nil {
+				return err
+			}
+		}
+
+		return nil
+	})
 }
