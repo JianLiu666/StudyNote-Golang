@@ -44,9 +44,11 @@ func (t *tradingPool) Enable(ctx context.Context) {
 	go t.schedule(ctx)
 }
 
-func (t *tradingPool) AddOrder(order *model.Order) {
+func (t *tradingPool) AddOrder(order *model.Order) e.CODE {
 	t.rdb.CreateOrder(context.TODO(), order)
 	t.orderChan <- order
+
+	return e.SUCCESS
 }
 
 func (t *tradingPool) schedule(ctx context.Context) {
