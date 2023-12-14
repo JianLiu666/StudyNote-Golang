@@ -52,18 +52,12 @@ func (t *tradingPool) AddOrder(order *model.Order) e.CODE {
 }
 
 func (t *tradingPool) GetOrders(limit int, opts *model.OrderQueryOpts) ([]*model.Order, e.CODE) {
-	result := []*model.Order{}
-
-	// TODO
-
+	result := t.rdb.GetOrders(context.TODO(), opts)
 	return result, e.SUCCESS
 }
 
 func (t *tradingPool) GetTransactionLogs(limit int, opts *model.TransactionLogQueryOpts) ([]*model.TransactionLog, e.CODE) {
-	result := []*model.TransactionLog{}
-
-	// TODO
-
+	result := t.rdb.GetTransactionLogs(context.TODO(), opts)
 	return result, e.SUCCESS
 }
 
