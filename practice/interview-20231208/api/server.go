@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"interview20231208/api/router/v1/order"
 	"interview20231208/pkg/accessor"
 	"net/http"
 
@@ -19,7 +20,8 @@ func Init(infra *accessor.Accessor) *server {
 
 	router.GET("/ping", func(c *gin.Context) { c.String(http.StatusOK, "pong") })
 
-	// api := router.Group("/api")
+	api := router.Group("/api")
+	order.NewOrderRouter(infra.TradingPool).Init(api)
 
 	app := &http.Server{
 		Addr:    infra.Config.Server.Port,
