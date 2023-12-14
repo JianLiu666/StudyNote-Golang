@@ -74,7 +74,7 @@ func (c *mysqlClient) GetOrders(ctx context.Context, opts *model.OrderQueryOpts)
 
 	tx := c.gormDB.Table(rdb.TbOrders).Select("*")
 
-	if opts.UserID != -1 {
+	if opts.UserID != e.UNDIFIED_USERID {
 		tx = tx.Where("userId = ?", opts.UserID)
 	}
 	if opts.Status != e.STATUS_PLACEHOLDER {
@@ -97,10 +97,10 @@ func (c *mysqlClient) GetTransactionLogs(ctx context.Context, opts *model.Transa
 
 	tx := c.gormDB.Table(rdb.TbTransactionLogs).Select("*")
 
-	if opts.BuyerOrderID != -1 {
+	if opts.BuyerOrderID != e.UNDIFIED_USERID {
 		tx = tx.Where("buyerOrderId = ?", opts.BuyerOrderID)
 	}
-	if opts.SellerOrderID != -1 {
+	if opts.SellerOrderID != e.UNDIFIED_USERID {
 		tx = tx.Where("sellerOrderId = ?", opts.SellerOrderID)
 	}
 	if !opts.StartTimestamp.IsZero() && !opts.EndTimestamp.IsZero() && opts.StartTimestamp.Unix() <= opts.EndTimestamp.Unix() {

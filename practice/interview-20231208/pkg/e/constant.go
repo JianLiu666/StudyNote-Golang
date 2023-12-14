@@ -1,5 +1,7 @@
 package e
 
+const UNDIFIED_USERID = -1
+
 type ROLE_TYPE int // 交易角色
 
 const (
