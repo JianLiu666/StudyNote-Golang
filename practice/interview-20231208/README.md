@@ -171,6 +171,17 @@
 
 - Params
 ```
+- `userId`         (int, optional): 指定用戶名稱
+- `status`         (int, optional): 指定交易單狀態(0:掛單中, 1:已取消, 2:已完成)
+- `startTimestamp` (timestamp, optional): 開始時間
+- `endTimestamp`   (timestamp, optional): 結束時間
+- `limit`          (int, optional): 查詢筆數上限
+```
+
+- Example
+```
+curl -X GET http://localhost:6600/api/v1/orders: 取回所有交易單
+curl -X GET http://localhost:6600/api/v1/orders?userId=1: 取回用戶識別碼為 1 的所有交易單
 ```
 
 ##### Response
@@ -179,14 +190,87 @@
 ```
 200: 請求成功
 400: 參數錯誤
+500: 系統錯誤
 ```
 
 - JSON Schema
 ```json
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "array",
+    "items": {
+        "type": "object",
+        "properties": {
+            "id": {
+                "type": "integer",
+                "description": "交易單唯一識別碼"
+            },
+            "userId": {
+                "type": "integer",
+                "description": "用戶唯一識別碼"
+            },
+            "roleType": {
+                "type": "integer",
+                "description": "掛單角色 (0:買方, 1:賣方)"
+            },
+            "orderType": {
+                "type": "integer",
+                "description": "交易單類型 (0:市價單, 1:限價單)"
+            },
+            "durationType": {
+                "type": "integer",
+                "description": "交易單期限 (0:ROD, 1:IOC, 2:FOK)"
+            },
+            "price": {
+                "type": "integer",
+                "description": "交易單價格"
+            },
+            "quantity": {
+                "type": "integer",
+                "description": "交易單數量"
+            },
+            "status": {
+                "type": "integer",
+                "description": "交易單狀態 (0:掛單中, 1:已取消, 2:已完成)"
+            },
+            "timestamp": {
+                "type": "string",
+                "format": "date-time",
+                "description": "交易單時間戳"
+            }
+        },
+        "required": ["id", "userId", "roleType", "orderType", "durationType", "price", "quantity", "status", "timestamp"]
+    }
+}
+****
 ```
 
 - Example
 ```json
+[
+  {
+    "id": 1,
+    "userId": 1,
+    "roleType": 0,
+    "orderType": 1,
+    "durationType": 0,
+    "price": 100,
+    "quantity": 100,
+    "status": 0,
+    "timestamp": "2023-12-14T23:38:39+08:00"
+  },
+  {
+    "id": 2,
+    "userId": 1,
+    "roleType": 0,
+    "orderType": 1,
+    "durationType": 0,
+    "price": 100,
+    "quantity": 100,
+    "status": 0,
+    "timestamp": "2023-12-14T23:38:42+08:00"
+  }
+]
 ```
 
 #### Get Transaction Log by filters
@@ -203,6 +287,17 @@
 
 - Params
 ```
+- `buyerOrderId`   (int, optional): 指定買方交易單唯一識別碼
+- `sellerOrderId`  (int, optional): 指定賣方交易單唯一識別碼
+- `startTimestamp` (timestamp, optional): 開始時間
+- `endTimestamp`   (timestamp, optional): 結束時間
+- `limit`          (int, optional): 查詢筆數上限
+```
+
+- Example
+```
+curl -X GET http://localhost:6600/api/v1/transactions: 取回所有交易單
+curl -X GET http://localhost:6600/api/v1/transactions?buyerOrderId=1: 取回買方交易單唯一識別碼為 1 的所有交易單
 ```
 
 ##### Response
@@ -211,14 +306,69 @@
 ```
 200: 請求成功
 400: 參數錯誤
+500: 系統錯誤
 ```
 
 - JSON Schema
 ```json
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "array",
+    "items": {
+        "type": "object",
+        "properties": {
+            "id": {
+                "type": "integer",
+                "description": "成交紀錄唯一識別碼"
+            },
+            "buyerOrderId": {
+                "type": "integer",
+                "description": "買方交易單唯一識別碼"
+            },
+            "sellerOrderId": {
+                "type": "integer",
+                "description": "賣方交易單唯一識別碼"
+            },
+            "price": {
+                "type": "integer",
+                "description": "成交價格"
+            },
+            "quantity": {
+                "type": "integer",
+                "description": "成交數量"
+            },
+            "timestamp": {
+                "type": "string",
+                "format": "date-time",
+                "description": "成交時間戳"
+            }
+        },
+        "required": ["id", "buyerOrderId", "sellerOrderId", "price", "quantity", "timestamp"]
+    }
+}
+
 ```
 
 - Example
 ```json
+[
+  {
+    "id": 1,
+    "buyerOrderId": 4,
+    "sellerOrderId": 3,
+    "price": 100,
+    "quantity": 100,
+    "timstamp": "2023-12-14T23:45:02+08:00"
+  },
+  {
+    "id": 2,
+    "buyerOrderId": 5,
+    "sellerOrderId": 6,
+    "price": 100,
+    "quantity": 100,
+    "timstamp": "2023-12-15T00:00:59+08:00"
+  }
+]
 ```
 
 ---
