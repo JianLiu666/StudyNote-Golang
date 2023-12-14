@@ -24,6 +24,7 @@
         - [Response](#response-2)
   - [Project Layout](#project-layout)
   - [Getting Started](#getting-started)
+  - [TODOs](#todos)
 
 ---
 
@@ -237,3 +238,13 @@ Trading System
 ## Getting Started
 
 TODO
+
+---
+
+## TODOs
+
+- Features
+  - [ ] 淘汰已經過期的 ROD orders
+- Availability
+  - [ ] Server Crash Recovery Mechanism
+    - 從 MySQL 中恢復掛單中的 orders
