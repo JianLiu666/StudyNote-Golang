@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"interview20231208/api/router/v1/order"
+	"interview20231208/api/router/v1/transaction"
 	"interview20231208/pkg/accessor"
 	"net/http"
 
@@ -22,6 +23,7 @@ func Init(infra *accessor.Accessor) *server {
 
 	api := router.Group("/api")
 	order.NewOrderRouter(infra.TradingPool).Init(api)
+	transaction.NewTransactionRouter(infra.TradingPool).Init(api)
 
 	app := &http.Server{
 		Addr:    infra.Config.Server.Port,
