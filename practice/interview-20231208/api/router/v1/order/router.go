@@ -21,4 +21,5 @@ func (o *orderRouter) Init(r *gin.RouterGroup) {
 	v1 := r.Group("/v1")
 
 	v1.POST("/orders", o.PendingOrder)
+	v1.GET("/orders", o.GetOrders)
 }
