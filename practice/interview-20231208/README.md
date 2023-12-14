@@ -24,6 +24,9 @@
         - [Response](#response-2)
   - [Project Layout](#project-layout)
   - [Getting Started](#getting-started)
+    - [Prerequisites](#prerequisites)
+    - [Quick install instructions](#quick-install-instructions)
+    - [Usage](#usage)
   - [TODOs](#todos)
 
 ---
@@ -379,7 +382,26 @@ curl -X GET http://localhost:6600/api/v1/transactions?buyerOrderId=1: 取回買�
 
 ```
 Trading System
+ ├─ api/                # OpenAPI
+ │   ├─ router/            # router group
+ |   |   ├─ v1/               # v1 版本 APIs
+ |   |   └─ router.go         # router common interface
+ │   └─ server.go          # gin web framework
+ ├─ cmd/                # 主要應用程式進入點
+ ├─ config/             # 組態設定檔
+ ├─ deployment/         # 部署設定檔
+ ├─ model/              # Data schema
+ ├─ pkg/                # 模組化函式庫
+ │   ├─ accessor/          # 基礎建設管理模組 (e.g. config, network, storage, etc.)
+ │   ├─ config/            # 組態設定模組 (viper)
+ │   ├─ e/                 # 專案內部使用的狀態碼、型別定義
+ │   ├─ rdb/               # Relational Database 模組
+ │   └─ trading/           # 交易撮合模組
+ ├─ dockerfile          #
+ ├─ go.mod              #
+ ├─ go.sum              #
  ├─ main.go             #
+ ├─ makefile            #
  └─ README.md           #
 ```
 
@@ -387,7 +409,36 @@ Trading System
 
 ## Getting Started
 
-TODO
+### Prerequisites
+
+- Go
+- Docker
+
+### Quick install instructions
+
+```shell
+make init
+```
+
+### Usage
+
+快速啟動 Trading 系統
+
+```shell
+make up
+```
+
+關閉系統
+
+```shell
+make down
+```
+
+單元測試
+
+```shell
+make test
+```
 
 ---
 
