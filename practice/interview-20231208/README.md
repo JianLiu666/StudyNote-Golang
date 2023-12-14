@@ -10,6 +10,18 @@
       - [可用性保證](#可用性保證)
   - [API 設計](#api-設計)
     - [RESTful APIs](#restful-apis)
+      - [Pending Order](#pending-order)
+        - [Endpoint](#endpoint)
+        - [Request](#request)
+        - [Response](#response)
+      - [Get Order by filters](#get-order-by-filters)
+        - [Endpoint](#endpoint-1)
+        - [Request](#request-1)
+        - [Response](#response-1)
+      - [Get Transaction Log by filters](#get-transaction-log-by-filters)
+        - [Endpoint](#endpoint-2)
+        - [Request](#request-2)
+        - [Response](#response-2)
   - [Project Layout](#project-layout)
   - [Getting Started](#getting-started)
 
@@ -76,7 +88,137 @@
 
 ### RESTful APIs
 
-TODO
+#### Pending Order
+
+發出掛單請求，等待系統根據規則進行撮合
+
+##### Endpoint
+
+```
+[POST] /api/v1/orders
+```
+
+##### Request
+
+- JSON Schema
+```json
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+        "userId": {
+            "type": "integer",
+            "description": "用戶唯一識別碼"
+        },
+        "roleType": {
+            "type": "integer",
+            "description": "掛單角色 (0:買方, 1:賣方)"
+        },
+        "orderType": {
+            "type": "integer",
+            "description": "交易單類型 (0:市價單, 1:限價單)"
+        },
+        "durationType": {
+            "type": "integer",
+            "description": "交易單期限 (0:ROD, 1:IOC, 2:FOK)"
+        },
+        "price": {
+            "type": "integer",
+            "description": "交易單價格"
+        },
+        "quantity": {
+            "type": "integer",
+            "description": "交易單數量"
+        }
+    },
+    "required": ["userId", "roleType", "orderType", "durationType", "price", "quantity"]
+}
+
+```
+
+- Example
+```json
+{
+    "userId": 1,
+    "roleType": 0,
+    "orderType": 0,
+    "durationType": 0,
+    "price": 100,
+    "quantity": 100
+}
+```
+
+##### Response
+
+- Status Code
+```
+200: 請求成功
+400: 參數錯誤
+```
+
+#### Get Order by filters
+
+根據篩選條件查詢交易單
+
+##### Endpoint
+
+```
+[GET] /api/v1/orders
+```
+
+##### Request
+
+- Params
+```
+```
+
+##### Response
+
+- Status Code
+```
+200: 請求成功
+400: 參數錯誤
+```
+
+- JSON Schema
+```json
+```
+
+- Example
+```json
+```
+
+#### Get Transaction Log by filters
+
+根據篩選條件查詢交易紀錄
+
+##### Endpoint
+
+```
+[GET] /api/v1/transactions
+```
+
+##### Request
+
+- Params
+```
+```
+
+##### Response
+
+- Status Code
+```
+200: 請求成功
+400: 參數錯誤
+```
+
+- JSON Schema
+```json
+```
+
+- Example
+```json
+```
 
 ---
 
