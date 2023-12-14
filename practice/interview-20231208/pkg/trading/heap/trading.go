@@ -51,6 +51,22 @@ func (t *tradingPool) AddOrder(order *model.Order) e.CODE {
 	return e.SUCCESS
 }
 
+func (t *tradingPool) GetOrders(limit int, opts *model.OrderQueryOpts) ([]*model.Order, e.CODE) {
+	result := []*model.Order{}
+
+	// TODO
+
+	return result, e.SUCCESS
+}
+
+func (t *tradingPool) GetTransactionLogs(limit int, opts *model.TransactionLogQueryOpts) ([]*model.TransactionLog, e.CODE) {
+	result := []*model.TransactionLog{}
+
+	// TODO
+
+	return result, e.SUCCESS
+}
+
 func (t *tradingPool) schedule(ctx context.Context) {
 	for {
 		select {

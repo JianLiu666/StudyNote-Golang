@@ -36,3 +36,13 @@ func (c *mockMysqlClient) SetUpdateOrdersAndCreateTransactionLogs(f func(ctx con
 func (c *mockMysqlClient) UpdateOrdersAndCreateTransactionLogs(ctx context.Context, orders map[int]*model.Order, logs []*model.TransactionLog) {
 	c.updateOrdersAndCreateTransactionLogsCallbackfunc(ctx, orders, logs)
 }
+
+func (c *mockMysqlClient) GetOrders(ctx context.Context, opts *model.OrderQueryOpts) []*model.Order {
+	result := []*model.Order{}
+	return result
+}
+
+func (c *mockMysqlClient) GetTransactionLogs(ctx context.Context, opts *model.TransactionLogQueryOpts) []*model.TransactionLog {
+	result := []*model.TransactionLog{}
+	return result
+}

@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"interview20231208/model"
+	"interview20231208/pkg/e"
 	"interview20231208/pkg/rdb"
 	"time"
 
@@ -64,4 +65,50 @@ func (c *mysqlClient) UpdateOrdersAndCreateTransactionLogs(ctx context.Context, 
 
 		return nil
 	})
+}
+
+func (c *mysqlClient) GetOrders(ctx context.Context, opts *model.OrderQueryOpts) []*model.Order {
+	result := []*model.Order{}
+
+	tx := c.gormDB.Table(rdb.TbOrders).Select("*")
+
+	if opts.UserID != -1 {
+		tx = tx.Where("userId = ?", opts.UserID)
+	}
+	if opts.Status != e.STATUS_PLACEHOLDER {
+		tx = tx.Where("status = ?", opts.Status)
+	}
+	if opts.StartTimestamp.Unix() < opts.EndTimestamp.Unix() {
+		tx = tx.Where("timestamp >= ? AND timestamp <= ?", opts.StartTimestamp, opts.EndTimestamp)
+	}
+
+	if err := tx.Find(&result).Error; err != nil {
+		logrus.Error(err)
+		return []*model.Order{}
+	}
+
+	return result
+}
+
+func (c *mysqlClient) GetTransactionLogs(ctx context.Context, opts *model.TransactionLogQueryOpts) []*model.TransactionLog {
+	result := []*model.TransactionLog{}
+
+	tx := c.gormDB.Table(rdb.TbTransactionLogs).Select("*")
+
+	if opts.BuyerOrderID != -1 {
+		tx = tx.Where("buyerOrderId = ?", opts.BuyerOrderID)
+	}
+	if opts.SellerOrderID != -1 {
+		tx = tx.Where("sellerOrderId = ?", opts.SellerOrderID)
+	}
+	if opts.StartTimestamp.Unix() < opts.EndTimestamp.Unix() {
+		tx = tx.Where("timestamp >= ? AND timestamp <= ?", opts.StartTimestamp, opts.EndTimestamp)
+	}
+
+	if err := tx.Find(&result).Error; err != nil {
+		logrus.Error(err)
+		return []*model.TransactionLog{}
+	}
+
+	return result
 }
