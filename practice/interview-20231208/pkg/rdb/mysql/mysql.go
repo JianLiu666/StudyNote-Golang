@@ -13,12 +13,14 @@ import (
 	"gorm.io/gorm"
 )
 
+var _ rdb.RDB = (*mysqlClient)(nil)
+
 type mysqlClient struct {
 	gormDB *gorm.DB
 	sqlDB  *sql.DB
 }
 
-func NewMySqlClient(ctx context.Context, dsn string, connMaxLifetime time.Duration, maxOpenConns, maxIdleConns int) rdb.RDB {
+func NewMySqlClient(ctx context.Context, dsn string, connMaxLifetime time.Duration, maxOpenConns, maxIdleConns int) *mysqlClient {
 	gormDB, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		logrus.Panicf("failed to open database by gorm: %v", err)
@@ -78,7 +80,7 @@ func (c *mysqlClient) GetOrders(ctx context.Context, opts *model.OrderQueryOpts)
 	if opts.Status != e.STATUS_PLACEHOLDER {
 		tx = tx.Where("status = ?", opts.Status)
 	}
-	if opts.StartTimestamp.Unix() < opts.EndTimestamp.Unix() {
+	if !opts.StartTimestamp.IsZero() && !opts.EndTimestamp.IsZero() && opts.StartTimestamp.Unix() <= opts.EndTimestamp.Unix() {
 		tx = tx.Where("timestamp >= ? AND timestamp <= ?", opts.StartTimestamp, opts.EndTimestamp)
 	}
 
@@ -101,7 +103,7 @@ func (c *mysqlClient) GetTransactionLogs(ctx context.Context, opts *model.Transa
 	if opts.SellerOrderID != -1 {
 		tx = tx.Where("sellerOrderId = ?", opts.SellerOrderID)
 	}
-	if opts.StartTimestamp.Unix() < opts.EndTimestamp.Unix() {
+	if !opts.StartTimestamp.IsZero() && !opts.EndTimestamp.IsZero() && opts.StartTimestamp.Unix() <= opts.EndTimestamp.Unix() {
 		tx = tx.Where("timestamp >= ? AND timestamp <= ?", opts.StartTimestamp, opts.EndTimestamp)
 	}
 
