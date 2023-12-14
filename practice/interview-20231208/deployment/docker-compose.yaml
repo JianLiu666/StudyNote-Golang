@@ -27,6 +27,22 @@ services:
         reservations:
           memory: 2G
 
+  tradingserver:
+    image: tradingserver:latest
+    container_name: "trading-server"
+    restart: always
+    ports:
+      - 6600:6600
+    networks:
+      - network-trading
+    deploy:
+      resources:
+        limits:
+          cpus: "2"
+          memory: 4G
+        reservations:
+          memory: 2G
+
 networks:
     network-trading:
       driver: bridge

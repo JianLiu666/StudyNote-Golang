@@ -11,8 +11,8 @@ help:
 	@echo "  test        執行專案單元測試"
 
 init:
-	rm -rf deployments/data
-	mkdir -p deployments/data/mysql
+	rm -rf deployment/data
+	mkdir -p deployment/data/mysql
 
 	go mod download
 	go mod tidy
