@@ -30,7 +30,7 @@ type TransactionLog struct {
 	SellerOrderID int       `json:"sellerOrderId" gorm:"column:sellerOrderId"` // 賣方唯一識別罵
 	Price         int       `json:"price"         gorm:"column:price"`         // 成交價格
 	Quantity      int       `json:"quantity"      gorm:"column:quantity"`      // 成交數量
-	Timestamp     time.Time `json:"timstamp"      gorm:"column:timstamp"`      // 成交時間戳
+	Timestamp     time.Time `json:"timestamp"     gorm:"column:timestamp"`     // 成交時間戳
 }
 
 type TransactionLogQueryOpts struct {
