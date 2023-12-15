@@ -14,6 +14,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"gotest.tools/assert"
@@ -39,6 +40,7 @@ func TestMain(m *testing.M) {
 }
 
 func TestPendingOrder_Success(t *testing.T) {
+	// init environment
 	_sqlServer.Clear()
 
 	// prepare data
@@ -62,10 +64,12 @@ func TestPendingOrder_Success(t *testing.T) {
 	w := httptest.NewRecorder()
 	_router.ServeHTTP(w, req)
 
+	// validation
 	assert.Equal(t, http.StatusOK, w.Result().StatusCode)
 }
 
 func TestPendingOrder_BadRequest_case1(t *testing.T) {
+	// init environment
 	_sqlServer.Clear()
 
 	// prepare data
@@ -89,10 +93,12 @@ func TestPendingOrder_BadRequest_case1(t *testing.T) {
 	w := httptest.NewRecorder()
 	_router.ServeHTTP(w, req)
 
+	// validation
 	assert.Equal(t, http.StatusBadRequest, w.Result().StatusCode)
 }
 
 func TestGetOrder_Success(t *testing.T) {
+	// init environment
 	_sqlServer.Clear()
 
 	// prepare data
@@ -116,6 +122,8 @@ func TestGetOrder_Success(t *testing.T) {
 	w := httptest.NewRecorder()
 	_router.ServeHTTP(w, req)
 
+	time.Sleep(100 * time.Millisecond)
+
 	req = httptest.NewRequest(http.MethodGet, fmt.Sprintf("/api/v1/orders?userId=%v", order.UserID), nil)
 	w = httptest.NewRecorder()
 	_router.ServeHTTP(w, req)
@@ -126,6 +134,7 @@ func TestGetOrder_Success(t *testing.T) {
 		t.FailNow()
 	}
 
+	// validation
 	assert.Equal(t, http.StatusOK, w.Result().StatusCode)
 	assert.Equal(t, 1, len(result))
 	assert.Equal(t, order.UserID, result[0].UserID)
@@ -138,6 +147,7 @@ func TestGetOrder_Success(t *testing.T) {
 }
 
 func TestGetOrder_BadRequest_case1(t *testing.T) {
+	// init environment
 	_sqlServer.Clear()
 
 	// prepare data
@@ -161,9 +171,12 @@ func TestGetOrder_BadRequest_case1(t *testing.T) {
 	w := httptest.NewRecorder()
 	_router.ServeHTTP(w, req)
 
+	time.Sleep(100 * time.Millisecond)
+
 	req = httptest.NewRequest(http.MethodGet, "/api/v1/orders?status=aaa", nil)
 	w = httptest.NewRecorder()
 	_router.ServeHTTP(w, req)
 
+	// validation
 	assert.Equal(t, http.StatusBadRequest, w.Result().StatusCode)
 }
