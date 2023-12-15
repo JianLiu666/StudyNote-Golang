@@ -1,6 +1,8 @@
 package rdb
 
 import (
+	"fmt"
+
 	sqle "github.com/dolthub/go-mysql-server"
 	"github.com/dolthub/go-mysql-server/memory"
 	"github.com/dolthub/go-mysql-server/server"
@@ -9,12 +11,12 @@ import (
 	"github.com/dolthub/go-mysql-server/sql/types"
 )
 
-type sqlServer struct {
+type SqlServer struct {
 	engine *sqle.Engine
 	server *server.Server
 }
 
-func NewSqlServer(address string) *sqlServer {
+func NewSqlServer(address string) *SqlServer {
 	engine := sqle.NewDefault(
 		memory.NewDBProvider(
 			createFakeDatabase(),
@@ -30,18 +32,23 @@ func NewSqlServer(address string) *sqlServer {
 		panic(err)
 	}
 
-	return &sqlServer{
+	return &SqlServer{
 		engine: engine,
 		server: server,
 	}
 }
 
-func (f *sqlServer) Enable() {
+func (f *SqlServer) Enable() {
 	go func() {
 		if err := f.server.Start(); err != nil {
 			panic(err)
 		}
 	}()
+}
+
+func (f *SqlServer) Clear() {
+	f.engine.Query(sql.NewEmptyContext(), fmt.Sprintf("TRUNCATE `trading`.`%v`;", TbOrders))
+	f.engine.Query(sql.NewEmptyContext(), fmt.Sprintf("TRUNCATE `trading`.`%v`;", TbTransactionLogs))
 }
 
 func createFakeDatabase() *memory.Database {
