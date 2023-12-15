@@ -28,6 +28,7 @@
     - [Quick install instructions](#quick-install-instructions)
     - [Usage](#usage)
   - [TODOs](#todos)
+- [References](#references)
 
 ---
 
@@ -449,3 +450,9 @@ make test
 - Availability
   - [ ] Server Crash Recovery Mechanism
     - 從 MySQL 中恢復掛單中的 orders
+
+---
+
+# References
+
+- [ROD / IOC / FOK差在哪？ 最完整的逐筆交易教學懶人包](https://rich01.com/what-rod-ioc-fok/)
