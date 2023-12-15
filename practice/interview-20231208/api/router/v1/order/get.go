@@ -26,7 +26,7 @@ func (o *orderRouter) GetOrders(c *gin.Context) {
 		return
 	}
 
-	statusStr := c.DefaultQuery("status", strconv.Itoa(e.STATUS_PLACEHOLDER))
+	statusStr := c.DefaultQuery("status", strconv.Itoa(int(e.STATUS_PLACEHOLDER)))
 	status, err := strconv.Atoi(statusStr)
 	if err != nil {
 		c.String(http.StatusBadRequest, e.GetMsg(e.INVALID_PARAMS))

@@ -143,7 +143,7 @@ func TestGetOrder_Success(t *testing.T) {
 	assert.Equal(t, order.DurationType, result[0].DurationType)
 	assert.Equal(t, order.Price, result[0].Price)
 	assert.Equal(t, order.Quantity, result[0].Quantity)
-	assert.Equal(t, e.ORDER_STATUS(e.STATUS_PENDING), result[0].Status)
+	assert.Equal(t, e.STATUS_PENDING, result[0].Status)
 }
 
 func TestGetOrder_BadRequest_case1(t *testing.T) {

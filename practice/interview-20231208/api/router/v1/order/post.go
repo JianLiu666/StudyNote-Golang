@@ -19,15 +19,15 @@ func (o *orderRouter) PendingOrder(c *gin.Context) {
 		c.String(http.StatusBadRequest, e.GetMsg(e.INVALID_PARAMS))
 		return
 	}
-	if !e.IsRoleTypeValid(int(order.RoleType)) {
+	if !e.IsRoleTypeValid(order.RoleType) {
 		c.String(http.StatusBadRequest, e.GetMsg(e.INVALID_PARAMS))
 		return
 	}
-	if !e.IsOrderTypeValid(int(order.OrderType)) {
+	if !e.IsOrderTypeValid(order.OrderType) {
 		c.String(http.StatusBadRequest, e.GetMsg(e.INVALID_PARAMS))
 		return
 	}
-	if !e.IsDurationTypeValid(int(order.DurationType)) {
+	if !e.IsDurationTypeValid(order.DurationType) {
 		c.String(http.StatusBadRequest, e.GetMsg(e.INVALID_PARAMS))
 		return
 	}
