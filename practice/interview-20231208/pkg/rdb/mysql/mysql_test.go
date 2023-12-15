@@ -5,9 +5,18 @@ import (
 	"fmt"
 	"interview20231208/model"
 	"interview20231208/pkg/e"
+	"interview20231208/pkg/rdb"
+	"os"
 	"testing"
 	"time"
 )
+
+func TestMain(m *testing.M) {
+	sqlServer := rdb.NewSqlServer("localhost:3306")
+	sqlServer.Enable()
+
+	os.Exit(m.Run())
+}
 
 func TestCreateOrder(t *testing.T) {
 	// TODO: remove magic number
@@ -25,9 +34,6 @@ func TestCreateOrder(t *testing.T) {
 		Status:       e.STATUS_PENDING,
 		Timestamp:    time.Now(),
 	})
-
-	// clean data
-	client.gormDB.Exec("TRUNCATE orders;")
 }
 
 func TestUpdateOrdersAndCreateTransactionLogs(t *testing.T) {
@@ -75,10 +81,6 @@ func TestUpdateOrdersAndCreateTransactionLogs(t *testing.T) {
 
 	// testcase
 	client.UpdateOrdersAndCreateTransactionLogs(context.TODO(), orderSet, logs)
-
-	// clean data
-	client.gormDB.Exec("TRUNCATE orders;")
-	client.gormDB.Exec("TRUNCATE transactionlogs;")
 }
 
 func TestGetOrders(t *testing.T) {
@@ -120,7 +122,4 @@ func TestGetOrders(t *testing.T) {
 	for _, data := range result {
 		fmt.Println(data)
 	}
-
-	// clean data
-	client.gormDB.Exec("TRUNCATE orders;")
 }
